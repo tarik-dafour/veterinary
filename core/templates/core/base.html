@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Veterinary Management{% endblock %}</title>
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+<link href="dist/pattern.min.css" rel="stylesheet">
+</head>
+<body class="{% if user.profile.theme == 'light' %}light-theme{% endif %}">
+    <!-- Barre latérale -->
+    <div class="sidebar">
+        <div class="logo-section">
+            <span class="logo-icon"><i class="fa-solid fa-user-doctor"></i></span>
+            <span class="logo-text">Vétérinaire</span>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-house-chimney"></i></span>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'clients' %}" class="nav-link {% if request.resolver_match.url_name == 'clients' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-user"></i></span>
+                    Clients
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'animals' %}" class="nav-link {% if request.resolver_match.url_name == 'animals' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-paw"></i></span>
+                    Animaux
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'reservation' %}" class="nav-link {% if request.resolver_match.url_name == 'reservation' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-regular fa-calendar-check"></i></span>
+                    Rendez-vous
+                </a>
+            </li>
+            {% if user.profile.role == 'admin' or user.profile.role == 'veterinarian' or user.profile.role == 'assistant' or user.is_superuser %}
+            <li class="nav-item">
+                <a href="{% url 'stock' %}" class="nav-link {% if request.resolver_match.url_name == 'stock' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-boxes-stacked"></i></span>
+                    Inventaire
+                </a>
+            </li>
+            {% endif %}
+            {% if user.profile.role == 'admin' or user.is_superuser %}
+            <li class="nav-item">
+                <a href="{% url 'users' %}" class="nav-link {% if request.resolver_match.url_name == 'users' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-user-plus"></i></span>
+                    Équipe
+                </a>
+            </li>
+            {% endif %}
+            {% if user.profile.role == 'admin' or user.profile.role == 'veterinarian' or user.is_superuser %}
+            <li class="nav-item">
+                <a href="{% url 'report' %}" class="nav-link {% if request.resolver_match.url_name == 'report' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+                    Rapports
+                </a>
+            </li>
+            {% endif %}
+            {% if user.profile.role == 'admin' or user.is_superuser %}
+            <li class="nav-item">
+                <a href="{% url 'facture' %}" class="nav-link {% if request.resolver_match.url_name == 'facture' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+                    Facture
+                </a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a href="{% url 'settings' %}" class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fa-solid fa-gear"></i></span>
+                    Paramètres
+                </a>
+            </li>
+            <li class="nav-item_last">
+                <a href="{% url 'logout' %}" class="nav-link">
+                    <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                    Déconnexion
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="main-content">
+        <!-- En-tête -->
+        <div class="top-header">
+            <div class="welcome-section">
+              <div class="user-avatar">
+                    {{ user.get_full_name|default:user.username|first|upper }}
+                </div>
+                <div class="welcome-text">
+                    Bienvenue, {% if user.profile.role == 'admin' or user.is_superuser %}Dr.{% endif %} {{ user.get_full_name|default:user.username }} !
+                </div>
+            </div>
+
+            <div class="Notification">
+                <div class="notification-icon">
+                    <i class="fa-solid fa-bell"></i>
+                </div>
+            </div>
+            
+            <div class="quick-stats">
+                <div class="quick-stat-item">
+                    <a href="{% url 'logout' %}" style="text-decoration: none; color: inherit;" onclick="return confirm('Êtes-vous sûr de vouloir vous déconnecter ?');">
+                        <div class="stat-avatar"><i class="fa-solid fa-right-from-bracket"></i></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone de contenu -->
+        <div class="content-area">
+            <div class="dashboard-container">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

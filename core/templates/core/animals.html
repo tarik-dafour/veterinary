@@ -1,0 +1,134 @@
+{% extends 'core/base.html' %}
+{% block title %}Animals - VetStock{% endblock %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/css/animals.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+   
+<div class="page-header">
+    <h1 class="page-title"><i class="fa-solid fa-paw"></i> Gestion des animaux</h1>
+    <p class="page-subtitle">Gérez les animaux de votre clinique vétérinaire et leurs informations</p>
+</div>
+
+<div class="content-grid">
+    <!-- Liste des animaux -->
+    <div class="table-card">
+        <div class="table-header">
+            <h3 class="form-title"><i class="fa-solid fa-paw"></i> Liste des animaux</h3>
+            <form method="get" class="search-form">
+                <input type="text" name="search" class="search-input" placeholder="Rechercher des animaux..." 
+                       value="{{ search_query }}">
+                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                {% if search_query %}
+                    <a class="btn btn-secondary" href="{% url 'animals' %}"><i class="fa-solid fa-times"></i></a>
+                {% endif %}
+                <a class="btn btn-success" href="{% url 'export_animals_csv' %}?search={{ search_query }}">
+                    <i class="fa-solid fa-download"></i>
+                </a>
+                <button type="button" class="btn btn-success" onclick="openAnimalModal()">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </form>
+        </div>
+        <div id="animalModal" class="modal">
+            <div class="modal-content">
+              <span class="close" onclick="closeAnimalModal()"><i class="fa-solid fa-xmark"></i></span>
+              <h3><i class="fa-solid fa-plus"></i> Ajouter un Animal</h3>
+              <form id="addAnimalForm" method="post" action="{% url 'animals' %}">
+                  {% csrf_token %}
+                  <div class="form-group">
+                      <label class="form-label">Nom de l'animal</label>
+                      <input type="text" name="nom" class="form-input" required>
+                  </div>
+                  <div class="form-group">
+                      <label class="form-label">Type</label>
+                      <input type="text" name="type" class="form-input" placeholder="Ex : Chien, Chat, Oiseau" required>
+                  </div>
+                  <div class="form-group">
+                      <label class="form-label">Race</label>
+                      <input type="text" name="race" class="form-input" required>
+                  </div>
+                  <div class="form-group">
+                      <label class="form-label">Âge</label>
+                      <input type="number" name="age" class="form-input" required>
+                  </div>
+                  <div class="form-group">
+                      <label class="form-label">Propriétaire (Client)</label>
+                      <select name="client" class="form-select" required>
+                          <option value="">Sélectionnez un client</option>
+                          {% for client in clients %}
+                              <option value="{{ client.id }}">{{ client.prenom }} {{ client.nom }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Ajouter</button>
+              </form>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><i class="fa-solid fa-paw"></i> Nom</th>
+                    <th><i class="fa-solid fa-tag"></i> Type</th>
+                    <th><i class="fa-solid fa-dog"></i> Race</th>
+                    <th><i class="fa-solid fa-calendar"></i> Âge</th>
+                    <th><i class="fa-solid fa-user"></i> Propriétaire</th>
+                    <th><i class="fa-solid fa-cog"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for animal in animals %}
+                <tr>
+                    <td><strong>{{ animal.nom }}</strong></td>
+                    <td>
+                        <span class="animal-type-badge 
+                            {% if animal.type|lower == 'dog' %}type-dog
+                            {% elif animal.type|lower == 'cat' %}type-cat
+                            {% elif animal.type|lower == 'bird' %}type-bird
+                            {% else %}type-other{% endif %}">
+                            {{ animal.type }}
+                        </span>
+                    </td>
+                    <td>{{ animal.race }}</td>
+                    <td>{{ animal.age }} ans</td>
+                    <td>{{ animal.client.prenom }} {{ animal.client.nom }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a class="btn btn-secondary" href="?edit={{ animal.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                <i class="fa-solid fa-pen-to-square"></i> Modifier
+                            </a>
+                            <a class="btn btn-danger" href="?delete={{ animal.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet animal ?');">
+                                <i class="fa-solid fa-trash"></i> Supprimer
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🐾</div>
+                            <h4>Aucun animal trouvé</h4>
+                            <p>{% if search_query %}Aucun animal ne correspond à vos critères de recherche.{% else %}Commencez par ajouter votre premier animal.{% endif %}</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+  function openAnimalModal() {
+    document.getElementById("animalModal").style.display = "block";
+  }
+  function closeAnimalModal() {
+    document.getElementById("animalModal").style.display = "none";
+  }
+</script>
+
+{% endblock %}

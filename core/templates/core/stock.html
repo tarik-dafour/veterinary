@@ -1,0 +1,374 @@
+{% extends 'core/base.html' %}
+{% block title %}Stock - VetStock{% endblock %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'core/css/stock.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+
+
+<div class="page-header">
+    <h1 class="page-title"><i class="fa-solid fa-cubes-stacked"></i> Gestion de Stock</h1>
+    <p class="page-subtitle">Gérez l'inventaire, les catégories et les fournisseurs de votre clinique vétérinaire</p>
+</div>
+
+<div class="tabs-container">
+    <div class="tabs-header">
+        <button class="tab-button active" onclick="showTab('products')"><i class="fa-solid fa-box"></i> Produits</button>
+        <button class="tab-button" onclick="showTab('categories')"><i class="fa-solid fa-tag"></i> Catégories</button>
+        <button class="tab-button" onclick="showTab('suppliers')"><i class="fa-solid fa-building"></i> Fournisseurs</button>
+    </div>
+
+    <!-- Onglet Produits -->
+    <div id="products" class="tab-content active">
+        <div class="content-grid">
+            <!-- ✅ Modal Ajouter / Modifier Produit -->
+            <div id="produitModal" class="modal">
+              <div class="modal-content">
+                <span class="close" onclick="closeModal('produit')"><i class="fa-solid fa-xmark"></i></span>
+
+                <h3 class="form-title">
+                  {% if edit_produit %}
+                    <i class="fa-solid fa-file-pen"></i> Modifier le Produit
+                  {% else %}
+                    <i class="fa-solid fa-cart-plus"></i> Ajouter un Nouveau Produit
+                  {% endif %}
+                </h3>
+            
+                <form method="post" action="{% url 'stock' %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="prod_form" value="1">
+                
+                  <div class="form-group">
+                    <label class="form-label">Nom du Produit</label>
+                    <input type="text" name="nom" class="form-input" 
+                           placeholder="Entrez le nom du produit"
+                           value="{% if edit_produit %}{{ edit_produit.nom }}{% endif %}" required>
+                  </div>
+              
+                  <div class="form-group">
+                    <label class="form-label">Quantité</label>
+                    <input type="number" name="quantite" class="form-input" 
+                           placeholder="Entrez la quantité"
+                           value="{% if edit_produit %}{{ edit_produit.quantite }}{% endif %}" required>
+                  </div>
+              
+                  <div class="form-group">
+                    <label class="form-label">Prix</label>
+                    <input type="number" step="0.01" name="prix_produit" class="form-input" 
+                           placeholder="Entrez le prix"
+                           value="{% if edit_produit %}{{ edit_produit.prix_produit }}{% endif %}" required>
+                  </div>
+              
+                  <div class="form-group">
+                    <label class="form-label">Date d'Expiration</label>
+                    <input type="date" name="date_expiration" class="form-input" 
+                           value="{% if edit_produit %}{{ edit_produit.date_expiration|date:'Y-m-d' }}{% endif %}" required>
+                  </div>
+              
+                  <div class="form-group">
+                    <label class="form-label">Catégorie</label>
+                    <select name="categorie" class="form-select" required>
+                      <option value="">Sélectionnez une catégorie</option>
+                      {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if edit_produit and edit_produit.categorie.id == cat.id %}selected{% endif %}>
+                          {{ cat.nom }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+              
+                  <button type="submit" class="btn btn-primary">
+                    {% if edit_produit %}Modifier{% else %}Ajouter{% endif %}
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Liste des Produits -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3 class="form-title"><i class="fa-solid fa-clipboard-list"></i> Liste des Produits</h3>
+                    <form method="get" class="search-form">
+                        <input type="text" name="search" class="search-input" placeholder="Rechercher un produit..." 
+                               value="{{ search_query }}">
+                        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        {% if search_query %}
+                            <a class="btn btn-secondary" href="{% url 'stock' %}"><i class="fa-solid fa-xmark"></i></a>
+                        {% endif %}
+                        <a class="btn btn-success" href="{% url 'export_products_csv' %}?search={{ search_query }}">
+                            <i class="fa-solid fa-download"></i>
+                        </a>
+                        <button class="btn btn-primary" onclick="openModal('produit')"><i class="fa-solid fa-cart-plus"></i> Ajouter</button>
+                    </form>
+                </div>
+                
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><i class="fa-solid fa-boxes-packing"></i> Nom</th>
+                            <th><i class="fa-solid fa-layer-group"></i> Catégorie</th>
+                            <th><i class="fa-solid fa-arrow-trend-up"></i> Quantité</th>
+                            <th><i class="fa-solid fa-hand-holding-dollar"></i> Prix</th>
+                            <th><i class="fa-solid fa-calendar-day"></i> Expiration</th>
+                            <th><i class="fa-solid fa-truck-field"></i> Fournisseur</th>
+                            <th><i class="fa-solid fa-gears"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produit in produits %}
+                        <tr>
+                            <td><strong>{{ produit.nom }}</strong></td>
+                            <td>{{ produit.categorie.nom }}</td>
+                            <td>
+                                <span class="stock-badge 
+                                    {% if produit.quantite <= 5 %}stock-low
+                                    {% elif produit.quantite <= 20 %}stock-medium
+                                    {% else %}stock-high{% endif %}">
+                                    {{ produit.quantite }}
+                                </span>
+                            </td>
+                            <td class="price">{{ produit.prix_produit }} MAD</td>
+                            <td>{{ produit.date_expiration|date:'d M Y' }}</td>
+                            <td>{{ produit.fournisseur.nom }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a class="btn btn-secondary" href="?edit={{ produit.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                        <i class="fa-solid fa-pen-to-square"></i> Modifier
+                                    </a>
+                                    <a class="btn btn-danger" href="?delete={{ produit.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
+                                        <i class="fa-solid fa-trash"></i> Supprimer
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                                    <h4>Aucun produit trouvé</h4>
+                                    <p>{% if search_query %}Aucun produit ne correspond à votre recherche.{% else %}Commencez par ajouter votre premier produit.{% endif %}</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onglet Catégories -->
+    <div id="categories" class="tab-content">
+        <div class="Categories-List">
+            <h3 class="form-title">📋 Liste des Catégories</h3>
+            <div class="Categories-card">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="cat_form" value="1">
+                    {% if cat_to_edit %}
+                        <input type="hidden" name="cat_edit_id" value="{{ cat_to_edit.id }}">
+                    {% endif %}
+                    <input type="text" name="cat_nom" class="Categories-input" placeholder="Ajouter une nouvelle catégorie" 
+                           value="{% if cat_to_edit %}{{ cat_to_edit.nom }}{% endif %}" required>
+                    {% if cat_to_edit %}
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
+                            <a class="btn btn-secondary" href="{% url 'stock' %}"><i class="fa-solid fa-xmark"></i></a>
+                        </div>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-tag"></i></button>
+                    {% endif %}
+                </form>
+            </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><i class="fa-solid fa-tag"></i> Nom</th>
+                            <th><i class="fa-solid fa-cog"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cat in categories %}
+                        <tr>
+                            <td><strong>{{ cat.nom }}</strong></td>
+                            <td>
+                                <div class="btn-group">
+                                    <a class="btn btn-secondary" href="?cat_edit={{ cat.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                        <i class="fa-solid fa-pen-to-square"></i> Modifier
+                                    </a>
+                                    <a class="btn btn-danger" href="?cat_delete={{ cat.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');">
+                                        <i class="fa-solid fa-trash"></i> Supprimer
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon"><i class="fa-solid fa-tag"></i></div>
+                                    <h4>Aucune catégorie trouvée</h4>
+                                    <p>Commencez par ajouter votre première catégorie.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onglet Fournisseurs -->
+    <div id="suppliers" class="tab-content">
+        <div id="fournisseurModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeFournisseurModal('fournisseur')"><i class="fa-solid fa-xmark"></i></span>
+                <h3 class="modal-title">
+                    {% if fourn_to_edit %}
+                        <i class="fa-solid fa-file-pen"></i> Modifier le Fournisseur
+                    {% else %}
+                        <i class="fa-solid fa-file-plus"></i> Ajouter un Nouveau Fournisseur
+                    {% endif %}
+                </h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="fourn_form" value="1">
+                
+                    <div class="form-group">
+                        <label class="form-label">Nom du Fournisseur</label>
+                        <input type="text" name="fourn_nom" class="form-input" 
+                               placeholder="Entrez le nom du fournisseur" 
+                               value="{% if fourn_to_edit %}{{ fourn_to_edit.nom }}{% endif %}" required>
+                    </div>
+                
+                    <div class="form-group">
+                        <label class="form-label">Téléphone</label>
+                        <input type="text" name="fourn_telephone" class="form-input" 
+                               placeholder="Entrez le numéro de téléphone" 
+                               value="{% if fourn_to_edit %}{{ fourn_to_edit.telephone }}{% endif %}" required>
+                    </div>
+                
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="fourn_email" class="form-input" 
+                               placeholder="Entrez l'adresse email" 
+                               value="{% if fourn_to_edit %}{{ fourn_to_edit.email }}{% endif %}" required>
+                    </div>
+                
+                    <div class="form-group">
+                        <label class="form-label">Adresse</label>
+                        <input type="text" name="fourn_adresse" class="form-input" 
+                               placeholder="Entrez l'adresse" 
+                               value="{% if fourn_to_edit %}{{ fourn_to_edit.adresse }}{% endif %}" required>
+                    </div>
+                
+                    {% if fourn_to_edit %}
+                        <input type="hidden" name="fourn_edit_id" value="{{ fourn_to_edit.id }}">
+                        <div class="btn-group">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fa-solid fa-floppy-disk"></i> Mettre à jour
+                            </button>
+                            <a class="btn btn-secondary" href="{% url 'stock' %}">
+                                <i class="fa-solid fa-xmark"></i> Annuler
+                            </a>
+                        </div>
+                    {% else %}
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa-solid fa-file-plus"></i> Ajouter
+                        </button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        <div class="table-header">
+            <h3 class="form-title"><i class="fa-solid fa-clipboard-list"></i> Liste des Fournisseurs</h3>
+            <form method="get" class="search-form">
+                <input type="text" name="search" class="search-input" placeholder="Rechercher un fournisseur..." 
+                       value="{{ search_query }}">
+                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                {% if search_query %}
+                    <a class="btn btn-secondary" href="{% url 'stock' %}"><i class="fa-solid fa-xmark"></i></a>
+                {% endif %}
+                <a class="btn btn-success" href="{% url 'export_clients_csv' %}?search={{ search_query }}">
+                    <i class="fa-solid fa-download"></i>
+                </a>
+                <button class="btn btn-primary" onclick="openModal('fournisseur')"><i class="fa-solid fa-cart-plus"></i> Ajouter</button>
+            </form>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><i class="fa-solid fa-building"></i> Nom</th>
+                    <th><i class="fa-solid fa-phone"></i> Téléphone</th>
+                    <th><i class="fa-solid fa-envelope"></i> Email</th>
+                    <th><i class="fa-solid fa-location-dot"></i> Adresse</th>
+                    <th><i class="fa-solid fa-gear"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in fournisseurs %}
+                <tr>
+                    <td><strong>{{ f.nom }}</strong></td>
+                    <td>{{ f.telephone }}</td>
+                    <td>{{ f.email }}</td>
+                    <td>{{ f.adresse }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a class="btn btn-secondary" href="?fourn_edit={{ f.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                <i class="fa-solid fa-pen-to-square"></i> Modifier
+                            </a>
+                            <a class="btn btn-danger" href="?fourn_delete={{ f.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce fournisseur ?');">
+                                <i class="fa-solid fa-trash"></i> Supprimer
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i class="fa-solid fa-building"></i></div>
+                            <h4>Aucun fournisseur trouvé</h4>
+                            <p>Commencez par ajouter votre premier fournisseur.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+function showTab(tabName) {
+    // Hide all tab contents
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => content.classList.remove('active'));
+    
+    // Remove active class from all tab buttons
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(button => button.classList.remove('active'));
+    
+    // Show selected tab content
+    document.getElementById(tabName).classList.add('active');
+    
+    // Add active class to clicked button
+    event.target.classList.add('active');
+}
+function openModal(ModalID) {
+    document.getElementById(ModalID).style.display = "block";
+}
+
+// ✅ Fonction pour fermer le modal 
+function closeModal(ModalID) {
+    document.getElementById(ModalID).style.display = "none";
+}
+</script>
+{% endblock %}

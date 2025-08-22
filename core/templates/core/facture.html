@@ -1,0 +1,84 @@
+{% extends 'core/base.html' %}
+{% block title %}Factures - VetStock{% endblock %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/css/facture.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+<body>
+  <div class="facture-container">
+    <div class="facture-header">
+      <h1><i class="fa-solid fa-file-invoice-dollar"></i> Facture</h1>
+      <p>Date: <span id="facture-date"></span></p>
+    </div>
+
+    <!-- Infos client -->
+    <div class="facture-section client-info">
+      <h2>Informations du Client</h2>
+      <p><strong>Nom:</strong> SAID MAZOUZ</p>
+      <p><strong>Téléphone:</strong> +212 600 000 000</p>
+      <p><strong>Email:</strong> EZZA@example.com</p>
+    </div>
+
+    <!-- Tableau des articles -->
+    <div class="facture-section">
+      <h2>Détails de la Facture</h2>
+      <table class="facture-table">
+        <thead>
+          <tr>
+            <th><i class="fa-solid fa-capsules"></i> Article</th>
+            <th>Quantité</th>
+            <th>Prix Unitaire</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Médicament A</td>
+            <td>2</td>
+            <td>150 MAD</td>
+            <td>300 MAD</td>
+          </tr>
+          <tr>
+            <td>Consultation</td>
+            <td>1</td>
+            <td>200 MAD</td>
+            <td>200 MAD</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Total général -->
+    <div class="facture-total">
+      <p><strong>Sous-total:</strong> 500 MAD</p>
+      <p><strong>TVA (20%):</strong> 100 MAD</p>
+      <p class="grand-total"><strong>Total à payer:</strong> 600 MAD</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="facture-footer">
+      <p>Merci pour votre confiance 🐾</p>
+      <button class="btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimer</button>
+    </div>
+  </div>
+</body>
+
+<script>
+  function facturedate() {
+    var date = new Date();
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+
+    if(day < 10) day = "0" + day;
+    if(month < 10) month = "0" + month;
+
+    document.getElementById("facture-date").innerHTML = day + "/" + month + "/" + year;
+  }
+
+  window.onload = facturedate;
+</script>
+{% endblock %}

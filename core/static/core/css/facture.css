@@ -1,0 +1,116 @@
+.facture-container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    color: #333;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.facture-header {
+    text-align: center;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+.facture-header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #2c3e50;
+}
+
+.facture-section {
+    margin-bottom: 20px;
+}
+
+.facture-section h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.facture-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.facture-table th,.facture-table td {
+    border: 1px solid #ddd;
+    font-family: 'Kumbh Sans', sans-serif !important;
+    font-size: 14px;
+    padding: 10px;
+    text-align: center;
+}
+
+.facture-table th {
+    background: #3498db;
+    color: white;
+}
+
+.facture-total {
+    text-align: right;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.facture-total p {
+    margin: 5px 0;
+}
+
+.facture-total .grand-total {
+    font-size: 18px;
+    color: #e74c3c;
+}
+
+.facture-footer {
+    text-align: center;
+    margin-top: 30px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    font-style: italic;
+    color: #555;
+}
+
+.btn-print {
+    margin-top: 10px;
+    padding: 8px 15px;
+    border: none;
+    background: #3498db;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-print:hover {
+    background: #2980b9;
+}
+
+/* Light theme adjustments */
+[data-theme="light"] .facture-container {
+    background: #fff;
+    color: #333;
+}
+
+[data-theme="light"] .facture-header h1 {
+    color: #2c3e50;
+}
+
+[data-theme="light"] .facture-section h2 {
+    color: #555;
+}
+
+[data-theme="light"] .facture-table th {
+    background: #3498db;
+}
+
+[data-theme="light"] .facture-total .grand-total {
+    color: #e74c3c;
+}
+
+[data-theme="light"] .facture-footer {
+    color: #555;
+}

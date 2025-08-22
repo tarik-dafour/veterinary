@@ -1,0 +1,419 @@
+{% extends 'core/base.html' %}
+{% block title %}Activity Logs - VetStock{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+<style>
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        color: #ffffff;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: #b0b0b0;
+        font-size: 1rem;
+    }
+
+    .table-card {
+        background: #2d2d2d;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid #404040;
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .form-title {
+        color: #ffffff;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .search-input {
+        padding: 0.75rem;
+        border: 1px solid #404040;
+        border-radius: 8px;
+        background: #1a1a1a;
+        color: #ffffff;
+        font-size: 0.9rem;
+        min-width: 250px;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #4FC3F7;
+        box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.2);
+    }
+
+    .search-input::placeholder {
+        color: #666;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: #4FC3F7;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #29B6F6;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #666;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #555;
+        transform: translateY(-1px);
+    }
+
+    .btn-success {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #45a049;
+        transform: translateY(-1px);
+    }
+
+    .table-card {
+        background: #2B2C3D;
+        border-radius: 12px;
+        padding: 1.5rem;
+        scrollbar-color: #ffffff #2B2C3D;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-height: 900px;
+        height: fit-content;
+    }
+    
+    .table-card h3 {
+        color: #ffffff;
+        font-size: 1.5rem;
+        font-weight: 600;
+        font-family: 'Kumbh Sans', sans-serif !important;
+        margin-bottom: 1.5rem;
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .table-header h3 {
+        color: #ffffff;
+        font-size: 1.7rem;
+        font-weight: 700;
+        font-family: 'Kumbh Sans', sans-serif !important;
+        margin: 1;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Kumbh Sans', sans-serif !important;
+        color: #ffffff;
+    }
+    .table th, .table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #404040;
+        text-align: left;
+    }
+    .table th {
+        color: #ffffff;
+        font-weight: 600;
+    }
+    .table td {
+        background: #2B2C3D;
+        color: #b0b0b0;
+    }
+    .table th i, .table td i {
+        margin-right: 0.5rem;
+        color: #ffffff;
+    }
+    .table th {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .search-form {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 0.70rem 1.9rem;
+        border-radius: 8px;
+        color: #ffffff;
+        gap: 0.9rem;
+    }
+
+    .search-input {
+        background: #2B2C3D;
+        border: 1px solid #ffffff;
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        color: #ffffff;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #b0b0b0;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .action-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+
+    .action-login {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .action-logout {
+        background: #FF9800;
+        color: white;
+    }
+
+    .action-create {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .action-update {
+        background: #FF9800;
+        color: white;
+    }
+
+    .action-delete {
+        background: #f44336;
+        color: white;
+    }
+
+    .action-view {
+        background: #2196F3;
+        color: white;
+    }
+
+    .action-export {
+        background: #9C27B0;
+        color: white;
+    }
+
+    .action-password_change {
+        background: #FF5722;
+        color: white;
+    }
+
+    .action-profile_update {
+        background: #607D8B;
+        color: white;
+    }
+
+    .action-theme_change {
+        background: #E91E63;
+        color: white;
+    }
+
+    .action-report_sent {
+        background: #3F51B5;
+        color: white;
+    }
+
+    .action-stock_alert {
+        background: #FFC107;
+        color: black;
+    }
+
+    .action-system {
+        background: #795548;
+        color: white;
+    }
+
+    .date-time {
+        font-weight: 600;
+        color: #4FC3F7;
+    }
+
+    .table-name {
+        font-weight: 500;
+        color: #9C27B0;
+    }
+
+    .description {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .ip-address {
+        font-family: monospace;
+        color: #FF9800;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: #4CAF50;
+    }
+
+    @media (max-width: 1024px) {
+        .table-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-form {
+            flex-direction: column;
+        }
+        
+        .search-input {
+            min-width: auto;
+        }
+        
+        .table {
+            font-size: 0.8rem;
+        }
+        
+        .table th,
+        .table td {
+            padding: 0.5rem;
+        }
+    }
+</style>
+
+<div class="page-header">
+    <h1 class="page-title"><i class="fa-solid fa-clock"></i> Activity Logs</h1>
+    <p class="page-subtitle">Track and monitor all system activities and user actions automatically</p>
+</div>
+
+<!-- Logs List -->
+<div class="table-card">
+    <div class="table-header">
+        <h3 class="form-title"><i class="fa-solid fa-clock"></i> Logs</h3>
+        <form method="get" class="search-form">
+            <input type="text" name="search" class="search-input" placeholder="Search logs..." 
+                   value="{{ search_query }}">
+            <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+            {% if search_query %}
+                <a class="btn btn-secondary" href="{% url 'logs' %}"><i class="fa-solid fa-xmark"></i></a>
+            {% endif %}
+            <a class="btn btn-success" href="{% url 'export_logs_csv' %}?search={{ search_query }}">
+                <i class="fa-solid fa-file-csv"></i>
+            </a>
+        </form>
+    </div>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th><i class="fa-solid fa-user"></i> User</th>
+                <th><i class="fa-solid fa-cog"></i> Action</th>
+                <th><i class="fa-solid fa-file-lines"></i> Description</th>
+                <th><i class="fa-solid fa-calendar"></i> Date & Time</th>
+                <th><i class="fa-solid fa-table"></i> Table</th>
+                <th><i class="fa-solid fa-hashtag"></i> Element ID</th>
+                <th><i class="fa-solid fa-globe"></i> IP Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>
+                    <span class="user-name">
+                        {% if log.user %}
+                            {{ log.user.get_full_name|default:log.user.username }}
+                        {% else %}
+                            Anonymous
+                        {% endif %}
+                    </span>
+                </td>
+                <td>
+                    <span class="action-badge action-{{ log.action }}">
+                        {{ log.get_action_display }}
+                    </span>
+                </td>
+                <td class="description" title="{{ log.description }}">
+                    {{ log.description }}
+                </td>
+                <td class="date-time">{{ log.date_action|date:'M d, Y g:i A' }}</td>
+                <td class="table-name">{{ log.table_cible|default:'-' }}</td>
+                <td>{{ log.id_element|default:'-' }}</td>
+                <td class="ip-address">{{ log.ip_address|default:'-' }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="fa-solid fa-clock"></i></div>
+                        <h4>No logs found</h4>
+                        <p>{% if search_query %}No logs match your search criteria.{% else %}No activity logs recorded yet.{% endif %}</p>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,680 @@
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Kumbh Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        height: 100vh;
+        overflow: hidden;
+        background-image : linear-gradient(to bottom right, #043665, #BDD8E9);
+    }
+
+    .login-container {
+        display: flex;
+        height: 100vh;
+        position: relative;
+    }
+
+    .vet-scene {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .fa-paw {
+        color: #000000;
+        font-size: 10rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Left Side - Decorative */
+    .left-side {
+        flex: 1.2;
+        background: #ffffff;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        clip-path: polygon(0 0, 85% 0, 95% 100%, 0 100%);
+        z-index: 1;
+    }
+
+    .veterinarian-illustration {
+        width: 300px;
+        height: 300px;
+        position: relative;
+        margin-bottom: 2rem;
+        background: radial-gradient(ellipse at center, rgba(74, 124, 89, 0.1) 0%, rgba(74, 124, 89, 0.05) 50%, transparent 70%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c5530;
+        text-align: center;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+        text-shadow: 2px 2px 4px rgba(74, 124, 89, 0.3);
+        font-family: 'Kumbh Sans', sans-serif !important;
+    }
+
+    .icon-veterinary {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .icon-circle {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #4a7c59 0%, #5d8a6b 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 15px rgba(74, 124, 89, 0.3);
+        transition: all 0.3s ease;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .icon-circle:nth-child(2) {
+        animation-delay: 1s;
+    }
+
+    .icon-circle:nth-child(3) {
+        animation-delay: 2s;
+    }
+
+    .icon-circle:hover {
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 8px 25px rgba(74, 124, 89, 0.4);
+    }
+
+    /* Right Side - Login Form */
+    .right-side {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .login-card h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        color: white;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .error-messages {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .error-messages ul {
+        list-style: none;
+    }
+
+    .error-messages li {
+        color: #ef4444;
+        font-size: 0.9rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+    }
+
+    .form-group input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .login-btn {
+        width: 100%;
+        padding: 1rem;
+        background-image : linear-gradient(to bottom right, #001D39, #BDD8E9); 
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(74, 124, 89, 0.4);
+    }
+
+    .login-btn:active {
+        transform: translateY(0);
+    }
+
+    .login-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .login-btn:hover::before {
+        left: 100%;
+    }
+
+    /* Animations */
+    @keyframes wag {
+        0%, 100% { transform: rotate(-2deg); }
+        50% { transform: rotate(2deg); }
+    }
+
+    @keyframes wagTail {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(20deg); }
+    }
+
+    @keyframes purr {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .login-container {
+            flex-direction: column;
+        }
+
+        .left-side {
+            flex: none;
+            height: 40vh;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+            padding: 1rem;
+        }
+
+        .veterinarian-illustration {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 1rem;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .icon-veterinary {
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+        }
+
+        .right-side {
+            flex: 1;
+            padding: 1rem;
+        }
+
+        .login-card {
+            padding: 2rem;
+            border-radius: 15px;
+        }
+
+        .login-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .login-card {
+            padding: 1.5rem;
+            margin: 1rem;
+        }
+
+        .title {
+            font-size: 1.5rem;
+        }
+
+        .form-group input {
+            padding: 0.875rem;
+        }
+
+        .login-btn {
+            padding: 0.875rem;
+        }
+    }    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Kumbh Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        height: 100vh;
+        overflow: hidden;
+        background-image : linear-gradient(to bottom right, #043665, #BDD8E9);
+    }
+
+    .login-container {
+        display: flex;
+        height: 100vh;
+        position: relative;
+    }
+
+    .vet-scene {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .fa-paw {
+        color: #000000;
+        font-size: 10rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Left Side - Decorative */
+    .left-side {
+        flex: 1.2;
+        background: #ffffff;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        clip-path: polygon(0 0, 85% 0, 95% 100%, 0 100%);
+        z-index: 1;
+    }
+
+    .veterinarian-illustration {
+        width: 300px;
+        height: 300px;
+        position: relative;
+        margin-bottom: 2rem;
+        background: radial-gradient(ellipse at center, rgba(74, 124, 89, 0.1) 0%, rgba(74, 124, 89, 0.05) 50%, transparent 70%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #0A4174;
+        text-align: center;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+        text-shadow: 2px 2px 4px rgba(74, 124, 89, 0.3);
+        font-family: 'Kumbh Sans', sans-serif !important;
+    }
+
+    .icon-veterinary {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .icon-circle {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #49769F 0%, #7BBDE8 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 15px rgba(74, 124, 89, 0.3);
+        transition: all 0.3s ease;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .icon-circle:nth-child(2) {
+        animation-delay: 1s;
+    }
+
+    .icon-circle:nth-child(3) {
+        animation-delay: 2s;
+    }
+
+    .icon-circle:hover {
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 8px 25px rgba(74, 124, 89, 0.4);
+    }
+
+    /* Right Side - Login Form */
+    .right-side {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .login-card h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        color: white;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .error-messages {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .error-messages ul {
+        list-style: none;
+    }
+
+    .error-messages li {
+        color: #ef4444;
+        font-size: 0.9rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+    }
+
+    .form-group input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .login-btn {
+        width: 100%;
+        padding: 1rem;
+        background-image : linear-gradient(to bottom right, #001D39, #BDD8E9); 
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(74, 124, 89, 0.4);
+    }
+
+    .login-btn:active {
+        transform: translateY(0);
+    }
+
+    .login-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .login-btn:hover::before {
+        left: 100%;
+    }
+
+    /* Animations */
+    @keyframes wag {
+        0%, 100% { transform: rotate(-2deg); }
+        50% { transform: rotate(2deg); }
+    }
+
+    @keyframes wagTail {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(20deg); }
+    }
+
+    @keyframes purr {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .login-container {
+            flex-direction: column;
+        }
+
+        .left-side {
+            flex: none;
+            height: 40vh;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+            padding: 1rem;
+        }
+
+        .veterinarian-illustration {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 1rem;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .icon-veterinary {
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+        }
+
+        .right-side {
+            flex: 1;
+            padding: 1rem;
+        }
+
+        .login-card {
+            padding: 2rem;
+            border-radius: 15px;
+        }
+
+        .login-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .login-card {
+            padding: 1.5rem;
+            margin: 1rem;
+        }
+
+        .title {
+            font-size: 1.5rem;
+        }
+
+        .form-group input {
+            padding: 0.875rem;
+        }
+
+        .login-btn {
+            padding: 0.875rem;
+        }
+    }
+    .modal {
+    display: none; 
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: rgba(0,0,0,0.6);
+    animation: fadeIn 0.5s ease;
+    }
+    
+    /* Modal Content */
+    .modal-content {
+        max-width: 480px;
+        margin: 8% auto;
+        position: relative;
+    }
+    
+    /* Close Button */
+    .close {
+        position: absolute;
+        right: 18px;
+        top: 14px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #fff;
+        cursor: pointer;
+    }
+    .close:hover {
+        color: #ff4b2b;
+    }

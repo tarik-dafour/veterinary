@@ -1,0 +1,195 @@
+{% extends 'core/base.html' %}
+{% block title %}Team Management - VetStock{% endblock %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/css/Equipe.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+
+<div class="page-header">
+    <h1 class="page-title"><i class="fas fa-users"></i> Gestion de l’équipe</h1>
+    <p class="page-subtitle">Gérez les membres de l’équipe de votre clinique vétérinaire et leurs rôles</p>
+</div>
+
+<div class="table-card">
+    <div class="table-header">
+        <h3 class="form-title"><i class="fas fa-users"></i> Membres de l’équipe</h3>
+
+        <!-- زر البحث + إضافة مستخدم -->
+        <form method="get" class="search-form">
+            <input type="text" name="search" class="search-input" placeholder="Rechercher un utilisateur..." 
+                   value="{{ search_query }}">
+            <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+            {% if search_query %}
+                <a class="btn btn-secondary" href="{% url 'users' %}"><i class="fas fa-times"></i></a>
+            {% endif %}
+            <a class="btn btn-success" href="{% url 'export_users_csv' %}?search={{ search_query }}">
+                <i class="fa-solid fa-download"></i>
+            </a>
+            <button type="button" class="btn btn-success" onclick="openUserModal()">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- Modal Ajouter Utilisateur -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeUserModal()"><i class="fa-solid fa-xmark"></i></span>
+            <h3><i class="fas fa-plus"></i> Ajouter un Utilisateur</h3>
+            <form id="addUserForm" method="post" action="{% url 'users' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Nom d’utilisateur</label>
+                    <input type="text" name="username" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Adresse e-mail</label>
+                    <input type="email" name="email" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prénom</label>
+                    <input type="text" name="first_name" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom</label>
+                    <input type="text" name="last_name" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rôle</label>
+                    <select name="role" class="form-select" required>
+                        <option value="">Sélectionnez un rôle</option>
+                        {% for role_value, role_name in role_choices %}
+                            <option value="{{ role_value }}">{{ role_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Numéro de téléphone</label>
+                    <input type="text" name="phone" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Adresse</label>
+                    <textarea name="address" class="form-textarea"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mot de passe *</label>
+                    <div style="position: relative;">
+                        <input type="password" name="password" class="form-input" id="modalPassword" required>
+                        <span onclick="toggleModalPassword()" 
+                              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                            <i class="fa-solid fa-eye-slash" style="font-size: 1.2rem;"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="is_active" class="checkbox-input" checked>
+                        <label class="checkbox-label">Compte actif</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Table des utilisateurs -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th><i class="fas fa-user"></i> Nom d’utilisateur</th>
+                <th><i class="fas fa-pencil-alt"></i> Nom complet</th>
+                <th><i class="fas fa-envelope"></i> E-mail</th>
+                <th><i class="fas fa-user-tag"></i> Rôle</th>
+                <th><i class="fas fa-phone"></i> Téléphone</th>
+                <th><i class="fas fa-check-circle"></i> Statut</th>
+                <th><i class="fas fa-cog"></i> Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td><strong>{{ user.username }}</strong></td>
+                <td>{{ user.get_full_name|default:"-" }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% if user.profile %}
+                        <span class="role-badge 
+                            {% if user.profile.role == 'admin' %}role-admin
+                            {% elif user.profile.role == 'veterinarian' %}role-veterinarian
+                            {% elif user.profile.role == 'assistant' %}role-assistant
+                            {% else %}role-receptionist{% endif %}">
+                            {{ user.profile.get_role_display }}
+                        </span>
+                    {% else %}
+                        <span class="role-badge role-receptionist">Aucun rôle</span>
+                    {% endif %}
+                </td>
+                <td>{% if user.profile %}{{ user.profile.phone|default:"-" }}{% else %}-{% endif %}</td>
+                <td>
+                    {% if user.is_active %}
+                        <span class="status-badge status-active">Actif</span>
+                    {% else %}
+                        <span class="status-badge status-inactive">Inactif</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a class="btn btn-secondary" href="{% url 'users' %}?edit={{ user.id }}">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        {% if user.id != request.user.id %}
+                            <a class="btn btn-danger" href="{% url 'users' %}?delete={{ user.id }}" 
+                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="fas fa-users"></i></div>
+                        <h4>Aucun utilisateur trouvé</h4>
+                        <p>{% if search_query %}Aucun utilisateur ne correspond à vos critères de recherche.{% else %}Commencez par ajouter votre premier membre d’équipe.{% endif %}</p>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Scripts pour modal et mot de passe -->
+<script>
+function openUserModal() {
+    document.getElementById("userModal").style.display = "block";
+}
+function closeUserModal() {
+    document.getElementById("userModal").style.display = "none";
+}
+window.onclick = function(event) {
+    if (event.target == document.getElementById("userModal")) {
+        closeUserModal();
+    }
+}
+function toggleModalPassword() {
+    const input = document.getElementById('modalPassword');
+    const icon = input.nextElementSibling.firstElementChild;
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    }
+}
+</script>
+
+{% endblock %}

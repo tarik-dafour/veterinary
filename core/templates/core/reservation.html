@@ -1,0 +1,172 @@
+{% extends 'core/base.html' %}
+{% block title %}Appointments - VetStock{% endblock %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'core/css/reservation.css' %}">
+
+
+<body>
+    <!-- En-tête de la page -->
+    <div class="page-header">
+        <h1 class="page-title"><i class="fa-solid fa-calendar-check"></i> Gestion des Rendez-vous</h1>
+        <p class="page-subtitle">Planifiez, modifiez et suivez tous vos rendez-vous en un seul endroit</p>
+    </div>
+    <div class="table-card">
+        <div class="table-header">
+            <h3 class="form-title"><i class="fa-solid fa-clipboard-list"></i> Rendez-vous</h3>
+            <form method="get" class="search-form">
+                <input type="text" name="search" class="search-input" placeholder="Rechercher des rendez-vous..." 
+                       value="{{ search_query }}">
+                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                {% if search_query %}
+                    <a class="btn btn-secondary" href="{% url 'reservation' %}"><i class="fa-solid fa-xmark"></i></a>
+                {% endif %}
+                <a class="btn btn-success" href="{% url 'export_reservations_csv' %}?search={{ search_query }}">
+                    <i class="fa-solid fa-download"></i>
+                </a>
+                <button type="button" class="btn btn-success" onclick="openReservationModal()">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                </button>
+            </form>
+            
+            <!-- ✅ Modal Ajouter Rendez-vous -->
+            <div id="reservationModal" class="modal">
+              <div class="modal-content">
+                <span class="close" onclick="closeReservationModal()"><i class="fa-solid fa-xmark"></i></span>
+                <h3><i class="fa-solid fa-calendar-plus"></i> Nouveau Rendez-vous</h3>
+                <form id="addReservationForm" method="post" action="{% url 'reservation' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label">Client</label>
+                        <select name="client" class="form-select" required>
+                            <option value="">Sélectionnez un client</option>
+                            {% for client in clients %}
+                                <option value="{{ client.id }}">
+                                    {{ client.prenom }} {{ client.nom }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Animal</label>
+                        <select name="animal" class="form-select" required>
+                            <option value="">Sélectionnez un animal</option>
+                            {% for animal in animals %}
+                                <option value="{{ animal.id }}">
+                                    {{ animal.nom }} ({{ animal.type }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date & Heure</label>
+                        <input type="datetime-local" name="date_reservation" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Service</label>
+                        <input type="text" name="service" class="form-input" placeholder="Ex. : Vaccination, Contrôle, Chirurgie" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Statut</label>
+                        <select name="statut" class="form-select" required>
+                            <option value="">Sélectionnez le statut</option>
+                            <option value="Scheduled">Planifié</option>
+                            <option value="Confirmed">Confirmé</option>
+                            <option value="Completed">Terminé</option>
+                            <option value="Cancelled">Annulé</option>
+                            <option value="Pending">En attente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notes</label>
+                        <textarea name="note" class="form-textarea" placeholder="Notes supplémentaires sur le rendez-vous"></textarea>
+                    </div>
+                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-calendar-plus"></i> Ajouter</button>
+                </form>
+              </div>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><i class="fa-solid fa-user"></i> Client</th>
+                    <th><i class="fa-solid fa-paw"></i> Animal</th>
+                    <th><i class="fa-solid fa-calendar"></i> Date & Heure</th>
+                    <th><i class="fa-solid fa-hospital"></i> Service</th>
+                    <th><i class="fa-solid fa-chart-bar"></i> Statut</th>
+                    <th><i class="fa-solid fa-file-alt"></i> Notes</th>
+                    <th><i class="fa-solid fa-cog"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in reservations %}
+                <tr>
+                    <td><strong>{{ reservation.client.prenom }} {{ reservation.client.nom }}</strong></td>
+                    <td>{{ reservation.animal.nom }} ({{ reservation.animal.type }})</td>
+                    <td class="date-time">{{ reservation.date_reservation|date:'d M Y H:i' }}</td>
+                    <td>{{ reservation.service }}</td>
+                    <td>
+                        <span class="status-badge 
+                            {% if reservation.statut == 'Scheduled' %}status-scheduled
+                            {% elif reservation.statut == 'Confirmed' %}status-confirmed
+                            {% elif reservation.statut == 'Completed' %}status-completed
+                            {% elif reservation.statut == 'Cancelled' %}status-cancelled
+                            {% else %}status-pending{% endif %}">
+                            {% if reservation.statut == 'Scheduled' %}Planifié
+                            {% elif reservation.statut == 'Confirmed' %}Confirmé
+                            {% elif reservation.statut == 'Completed' %}Terminé
+                            {% elif reservation.statut == 'Cancelled' %}Annulé
+                            {% else %}En attente{% endif %}
+                        </span>
+                    </td>
+                    <td>{{ reservation.note|default:"-" }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a class="btn btn-secondary" href="?edit={{ reservation.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                <i class="fa-solid fa-pen-to-square"></i> Modifier
+                            </a>
+                            <a class="btn btn-danger" href="?delete={{ reservation.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?');">
+                                <i class="fa-solid fa-trash"></i> Supprimer
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i class="fa-solid fa-calendar"></i></div>
+                            <h4>Aucun rendez-vous trouvé</h4>
+                            <p>{% if search_query %}Aucun rendez-vous ne correspond à votre recherche.{% else %}Commencez par planifier votre premier rendez-vous.{% endif %}</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script>
+        // Fonctions pour le modal de réservation
+        function openReservationModal() {
+            document.getElementById("reservationModal").style.display = "block";
+        }
+        
+        function closeReservationModal() {
+            document.getElementById("reservationModal").style.display = "none";
+        }
+        
+        // Fermer le modal si l'utilisateur clique en dehors
+        window.onclick = function(event) {
+            const modal = document.getElementById("reservationModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+{% endblock %}

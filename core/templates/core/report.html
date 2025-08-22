@@ -1,0 +1,155 @@
+{% extends 'core/base.html' %}
+{% block title %}Reports - VetStock{% endblock %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/css/rapport.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+
+<div class="page-header">
+    <h1 class="page-title"><i class="fas fa-chart-line"></i> Gestion des rapports</h1>
+    <p class="page-subtitle">Créez et gérez les rapports et communications de la clinique vétérinaire</p>
+</div>
+
+<!-- Liste des rapports envoyés -->
+<div class="table-card">
+    <div class="table-header">
+        <h3 class="form-title"><i class="fas fa-clipboard-list"></i> Rapports envoyés</h3>
+        <form method="get" class="search-form">
+            <input type="text" name="search" class="search-input" placeholder="Rechercher des rapports..." 
+                   value="{{ search_query }}">
+            <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+            {% if search_query %}
+                <a class="btn btn-secondary" href="{% url 'report' %}"><i class="fas fa-times"></i></a>
+            {% endif %}
+            <a class="btn btn-success" href="{% url 'export_reports_csv' %}?search={{ search_query }}">
+                <i class="fa-solid fa-download"></i>
+            </a>
+            <button type="button" class="btn btn-success" onclick="openReportModal()">
+                <i class="fa-solid fa-user-plus"></i>
+            </button>
+        </form>
+        <!-- ✅ Modal Envoyer Rapport -->
+        <div id="reportModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeReportModal()"><i class="fa-solid fa-xmark"></i></span>
+                <h3 class="modal-title">
+                    {% if edit_report %}
+                        <i class="fas fa-pencil-alt"></i> Modifier le rapport
+                    {% else %}
+                        <i class="fas fa-paper-plane"></i> Envoyer un nouveau rapport
+                    {% endif %}
+                </h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label">Sélectionner l'utilisateur</label>
+                        <select name="user" class="form-select" required>
+                            <option value="">Sélectionnez un utilisateur</option>
+                            {% for user in users %}
+                                <option value="{{ user.id }}" {% if edit_report and edit_report.user.id == user.id %}selected{% endif %}>
+                                    {{ user.get_full_name|default:user.username }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Sujet</label>
+                        <input type="text" name="sujet" class="form-input" placeholder="Entrez l'objet du rapport"
+                               value="{% if edit_report %}{{ edit_report.sujet }}{% endif %}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Message</label>
+                        <textarea name="message" class="form-textarea" placeholder="Entrez le message du rapport" required>{% if edit_report %}{{ edit_report.message }}{% endif %}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Date et heure</label>
+                        <input type="datetime-local" name="date_envoi" class="form-input" 
+                               value="{% if edit_report %}{{ edit_report.date_envoi|date:'Y-m-d\TH:i' }}{% endif %}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Destinataire</label>
+                        <input type="text" name="destinataire" class="form-input" placeholder="Entrez l'e-mail ou le nom du destinataire" 
+                               value="{% if edit_report %}{{ edit_report.destinataire }}{% endif %}" required>
+                    </div>
+
+                    {% if edit_report %}
+                        <input type="hidden" name="edit_id" value="{{ edit_report.id }}">
+                        <div class="btn-group">
+                            <button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> Mettre à jour le rapport</button>
+                            <a class="btn btn-secondary" href="{% url 'report' %}"><i class="fas fa-times"></i></a>
+                        </div>
+                    {% else %}
+                        <button class="btn btn-primary" type="submit"><i class="fas fa-paper-plane"></i> Envoyer le rapport</button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th><i class="fas fa-user"></i> Utilisateur</th>
+                <th><i class="fas fa-pencil-alt"></i> Sujet</th>
+                <th><i class="fas fa-comments"></i> Message</th>
+                <th><i class="fas fa-calendar-alt"></i> Date</th>
+                <th><i class="fas fa-envelope"></i> Destinataire</th>
+                <th><i class="fas fa-cog"></i> Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports %}
+            <tr>
+                <td><strong>{{ report.user.get_full_name|default:report.user.username }}</strong></td>
+                <td class="subject-text">{{ report.sujet }}</td>
+                <td class="message-preview" title="{{ report.message }}">{{ report.message }}</td>
+                <td class="date-time">{{ report.date_envoi|date:'M d, Y g:i A' }}</td>
+                <td>{{ report.destinataire }}</td>
+                <td>
+                    <div class="btn-group">
+                        <a class="btn btn-secondary" href="?edit={{ report.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                            <i class="fa-solid fa-pen-to-square"></i> Modifier
+                        </a>
+                        <a class="btn btn-danger" href="?delete={{ report.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rapport ?');">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="fas fa-chart-bar"></i></div>
+                        <h4>Aucun rapport trouvé</h4>
+                        <p>{% if search_query %}Aucun rapport ne correspond à vos critères de recherche.{% else %}Commencez par envoyer votre premier rapport.{% endif %}</p>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    const reportModal = document.getElementById("reportModal");
+    function openReportModal() {
+        reportModal.style.display = "block";
+    }
+    function closeReportModal() {
+        reportModal.style.display = "none";
+    }
+    // Close if clicked outside
+    window.onclick = function(event) {
+        if (event.target == reportModal) {
+            reportModal.style.display = "none";
+        }
+    }
+</script>
+{% endblock %}
