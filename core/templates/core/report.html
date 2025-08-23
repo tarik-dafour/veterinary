@@ -32,7 +32,7 @@
             </button>
         </form>
         <!-- ✅ Modal Envoyer Rapport -->
-        <div id="reportModal" class="modal">
+        <div id="reportModal" class="modal" {% if edit_report %}style="display: block;"{% endif %}>
             <div class="modal-content">
                 <span class="close" onclick="closeReportModal()"><i class="fa-solid fa-xmark"></i></span>
                 <h3 class="modal-title">
@@ -81,9 +81,9 @@
 
                     {% if edit_report %}
                         <input type="hidden" name="edit_id" value="{{ edit_report.id }}">
-                        <div class="btn-group">
+                        <div class="form-actions">
                             <button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> Mettre à jour le rapport</button>
-                            <a class="btn btn-secondary" href="{% url 'report' %}"><i class="fas fa-times"></i></a>
+                            <a class="btn btn-secondary" href="{% url 'report' %}{% if search_query %}?search={{ search_query }}{% endif %}"><i class="fas fa-times"></i> Annuler</a>
                         </div>
                     {% else %}
                         <button class="btn btn-primary" type="submit"><i class="fas fa-paper-plane"></i> Envoyer le rapport</button>
@@ -139,17 +139,27 @@
 </div>
 <script>
     const reportModal = document.getElementById("reportModal");
+    
     function openReportModal() {
         reportModal.style.display = "block";
     }
+    
     function closeReportModal() {
         reportModal.style.display = "none";
     }
+    
     // Close if clicked outside
     window.onclick = function(event) {
         if (event.target == reportModal) {
             reportModal.style.display = "none";
         }
     }
+    
+    // Close modal when pressing Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeReportModal();
+        }
+    });
 </script>
 {% endblock %}

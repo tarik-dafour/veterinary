@@ -45,6 +45,15 @@
     margin-bottom: 1.5rem;
 }
 
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: flex-start;
+    align-items: center;
+}
+
 .form-label {
     display: block;
     margin-bottom: 0.5rem;

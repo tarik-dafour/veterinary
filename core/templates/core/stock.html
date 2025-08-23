@@ -25,7 +25,7 @@
     <div id="products" class="tab-content active">
         <div class="content-grid">
             <!-- ✅ Modal Ajouter / Modifier Produit -->
-            <div id="produitModal" class="modal">
+            <div id="produitModal" class="modal" {% if edit_produit %}style="display: block;"{% endif %}>
               <div class="modal-content">
                 <span class="close" onclick="closeModal('produit')"><i class="fa-solid fa-xmark"></i></span>
 
@@ -40,6 +40,9 @@
                 <form method="post" action="{% url 'stock' %}">
                   {% csrf_token %}
                   <input type="hidden" name="prod_form" value="1">
+                  {% if edit_produit %}
+                    <input type="hidden" name="edit_id" value="{{ edit_produit.id }}">
+                  {% endif %}
                 
                   <div class="form-group">
                     <label class="form-label">Nom du Produit</label>
@@ -57,9 +60,9 @@
               
                   <div class="form-group">
                     <label class="form-label">Prix</label>
-                    <input type="number" step="0.01" name="prix_produit" class="form-input" 
+                    <input type="number" step="0.01" name="prix" class="form-input" 
                            placeholder="Entrez le prix"
-                           value="{% if edit_produit %}{{ edit_produit.prix_produit }}{% endif %}" required>
+                           value="{% if edit_produit %}{{ edit_produit.prix }}{% endif %}" required>
                   </div>
               
                   <div class="form-group">
@@ -79,10 +82,33 @@
                       {% endfor %}
                     </select>
                   </div>
-              
-                  <button type="submit" class="btn btn-primary">
-                    {% if edit_produit %}Modifier{% else %}Ajouter{% endif %}
-                  </button>
+               
+                  <div class="form-group">
+                    <label class="form-label">Fournisseur</label>
+                    <select name="fournisseur" class="form-select" required>
+                      <option value="">Sélectionnez un fournisseur</option>
+                      {% for fourn in fournisseurs %}
+                        <option value="{{ fourn.id }}" {% if edit_produit and edit_produit.fournisseur.id == fourn.id %}selected{% endif %}>
+                          {{ fourn.nom }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+               
+                   {% if edit_produit %}
+                     <div class="form-actions">
+                       <button type="submit" class="btn btn-primary">
+                         <i class="fa-solid fa-save"></i> Modifier
+                       </button>
+                       <a href="{% url 'stock' %}{% if search_query %}?search={{ search_query }}{% endif %}" class="btn btn-secondary">
+                         <i class="fa-solid fa-xmark"></i> Annuler
+                       </a>
+                     </div>
+                   {% else %}
+                     <button type="submit" class="btn btn-primary">
+                       <i class="fa-solid fa-cart-plus"></i> Ajouter
+                     </button>
+                   {% endif %}
                 </form>
               </div>
             </div>
@@ -130,7 +156,7 @@
                                     {{ produit.quantite }}
                                 </span>
                             </td>
-                            <td class="price">{{ produit.prix_produit }} MAD</td>
+                            <td class="price">{{ produit.prix }} MAD</td>
                             <td>{{ produit.date_expiration|date:'d M Y' }}</td>
                             <td>{{ produit.fournisseur.nom }}</td>
                             <td>
@@ -173,15 +199,15 @@
                     {% if cat_to_edit %}
                         <input type="hidden" name="cat_edit_id" value="{{ cat_to_edit.id }}">
                     {% endif %}
-                    <input type="text" name="cat_nom" class="Categories-input" placeholder="Ajouter une nouvelle catégorie" 
+                    <input type="text" name="cat_nom" class="Categories-input" placeholder="{% if cat_to_edit %}Modifier la catégorie{% else %}Ajouter une nouvelle catégorie{% endif %}" 
                            value="{% if cat_to_edit %}{{ cat_to_edit.nom }}{% endif %}" required>
                     {% if cat_to_edit %}
                         <div class="btn-group">
-                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
-                            <a class="btn btn-secondary" href="{% url 'stock' %}"><i class="fa-solid fa-xmark"></i></a>
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Modifier</button>
+                            <a class="btn btn-secondary" href="{% url 'stock' %}"><i class="fa-solid fa-xmark"></i> Annuler</a>
                         </div>
                     {% else %}
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-tag"></i></button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-tag"></i> Ajouter</button>
                     {% endif %}
                 </form>
             </div>
@@ -227,9 +253,26 @@
 
     <!-- Onglet Fournisseurs -->
     <div id="suppliers" class="tab-content">
-        <div id="fournisseurModal" class="modal">
+        <div class="table-header">
+            <h3 class="form-title"><i class="fa-solid fa-clipboard-list"></i> Liste des Fournisseurs</h3>
+            <form method="get" class="search-form">
+                <input type="text" name="search" class="search-input" placeholder="Rechercher un fournisseur..." 
+                       value="{{ search_query }}">
+                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                {% if search_query %}
+                    <a class="btn btn-secondary" href="{% url 'stock' %}"><i class="fa-solid fa-xmark"></i></a>
+                {% endif %}
+                <a class="btn btn-success" href="{% url 'export_products_csv' %}?search={{ search_query }}">
+                    <i class="fa-solid fa-download"></i>
+                </a>
+                <button class="btn btn-primary" onclick="openModal('fournisseur')"><i class="fa-solid fa-cart-plus"></i> Ajouter</button>
+            </form>
+        </div>
+        
+        <!-- Modal Fournisseur -->
+        <div id="fournisseurModal" class="modal" {% if fourn_to_edit %}style="display: block;"{% endif %}>
             <div class="modal-content">
-                <span class="close" onclick="closeFournisseurModal('fournisseur')"><i class="fa-solid fa-xmark"></i></span>
+                <span class="close" onclick="closeModal('fournisseur')"><i class="fa-solid fa-xmark"></i></span>
                 <h3 class="modal-title">
                     {% if fourn_to_edit %}
                         <i class="fa-solid fa-file-pen"></i> Modifier le Fournisseur
@@ -240,6 +283,9 @@
                 <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="fourn_form" value="1">
+                    {% if fourn_to_edit %}
+                        <input type="hidden" name="fourn_edit_id" value="{{ fourn_to_edit.id }}">
+                    {% endif %}
                 
                     <div class="form-group">
                         <label class="form-label">Nom du Fournisseur</label>
@@ -270,7 +316,6 @@
                     </div>
                 
                     {% if fourn_to_edit %}
-                        <input type="hidden" name="fourn_edit_id" value="{{ fourn_to_edit.id }}">
                         <div class="btn-group">
                             <button class="btn btn-primary" type="submit">
                                 <i class="fa-solid fa-floppy-disk"></i> Mettre à jour
@@ -286,21 +331,6 @@
                     {% endif %}
                 </form>
             </div>
-        </div>
-        <div class="table-header">
-            <h3 class="form-title"><i class="fa-solid fa-clipboard-list"></i> Liste des Fournisseurs</h3>
-            <form method="get" class="search-form">
-                <input type="text" name="search" class="search-input" placeholder="Rechercher un fournisseur..." 
-                       value="{{ search_query }}">
-                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                {% if search_query %}
-                    <a class="btn btn-secondary" href="{% url 'stock' %}"><i class="fa-solid fa-xmark"></i></a>
-                {% endif %}
-                <a class="btn btn-success" href="{% url 'export_clients_csv' %}?search={{ search_query }}">
-                    <i class="fa-solid fa-download"></i>
-                </a>
-                <button class="btn btn-primary" onclick="openModal('fournisseur')"><i class="fa-solid fa-cart-plus"></i> Ajouter</button>
-            </form>
         </div>
         <table class="table">
             <thead>

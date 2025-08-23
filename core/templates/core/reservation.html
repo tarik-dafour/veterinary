@@ -15,6 +15,73 @@
         <h1 class="page-title"><i class="fa-solid fa-calendar-check"></i> Gestion des Rendez-vous</h1>
         <p class="page-subtitle">Planifiez, modifiez et suivez tous vos rendez-vous en un seul endroit</p>
     </div>
+
+    <!-- Edit Reservation Modal -->
+    {% if edit_reservation %}
+    <div id="editReservationModal" class="modal" style="display: block;">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditReservationModal()"><i class="fa-solid fa-xmark"></i></span>
+            <h3><i class="fa-solid fa-edit"></i> Modifier le Rendez-vous</h3>
+            <form id="editReservationForm" method="post" action="{% url 'reservation' %}">
+                {% csrf_token %}
+                <input type="hidden" name="edit_id" value="{{ edit_reservation.id }}">
+                <div class="form-group">
+                    <label class="form-label">Client</label>
+                    <select name="client" class="form-select" required>
+                        <option value="">Sélectionnez un client</option>
+                        {% for client in clients %}
+                            <option value="{{ client.id }}" {% if client.id == edit_reservation.client.id %}selected{% endif %}>
+                                {{ client.prenom }} {{ client.nom }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Animal</label>
+                    <select name="animal" class="form-select" required>
+                        <option value="">Sélectionnez un animal</option>
+                        {% for animal in animals %}
+                            <option value="{{ animal.id }}" {% if animal.id == edit_reservation.animal.id %}selected{% endif %}>
+                                {{ animal.nom }} ({{ animal.type }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date & Heure</label>
+                    <input type="datetime-local" name="date_reservation" class="form-input" 
+                           value="{{ edit_reservation.date_reservation|date:'Y-m-d\TH:i' }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service</label>
+                    <input type="text" name="service" class="form-input" 
+                           value="{{ edit_reservation.service }}" 
+                           placeholder="Ex. : Vaccination, Contrôle, Chirurgie" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Statut</label>
+                    <select name="statut" class="form-select" required>
+                        <option value="">Sélectionnez le statut</option>
+                        <option value="Scheduled" {% if edit_reservation.statut == 'Scheduled' %}selected{% endif %}>Planifié</option>
+                        <option value="Confirmed" {% if edit_reservation.statut == 'Confirmed' %}selected{% endif %}>Confirmé</option>
+                        <option value="Completed" {% if edit_reservation.statut == 'Completed' %}selected{% endif %}>Terminé</option>
+                        <option value="Cancelled" {% if edit_reservation.statut == 'Cancelled' %}selected{% endif %}>Annulé</option>
+                        <option value="Pending" {% if edit_reservation.statut == 'Pending' %}selected{% endif %}>En attente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea name="note" class="form-textarea" placeholder="Notes supplémentaires sur le rendez-vous">{{ edit_reservation.note|default:"" }}</textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-save"></i> Modifier</button>
+                    <a href="{% url 'reservation' %}{% if search_query %}?search={{ search_query }}{% endif %}" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="table-card">
         <div class="table-header">
             <h3 class="form-title"><i class="fa-solid fa-clipboard-list"></i> Rendez-vous</h3>
@@ -158,6 +225,10 @@
         
         function closeReservationModal() {
             document.getElementById("reservationModal").style.display = "none";
+        }
+        
+        function closeEditReservationModal() {
+            document.getElementById("editReservationModal").style.display = "none";
         }
         
         // Fermer le modal si l'utilisateur clique en dehors

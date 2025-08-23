@@ -16,6 +16,41 @@
     </h1>
     <p class="page-subtitle">Gérez les clients de votre clinique vétérinaire et leurs informations</p>
 </div>
+
+<!-- Edit Client Modal -->
+{% if edit_client %}
+<div id="editClientModal" class="modal" style="display: block;">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditClientModal()"><i class="fa-solid fa-xmark"></i></span>
+        <h3><i class="fa-solid fa-edit"></i> Modifier le Client</h3>
+        <form id="editClientForm" method="post" action="{% url 'clients' %}">
+            {% csrf_token %}
+            <input type="hidden" name="edit_id" value="{{ edit_client.id }}">
+            <div class="form-group">
+                <label class="form-label">Prénom</label>
+                <input type="text" name="prenom" class="form-input" value="{{ edit_client.prenom }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nom</label>
+                <input type="text" name="nom" class="form-input" value="{{ edit_client.nom }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Téléphone</label>
+                <input type="text" name="telephone" class="form-input" value="{{ edit_client.telephone }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-input" value="{{ edit_client.email }}">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Modifier</button>
+                <a href="{% url 'clients' %}{% if search_query %}?search={{ search_query }}{% endif %}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
 <div class="table-card">
     <div class="table-header">
         <h3 class="form-title"><i class="fa-solid fa-list-check"></i> Liste des clients</h3>
@@ -67,6 +102,7 @@
                 <th><i class="fa-solid fa-user" style="width: 15px;"></i> Nom</th>
                 <th><i class="fa-solid fa-phone-volume" style="width: 19px;"></i> Téléphone</th>
                 <th><i class="fa-solid fa-envelope" style="width: 19px;"></i> E-mail</th>
+                <th><i class="fa-solid fa-cog" style="width: 19px;"></i> Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -101,5 +137,19 @@
         </tbody>
     </table>
 </div>
+
+<script>
+function openClientModal() {
+    document.getElementById("clientModal").style.display = "block";
+}
+
+function closeClientModal() {
+    document.getElementById("clientModal").style.display = "none";
+}
+
+function closeEditClientModal() {
+    document.getElementById("editClientModal").style.display = "none";
+}
+</script>
 
 {% endblock %}

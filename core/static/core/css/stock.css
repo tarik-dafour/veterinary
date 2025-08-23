@@ -90,6 +90,14 @@
     color: #3a7bd5;
     font-size: 1.4rem;
 }
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: flex-start;
+    align-items: center;
+}
 
 .form-group {
     margin-bottom: 1.5rem;

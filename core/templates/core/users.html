@@ -9,9 +9,78 @@
 <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
 
 <div class="page-header">
-    <h1 class="page-title"><i class="fas fa-users"></i> Gestion de l’équipe</h1>
-    <p class="page-subtitle">Gérez les membres de l’équipe de votre clinique vétérinaire et leurs rôles</p>
+    <h1 class="page-title"><i class="fas fa-users"></i> Gestion de l'équipe</h1>
+    <p class="page-subtitle">Gérez les membres de l'équipe de votre clinique vétérinaire et leurs rôles</p>
 </div>
+
+<!-- Edit User Modal -->
+{% if edit_user %}
+<div id="editUserModal" class="modal" style="display: block;">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditUserModal()"><i class="fa-solid fa-xmark"></i></span>
+        <h3><i class="fas fa-edit"></i> Modifier l'Utilisateur</h3>
+        <form id="editUserForm" method="post" action="{% url 'users' %}">
+            {% csrf_token %}
+            <input type="hidden" name="edit_id" value="{{ edit_user.id }}">
+            <div class="form-group">
+                <label class="form-label">Nom d'utilisateur</label>
+                <input type="text" name="username" class="form-input" value="{{ edit_user.username }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Adresse e-mail</label>
+                <input type="email" name="email" class="form-input" value="{{ edit_user.email }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Prénom</label>
+                <input type="text" name="first_name" class="form-input" value="{{ edit_user.first_name|default:'' }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nom</label>
+                <input type="text" name="last_name" class="form-input" value="{{ edit_user.last_name|default:'' }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Rôle</label>
+                <select name="role" class="form-select" required>
+                    <option value="">Sélectionnez un rôle</option>
+                    {% for role_value, role_name in role_choices %}
+                        <option value="{{ role_value }}" {% if edit_user.profile.role == role_value %}selected{% endif %}>
+                            {{ role_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Numéro de téléphone</label>
+                <input type="text" name="phone" class="form-input" value="{{ edit_user.profile.phone|default:'' }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Adresse</label>
+                <textarea name="address" class="form-textarea">{{ edit_user.profile.address|default:'' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+                <div style="position: relative;">
+                    <input type="password" name="password" class="form-input" id="editModalPassword">
+                    <span onclick="toggleEditModalPassword()" 
+                          style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                        <i class="fa-solid fa-eye-slash" style="font-size: 1.2rem;"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" name="is_active" class="checkbox-input" {% if edit_user.is_active %}checked{% endif %}>
+                    <label class="checkbox-label">Compte actif</label>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Modifier</button>
+                <a href="{% url 'users' %}{% if search_query %}?search={{ search_query }}{% endif %}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
 
 <div class="table-card">
     <div class="table-header">
@@ -172,13 +241,32 @@ function openUserModal() {
 function closeUserModal() {
     document.getElementById("userModal").style.display = "none";
 }
+function closeEditUserModal() {
+    document.getElementById("editUserModal").style.display = "none";
+}
 window.onclick = function(event) {
     if (event.target == document.getElementById("userModal")) {
         closeUserModal();
     }
+    if (event.target == document.getElementById("editUserModal")) {
+        closeEditUserModal();
+    }
 }
 function toggleModalPassword() {
     const input = document.getElementById('modalPassword');
+    const icon = input.nextElementSibling.firstElementChild;
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    }
+}
+function toggleEditModalPassword() {
+    const input = document.getElementById('editModalPassword');
     const icon = input.nextElementSibling.firstElementChild;
     if (input.type === "password") {
         input.type = "text";
