@@ -7,154 +7,151 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.8/index.global.min.js"></script>
 <!--  Cards Row -->
-<div class="dashboard-grid">
-    <div class="kpi-card clients">
-        <div class="kpi-header">
-            <div>
-                <div class="kpi-title">New Clients</div>
-                <div class="kpi-value">{{ new_clients_this_month }}</div>
-                <div class="kpi-trend trend-up"><span class="trend-label">This month</span></div>
+<div class="dashboard-cards">
+    <div class="dashboard-grid">
+        <div class="kpi-card clients">
+            <div class="kpi-header">
+                <div>
+                    <div class="kpi-title">New Clients</div>
+                    <div class="kpi-value">{{ new_clients_this_month }}</div>
+                    <div class="kpi-trend trend-up"><span class="trend-label">This month</span></div>
+                </div>
+                <div style="font-size: 2rem; color: #ffffff;">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
             </div>
-            <div style="font-size: 2rem; color: #ffffff;">
-                <i class="fa-solid fa-user-plus"></i>
+        </div>
+        <div class="kpi-card total-clients">
+            <div class="kpi-header">
+                <div>
+                    <div class="kpi-title">Total Clients</div>
+                    <div class="kpi-value">{{ total_clients }}</div>
+                    <div class="kpi-trend trend-up"><span class="trend-label">Registered clients</span></div>
+                </div>
+                <div style="font-size: 2rem; color: #ffffff;"><i class="fa-solid fa-user"></i></div>
+            </div>
+        </div>
+        <div class="kpi-card animals">
+            <div class="kpi-header">
+                <div>
+                    <div class="kpi-title">Total Animals</div>
+                    <div class="kpi-value">{{ total_animals }}</div>
+                    <div class="kpi-trend trend-up"><span class="trend-label">Registered animals</span></div>
+                </div>
+                <div style="font-size: 2rem; color: #ffffff;"><i class="fa-solid fa-dog"></i></div>
+            </div>
+        </div>
+        <div class="kpi-card reservations">
+            <div class="kpi-header">
+                <div>
+                    <div class="kpi-title">Total Reservations</div>
+                    <div class="kpi-value">{{ total_reservations }}</div>
+                    <div class="kpi-trend trend-up"><span class="trend-label">All appointments</span></div>
+                </div>
+                <div style="font-size: 2rem; color: #ffffff;"><i class="fa-solid fa-clipboard-list"></i></div>
             </div>
         </div>
     </div>
-    <div class="kpi-card total-clients">
-        <div class="kpi-header">
-            <div>
-                <div class="kpi-title">Total Clients</div>
-                <div class="kpi-value">{{ total_clients }}</div>
-                <div class="kpi-trend trend-up"><span class="trend-label">Registered clients</span></div>
+
+    <!-- Charts and Team Section -->
+    <div class="chart-section">
+        <div class="bottom-section">
+            <div class="team-section">
+                <div class="team-title">Team Members</div>
+                <div class="team-members">
+                    {% for member in team_members %}
+                    <div class="team-member">
+                        <div class="member-avatar">
+                            {{ member.user.get_full_name|default:member.user.username|first|upper }}
+                            <div class="status-dot status-online"></div>
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">{{ member.user.get_full_name|default:member.user.username }}</div>
+                            <div class="member-role">{{ member.get_role_display }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-            <div style="font-size: 2rem; color: #ffffff;"><i class="fa-solid fa-user"></i></div>
+            <div class="calendar-card">
+                <div id="calendar"></div>
+            </div>
         </div>
-    </div>
-    <div class="kpi-card animals">
-        <div class="kpi-header">
-            <div>
-                <div class="kpi-title">Total Animals</div>
-                <div class="kpi-value">{{ total_animals }}</div>
-                <div class="kpi-trend trend-up"><span class="trend-label">Registered animals</span></div>
+
+        <div class="bottom-section">
+            <div class="list-card">
+                <div class="list-title">Upcoming Appointments</div>
+                {% for appointment in upcoming_appointments %}
+                <div class="list-item">
+                    <div class="item-icon"><i class="fa-solid fa-paw"></i></div>
+                    <div class="item-info">
+                        <div class="item-name">{{ appointment.service }}</div>
+                        <div class="item-subtitle">{{ appointment.client.nom }} {{ appointment.client.prenom }} - {{ appointment.animal.nom }}</div>
+                    </div>
+                    <div class="item-time">{{ appointment.date_reservation|time:"g:i A" }}</div>
+                </div>
+                {% empty %}
+                <div class="list-item">
+                    <div class="item-icon"><i class="fa-solid fa-calendar"></i></div>
+                    <div class="item-info">
+                        <div class="item-name">No upcoming appointments</div>
+                        <div class="item-subtitle">No appointments scheduled for today or tomorrow</div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="appointments-today">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>Appointments Today : {{ upcoming_appointments|length }}</span>
+                </div>
             </div>
-            <div style="font-size: 2rem; color: #ffffff;"><i class="fa-solid fa-dog"></i></div>
-        </div>
-    </div>
-    <div class="kpi-card reservations">
-        <div class="kpi-header">
-            <div>
-                <div class="kpi-title">Total Reservations</div>
-                <div class="kpi-value">{{ total_reservations }}</div>
-                <div class="kpi-trend trend-up"><span class="trend-label">All appointments</span></div>
+
+            <div class="list-card">
+                <div class="list-title">Low Stock Alerts</div>
+                {% for product in stock_alerts %}
+                <div class="list-item">
+                    <div class="item-icon">📦</div>
+                    <div class="item-info">
+                        <div class="item-name">{{ product.nom }}</div>
+                        <div class="item-subtitle">{{ product.categorie.nom }} - {{ product.fournisseur.nom }}</div>
+                    </div>
+                    <div class="item-time">{{ product.quantite }} left</div>
+                </div>
+                {% empty %}
+                <div class="list-item">
+                    <div class="item-icon"><i class="fa-solid fa-check"></i></div>
+                    <div class="item-info">
+                        <div class="item-name">All stock levels are good</div>
+                        <div class="item-subtitle">No low stock alerts</div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
-            <div style="font-size: 2rem; color: #ffffff;"><i class="fa-solid fa-clipboard-list"></i></div>
         </div>
     </div>
 </div>
-
-<!-- Charts and Team Section -->
-<div class="chart-section">
-    <div class="team-section">
-        <div class="team-title">Team Members</div>
-        <div class="team-members">
-            {% for member in team_members %}
-            <div class="team-member">
-                <div class="member-avatar">
-                    {{ member.user.get_full_name|default:member.user.username|first|upper }}
-                    <div class="status-dot status-online"></div>
-                </div>
-                <div class="member-info">
-                    <div class="member-name">{{ member.user.get_full_name|default:member.user.username }}</div>
-                    <div class="member-role">{{ member.get_role_display }}</div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="team-member">
-                <div class="member-avatar">
-                    {{ user.get_full_name|default:user.username|first|upper }}
-                    <div class="status-dot status-online"></div>
-                </div>
-                <div class="member-info">
-                    <div class="member-name">{{ user.get_full_name|default:user.username }}</div>
-                    <div class="member-role">{{ user.profile.get_role_display }}</div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        <div class="appointments-today">
-            <i class="fa-solid fa-calendar-days"></i>
-            <span>Appointments Today : {{ upcoming_appointments|length }}</span>
-        </div>
-    </div>
-
-    <div class="bottom-section">
-        <div class="list-card">
-            <div class="list-title">Upcoming Appointments</div>
-            {% for appointment in upcoming_appointments %}
-            <div class="list-item">
-                <div class="item-icon"><i class="fa-solid fa-paw"></i></div>
-                <div class="item-info">
-                    <div class="item-name">{{ appointment.service }}</div>
-                    <div class="item-subtitle">{{ appointment.client.nom }} {{ appointment.client.prenom }} - {{ appointment.animal.nom }}</div>
-                </div>
-                <div class="item-time">{{ appointment.date_reservation|time:"g:i A" }}</div>
-            </div>
-            {% empty %}
-            <div class="list-item">
-                <div class="item-icon"><i class="fa-solid fa-calendar"></i></div>
-                <div class="item-info">
-                    <div class="item-name">No upcoming appointments</div>
-                    <div class="item-subtitle">No appointments scheduled for today or tomorrow</div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="list-card">
-            <div class="list-title">Low Stock Alerts</div>
-            {% for product in stock_alerts %}
-            <div class="list-item">
-                <div class="item-icon">📦</div>
-                <div class="item-info">
-                    <div class="item-name">{{ product.nom }}</div>
-                    <div class="item-subtitle">{{ product.categorie.nom }} - {{ product.fournisseur.nom }}</div>
-                </div>
-                <div class="item-time">{{ product.quantite }} left</div>
-            </div>
-            {% empty %}
-            <div class="list-item">
-                <div class="item-icon"><i class="fa-solid fa-check"></i></div>
-                <div class="item-info">
-                    <div class="item-name">All stock levels are good</div>
-                    <div class="item-subtitle">No low stock alerts</div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="list-card">
-            <div class="list-title">Low Stock Alerts</div>
-            {% for product in stock_alerts %}
-            <div class="list-item">
-                <div class="item-icon">📦</div>
-                <div class="item-info">
-                    <div class="item-name">{{ product.nom }}</div>
-                    <div class="item-subtitle">{{ product.categorie.nom }} - {{ product.fournisseur.nom }}</div>
-                </div>
-                <div class="item-time">{{ product.quantite }} left</div>
-            </div>
-            {% empty %}
-            <div class="list-item">
-                <div class="item-icon"><i class="fa-solid fa-check"></i></div>
-                <div class="item-info">
-                    <div class="item-name">All stock levels are good</div>
-                    <div class="item-subtitle">No low stock alerts</div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            // --- Basic Settings ---
+            initialView: 'dayGridMonth',
+            height: 'auto', 
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth'
+            },
+            events: "{% url 'all_appointments' %}",
+            editable: true,
+            selectable: true,
+            eventClick: function(info) {
+                alert('Appointment: ' + info.event.title);
+            }
+        });
+        calendar.render();
+    });
+</script>
 {% endblock %}
+

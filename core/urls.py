@@ -25,4 +25,6 @@ urlpatterns = [
     # User Management URLs
     path('users/', views.users, name='users'),
     path('export/users/csv/', views.export_users_csv, name='export_users_csv'),
+    # All appointments API
+    path('api/all_appointments/', views.all_appointments, name='all_appointments'),
 ]

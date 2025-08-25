@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from .models import Client, Animal, Reservation, Produit, Categorie, Fournisseur, Log, RapportEnvoye, UserProfile
 from .decorators import admin_required, veterinarian_required, assistant_required, receptionist_required
 from .utils import log_login, log_logout, log_create, log_update, log_delete, log_export, log_password_change, log_profile_update, log_theme_change, log_report_sent
@@ -918,5 +918,21 @@ def export_users_csv(request):
     
     return response
 def facture(request):
-    
     return render(request, 'core/facture.html')
+
+def all_appointments(request):
+    """
+    This view returns all reservations in the JSON format required by FullCalendar.
+    """
+    all_reservations = Reservation.objects.all()
+    # Format the data into a list of event objects
+    event_list = []
+    for reservation in all_reservations:
+        event_list.append({
+            'id': reservation.id,
+            'title': f"{reservation.service} - {reservation.animal.nom}",
+            'start': reservation.date_reservation.strftime('%Y-%m-%dT%H:%M:%S'),
+            'color': '#F39C12'  # Default color for scheduled or pending
+        })
+        
+    return JsonResponse(event_list, safe=False)
