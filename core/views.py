@@ -273,8 +273,24 @@ def stock(request):
             models.Q(categorie__nom__icontains=search_query) |
             models.Q(fournisseur__nom__icontains=search_query)
         )
+    
+    # Filter categories based on search query
     categories = Categorie.objects.all()
+    if search_query:
+        categories = categories.filter(
+            models.Q(nom__icontains=search_query)
+        )
+    
+    # Filter suppliers based on search query
     fournisseurs = Fournisseur.objects.all()
+    if search_query:
+        fournisseurs = fournisseurs.filter(
+            models.Q(nom__icontains=search_query) |
+            models.Q(telephone__icontains=search_query) |
+            models.Q(email__icontains=search_query) |
+            models.Q(adresse__icontains=search_query)
+        )
+    
     produits = qs
     # Category CRUD
     if request.method == 'POST' and 'cat_form' in request.POST:
@@ -295,12 +311,23 @@ def stock(request):
     elif request.method == 'GET' and 'cat_edit' in request.GET:
         all_produits = qs
         cat_to_edit = get_object_or_404(Categorie, id=request.GET.get('cat_edit'))
+        # Calculate statistics
+        from datetime import timedelta
+        from django.utils import timezone
+        low_stock_count = all_produits.filter(quantite__lte=10).count()
+        total_value = sum(float(p.prix) * p.quantite for p in all_produits)
+        thirty_days_from_now = timezone.now().date() + timedelta(days=30)
+        expiring_soon_count = all_produits.filter(date_expiration__lte=thirty_days_from_now).count()
+        
         return render(request, 'core/stock.html', {
             'produits': all_produits,
             'cat_to_edit': cat_to_edit,
             'categories': categories,
             'fournisseurs': fournisseurs,
-            'search_query': search_query
+            'search_query': search_query,
+            'low_stock_count': low_stock_count,
+            'total_value': total_value,
+            'expiring_soon_count': expiring_soon_count,
         })
     # Supplier CRUD
     if request.method == 'POST' and 'fourn_form' in request.POST:
@@ -343,6 +370,8 @@ def stock(request):
         date_expiration = request.POST.get('date_expiration')
         categorie_id = request.POST.get('categorie')
         fournisseur_id = request.POST.get('fournisseur')
+        description = request.POST.get('description', '')
+        
         if edit_id:
             produit = get_object_or_404(Produit, id=edit_id)
             produit.nom = nom
@@ -351,17 +380,30 @@ def stock(request):
             produit.date_expiration = date_expiration
             produit.categorie_id = categorie_id
             produit.fournisseur_id = fournisseur_id
+            produit.description = description
+            
+            # Handle image upload for edit
+            if 'image' in request.FILES:
+                produit.image = request.FILES['image']
+            
             produit.save()
         else:
             if nom and quantite and prix and date_expiration and categorie_id and fournisseur_id:
-                Produit.objects.create(
+                produit = Produit.objects.create(
                     nom=nom,
                     quantite=quantite,
                     prix=prix,
                     date_expiration=date_expiration,
                     categorie_id=categorie_id,
-                    fournisseur_id=fournisseur_id
+                    fournisseur_id=fournisseur_id,
+                    description=description
                 )
+                
+                # Handle image upload for new product
+                if 'image' in request.FILES:
+                    produit.image = request.FILES['image']
+                    produit.save()
+        
         return redirect('stock')
     elif request.method == 'GET' and 'delete' in request.GET:
         produit = get_object_or_404(Produit, id=request.GET.get('delete'))
@@ -369,19 +411,147 @@ def stock(request):
         return redirect('stock')
     elif request.method == 'GET' and 'edit' in request.GET:
         produit_to_edit = get_object_or_404(Produit, id=request.GET.get('edit'))
+        # Calculate statistics
+        from datetime import timedelta
+        from django.utils import timezone
+        low_stock_count = produits.filter(quantite__lte=10).count()
+        total_value = sum(float(p.prix) * p.quantite for p in produits)
+        thirty_days_from_now = timezone.now().date() + timedelta(days=30)
+        expiring_soon_count = produits.filter(date_expiration__lte=thirty_days_from_now).count()
+        
         return render(request, 'core/stock.html', {
             'produits': produits,
             'categories': categories,
             'fournisseurs': fournisseurs,
             'edit_produit': produit_to_edit,
-            'search_query': search_query
+            'search_query': search_query,
+            'low_stock_count': low_stock_count,
+            'total_value': total_value,
+            'expiring_soon_count': expiring_soon_count,
         })
+    # Calculate statistics for the dashboard
+    from datetime import datetime, timedelta
+    from django.utils import timezone
+    
+    # Calculate total products count
+    total_products = produits.count()
+    
+    # Calculate low stock count (products with quantity <= 10)
+    low_stock_count = produits.filter(quantite__lte=10).count()
+    
+    # Calculate total inventory value
+    total_value = sum(float(p.prix) * p.quantite for p in produits)
+    
+    # Calculate expiring soon count (products expiring within 30 days)
+    thirty_days_from_now = timezone.now().date() + timedelta(days=30)
+    expiring_soon_count = produits.filter(date_expiration__lte=thirty_days_from_now).count()
+    
+    # Calculate categories count
+    categories_count = categories.count()
+    
+    # Calculate suppliers count
+    fournisseurs_count = fournisseurs.count()
+    
     return render(request, 'core/stock.html', {
         'produits': produits,
         'categories': categories,
         'fournisseurs': fournisseurs,
-        'search_query': search_query
+        'search_query': search_query,
+        'total_products': total_products,
+        'low_stock_count': low_stock_count,
+        'total_value': total_value,
+        'expiring_soon_count': expiring_soon_count,
+        'categories_count': categories_count,
+        'fournisseurs_count': fournisseurs_count,
     })
+
+@login_required(login_url='login')
+def store(request):
+    """
+    Store management view for veterinary clinic
+    Handles store products, sales, and inventory management
+    """
+    search_query = request.GET.get('search', '')
+    
+    # Get all products
+    qs = Produit.objects.select_related('categorie', 'fournisseur').all()
+    
+    if search_query:
+        qs = qs.filter(
+            models.Q(nom__icontains=search_query) |
+            models.Q(categorie__nom__icontains=search_query) |
+            models.Q(description__icontains=search_query)
+        )
+    
+    produits = qs
+    
+    # Handle POST requests for edit and delete actions
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        produit_id = request.POST.get('produit_id')
+        
+        if action == 'edit' and produit_id:
+            # Handle product editing
+            try:
+                produit = Produit.objects.get(id=produit_id)
+                nom_produit = request.POST.get('nom_produit')
+                categorie = request.POST.get('categorie')
+                prix = request.POST.get('prix')
+                quantite_stock = request.POST.get('quantite_stock')
+                description_produit = request.POST.get('description_produit')
+                
+                if nom_produit and categorie and prix and quantite_stock:
+                    produit.nom = nom_produit
+                    # Get or create category
+                    category, created = Categorie.objects.get_or_create(nom=categorie)
+                    produit.categorie = category
+                    produit.prix = float(prix)
+                    produit.quantite = int(quantite_stock)
+                    produit.description = description_produit
+                    
+                    # Handle image upload
+                    if 'image_produit' in request.FILES:
+                        produit.image = request.FILES['image_produit']
+                    
+                    produit.save()
+                    messages.success(request, 'Product updated successfully!')
+                else:
+                    messages.error(request, 'Please fill all required fields.')
+            except Produit.DoesNotExist:
+                messages.error(request, 'Product not found.')
+            except Exception as e:
+                messages.error(request, f'Error updating product: {str(e)}')
+                
+        elif action == 'delete' and produit_id:
+            # Handle product deletion
+            try:
+                produit = Produit.objects.get(id=produit_id)
+                produit_name = produit.nom
+                produit.delete()
+                messages.success(request, f'Product "{produit_name}" deleted successfully!')
+            except Produit.DoesNotExist:
+                messages.error(request, 'Product not found.')
+            except Exception as e:
+                messages.error(request, f'Error deleting product: {str(e)}')
+        
+        return redirect('store')
+    
+    # Calculate some statistics for the dashboard
+    total_products = produits.count()
+    low_stock_count = produits.filter(quantite__lt=10).count()
+    
+    # Get unique categories count
+    categories_count = produits.values('categorie').distinct().count()
+    
+    context = {
+        'produits': produits,
+        'search_query': search_query,
+        'total_products': total_products,
+        'low_stock_count': low_stock_count,
+        'categories_count': categories_count,
+    }
+    
+    return render(request, 'core/store.html', context)
 
 @veterinarian_required
 def logs(request):
@@ -936,3 +1106,82 @@ def all_appointments(request):
         })
         
     return JsonResponse(event_list, safe=False)
+
+@login_required
+def delete_category(request, category_id):
+    """
+    Delete a category via AJAX request
+    """
+    if request.method == 'POST':
+        try:
+            category = get_object_or_404(Categorie, id=category_id)
+            
+            # Check if category is used by any products
+            products_using_category = Produit.objects.filter(categorie=category)
+            if products_using_category.exists():
+                return JsonResponse({
+                    'success': False,
+                    'message': f'Cannot delete category "{category.nom}" because it is used by {products_using_category.count()} product(s). Please reassign or delete those products first.'
+                }, status=400)
+            
+            category_name = category.nom
+            category.delete()
+            
+            # Log the deletion
+            log_delete(request, 'Categorie', category_id, category_name)
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Category "{category_name}" deleted successfully!'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Error deleting category: {str(e)}'
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    }, status=405)
+
+@login_required
+def delete_supplier(request, supplier_id):
+    """
+    Delete a supplier via AJAX request
+    """
+    if request.method == 'POST':
+        try:
+            supplier = get_object_or_404(Fournisseur, id=supplier_id)
+            
+            # Check if supplier is used by any products
+            products_using_supplier = Produit.objects.filter(fournisseur=supplier)
+            if products_using_supplier.exists():
+                return JsonResponse({
+                    'success': False,
+                    'message': f'Cannot delete supplier "{supplier.nom}" because it is used by {products_using_supplier.count()} product(s). Please reassign or delete those products first.'
+                }, status=400)
+            
+            supplier_name = supplier.nom
+            supplier.delete()
+            
+            # Log the deletion
+            log_delete(request, 'Fournisseur', supplier_id, supplier_name)
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Supplier "{supplier_name}" deleted successfully!'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Error deleting supplier: {str(e)}'
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    }, status=405)
+

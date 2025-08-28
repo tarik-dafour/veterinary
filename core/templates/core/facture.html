@@ -17,9 +17,35 @@
     <!-- Infos client -->
     <div class="facture-section client-info">
       <h2>Informations du Client</h2>
-      <p><strong>Nom:</strong> SAID MAZOUZ</p>
-      <p><strong>Téléphone:</strong> +212 600 000 000</p>
-      <p><strong>Email:</strong> EZZA@example.com</p>
+      <div class="client-info-display" id="client-info-display">
+        <p><strong>Nom:</strong> <span id="client-name">SAID MAZOUZ</span></p>
+        <p><strong>Téléphone:</strong> <span id="client-phone">+212 600 000 000</span></p>
+        <p><strong>Email:</strong> <span id="client-email">EZZA@example.com</span></p>
+      </div>
+      
+      <div class="client-info-edit" id="client-info-edit" style="display: none;">
+        <div class="edit-form-group">
+          <label for="edit-name">Nom:</label>
+          <input type="text" id="edit-name" value="SAID MAZOUZ" class="edit-input">
+        </div>
+        <div class="edit-form-group">
+          <label for="edit-phone">Téléphone:</label>
+          <input type="tel" id="edit-phone" value="+212 600 000 000" class="edit-input">
+        </div>
+        <div class="edit-form-group">
+          <label for="edit-email">Email:</label>
+          <input type="email" id="edit-email" value="EZZA@example.com" class="edit-input">
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save-client" onclick="saveClientInfo()">
+            <i class="fa-solid fa-save"></i> Sauvegarder
+          </button>
+          <button class="btn-cancel-edit" onclick="cancelEditClient()">
+            <i class="fa-solid fa-times"></i> Annuler
+          </button>
+        </div>
+      </div>
+      
     </div>
 
     <!-- Tableau des articles -->
@@ -34,34 +60,33 @@
             <th>Total</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>Médicament A</td>
-            <td>2</td>
-            <td>150 MAD</td>
-            <td>300 MAD</td>
-          </tr>
-          <tr>
-            <td>Consultation</td>
-            <td>1</td>
-            <td>200 MAD</td>
-            <td>200 MAD</td>
-          </tr>
+        <tbody id="facture-items">
+          <!-- Cart items will be populated here -->
         </tbody>
       </table>
     </div>
 
     <!-- Total général -->
     <div class="facture-total">
-      <p><strong>Sous-total:</strong> 500 MAD</p>
-      <p><strong>TVA (20%):</strong> 100 MAD</p>
-      <p class="grand-total"><strong>Total à payer:</strong> 600 MAD</p>
+      <p><strong>Sous-total:</strong> <span id="subtotal">0 MAD</span></p>
+      <p><strong>TVA (20%):</strong> <span id="tva">0 MAD</span></p>
+      <p class="grand-total"><strong>Total à payer:</strong> <span id="grand-total">0 MAD</span></p>
     </div>
 
     <!-- Footer -->
-    <div class="facture-footer">
-      <p>Merci pour votre confiance 🐾</p>
-      <button class="btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimer</button>
+          <div class="facture-footer">
+        <p>Merci pour votre confiance</p>
+      <div class="facture-actions">
+        <button class="btn-back-to-store" onclick="window.location.href='{% url 'store' %}'">
+          <i class="fa-solid fa-arrow-left"></i> Retour au Magasin
+        </button>
+        <button class="btn-edit-client" onclick="editClientInfo()" id="btn-edit-client">
+          <i class="fa-solid fa-edit"></i> Modifier
+        </button>
+        <button class="btn-print" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> Imprimer
+        </button>
+      </div>
     </div>
   </div>
 </body>
@@ -79,6 +104,172 @@
     document.getElementById("facture-date").innerHTML = day + "/" + month + "/" + year;
   }
 
-  window.onload = facturedate;
+  function loadFactureData() {
+    try {
+      // Load cart data from localStorage
+      const cartData = localStorage.getItem('factureCart');
+      const factureDate = localStorage.getItem('factureDate');
+      
+      if (!cartData) {
+        // No cart data, show empty state
+        document.getElementById('facture-items').innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #718096;">Aucun article dans la facture</td></tr>';
+        return;
+      }
+
+      const cart = JSON.parse(cartData);
+      const tbody = document.getElementById('facture-items');
+      let subtotal = 0;
+
+      // Clear existing content
+      tbody.innerHTML = '';
+
+      // Populate table with cart items
+      cart.forEach(item => {
+        const row = document.createElement('tr');
+        const itemTotal = item.price * item.quantity;
+        subtotal += itemTotal;
+
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>${item.quantity}</td>
+          <td>${item.price.toFixed(2)} MAD</td>
+          <td>${itemTotal.toFixed(2)} MAD</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Calculate totals
+      const tva = subtotal * 0.20; // 20% TVA
+      const grandTotal = subtotal + tva;
+
+      // Update totals display
+      document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' MAD';
+      document.getElementById('tva').textContent = tva.toFixed(2) + ' MAD';
+      document.getElementById('grand-total').textContent = grandTotal.toFixed(2) + ' MAD';
+
+      // Update date if available
+      if (factureDate) {
+        const date = new Date(factureDate);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        document.getElementById("facture-date").innerHTML = day + "/" + month + "/" + year;
+      }
+
+    } catch (error) {
+      console.error('Error loading facture data:', error);
+      document.getElementById('facture-items').innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #DC2626;">Erreur lors du chargement des données</td></tr>';
+    }
+  }
+
+  function clearFactureData() {
+    // Clear the cart data from localStorage after generating facture
+    localStorage.removeItem('factureCart');
+    localStorage.removeItem('factureDate');
+  }
+
+  // Client Information Management
+  function editClientInfo() {
+    const displayDiv = document.getElementById('client-info-display');
+    const editDiv = document.getElementById('client-info-edit');
+    const editBtn = document.getElementById('btn-edit-client');
+    
+    // Hide display, show edit form
+    displayDiv.style.display = 'none';
+    editDiv.style.display = 'block';
+    editBtn.style.display = 'none';
+    
+    // Populate edit fields with current values
+    document.getElementById('edit-name').value = document.getElementById('client-name').textContent;
+    document.getElementById('edit-phone').value = document.getElementById('client-phone').textContent;
+    document.getElementById('edit-email').value = document.getElementById('client-email').textContent;
+    
+    // Focus on first input
+    document.getElementById('edit-name').focus();
+  }
+
+  function saveClientInfo() {
+    const name = document.getElementById('edit-name').value.trim();
+    const phone = document.getElementById('edit-phone').value.trim();
+    const email = document.getElementById('edit-email').value.trim();
+    
+    // Basic validation
+    if (!name || !phone || !email) {
+      alert('Veuillez remplir tous les champs');
+      return;
+    }
+    
+    // Update display values
+    document.getElementById('client-name').textContent = name;
+    document.getElementById('client-phone').textContent = phone;
+    document.getElementById('client-email').textContent = email;
+    
+    // Save to localStorage
+    localStorage.setItem('factureClientName', name);
+    localStorage.setItem('factureClientPhone', phone);
+    localStorage.setItem('factureClientEmail', email);
+    
+    // Show success message
+    showClientNotification('Informations client mises à jour avec succès!', 'success');
+    
+    // Return to display mode
+    cancelEditClient();
+  }
+
+  function cancelEditClient() {
+    const displayDiv = document.getElementById('client-info-display');
+    const editDiv = document.getElementById('client-info-edit');
+    const editBtn = document.getElementById('btn-edit-client');
+    
+    // Show display, hide edit form
+    displayDiv.style.display = 'block';
+    editDiv.style.display = 'none';
+    editBtn.style.display = 'block';
+  }
+
+  function showClientNotification(message, type) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `client-notification ${type}`;
+    notification.innerHTML = `
+      <div class="notification-content">
+        <i class="fa-solid fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <span>${message}</span>
+      </div>
+    `;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Show notification
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.classList.remove('show');
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  function loadClientInfo() {
+    // Load client info from localStorage if available
+    const savedName = localStorage.getItem('factureClientName');
+    const savedPhone = localStorage.getItem('factureClientPhone');
+    const savedEmail = localStorage.getItem('factureClientEmail');
+    
+    if (savedName) document.getElementById('client-name').textContent = savedName;
+    if (savedPhone) document.getElementById('client-phone').textContent = savedPhone;
+    if (savedEmail) document.getElementById('client-email').textContent = savedEmail;
+  }
+
+  // Load facture data when page loads
+  window.onload = function() {
+    facturedate();
+    loadFactureData();
+    loadClientInfo();
+  };
+
+  // Clear data when printing (optional)
+  window.addEventListener('beforeprint', clearFactureData);
 </script>
 {% endblock %}

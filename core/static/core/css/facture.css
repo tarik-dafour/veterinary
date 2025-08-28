@@ -1,116 +1,623 @@
+/* Veterinary Factura Design - Modern & Professional */
 .facture-container {
-    max-width: 800px;
-    margin: auto;
-    background: #fff;
-    color: #333;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-width: 900px;
+    margin: 2rem auto;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+    color: #1A202C;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid #E2E8F0;
+    position: relative;
+    overflow: hidden;
 }
 
+.facture-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #38B2FF 0%, #1E90FF 50%, #1A73E8 100%);
+}
+
+/* Header Section */
 .facture-header {
     text-align: center;
-    border-bottom: 2px solid #ddd;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
+    border-bottom: 3px solid #E2E8F0;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    position: relative;
+}
+
+.facture-header::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FFFFFF;
+    padding: 0 1rem;
+    font-size: 1.5rem;
 }
 
 .facture-header h1 {
-    margin: 0;
-    font-size: 28px;
-    color: #2c3e50;
+    margin: 0 0 0.5rem 0;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1A202C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
 }
 
+.facture-header h1 i {
+    color: #38B2FF;
+    font-size: 2.2rem;
+}
+
+.facture-header p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #718096;
+    font-weight: 500;
+}
+
+/* Client Information Section */
+.facture-section.client-info {
+    background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #BAE6FD;
+    position: relative;
+}
+
+.facture-section.client-info::before {
+    display: none;
+}
+
+.facture-section.client-info h2 {
+    color: #0C4A6E;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.facture-section.client-info p {
+    margin: 0.5rem 0;
+    color: #1E40AF;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.facture-section.client-info strong {
+    color: #0C4A6E;
+    min-width: 80px;
+}
+
+/* Client Info Edit Form */
+.client-info-edit {
+    margin-top: 1rem;
+}
+
+.edit-form-group {
+    margin-bottom: 1rem;
+}
+
+.edit-form-group label {
+    display: block;
+    font-weight: 600;
+    color: #0C4A6E;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.edit-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #BAE6FD;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1E40AF;
+    background: #FFFFFF;
+    transition: all 0.3s ease;
+}
+
+.edit-input:focus {
+    outline: none;
+    border-color: #38B2FF;
+    box-shadow: 0 0 0 3px rgba(56, 178, 255, 0.1);
+}
+
+.edit-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-save-client {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #FFFFFF;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.btn-save-client:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.btn-cancel-edit {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #E2E8F0;
+    background: #FFFFFF;
+    color: #718096;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.btn-cancel-edit:hover {
+    background: #F7FAFC;
+    border-color: #CBD5E0;
+    color: #4A5568;
+}
+
+/* Client Actions - Now in Footer */
+.btn-edit-client {
+    padding: 1rem 1.5rem;
+    border: none;
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    color: #FFFFFF;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    min-width: 150px;
+    justify-content: center;
+}
+
+.btn-edit-client:hover {
+    background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+}
+
+.btn-edit-client:active {
+    transform: translateY(0);
+}
+
+/* Client Notifications */
+.client-notification {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    background: #10B981;
+    color: #FFFFFF;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    max-width: 400px;
+}
+
+.client-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.client-notification.success {
+    background: #10B981;
+}
+
+.client-notification.error {
+    background: #F56565;
+}
+
+.client-notification .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.client-notification i {
+    font-size: 1.1rem;
+}
+
+/* Invoice Details Section */
 .facture-section {
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
 }
 
 .facture-section h2 {
-    font-size: 18px;
-    margin-bottom: 10px;
-    color: #555;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #1A202C;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #E2E8F0;
 }
 
+.facture-section h2 i {
+    color: #38B2FF;
+    font-size: 1.3rem;
+}
+
+/* Table Styling */
 .facture-table {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-.facture-table th,.facture-table td {
-    border: 1px solid #ddd;
-    font-family: 'Kumbh Sans', sans-serif !important;
-    font-size: 14px;
-    padding: 10px;
-    text-align: center;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .facture-table th {
-    background: #3498db;
-    color: white;
+    background: linear-gradient(135deg, #38B2FF 0%, #1E90FF 100%);
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 1.25rem 1rem;
+    text-align: center;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
+.facture-table th:first-child {
+    text-align: left;
+}
+
+.facture-table td {
+    border: none;
+    border-bottom: 1px solid #E2E8F0;
+    font-family: 'Kumbh Sans', sans-serif;
+    font-size: 0.95rem;
+    padding: 1.25rem 1rem;
+    text-align: center;
+    color: #1A202C;
+    background: #FFFFFF;
+    transition: background 0.2s ease;
+}
+
+.facture-table td:first-child {
+    text-align: left;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.facture-table tr:hover td {
+    background: #F7FAFC;
+}
+
+.facture-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Totals Section */
 .facture-total {
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-top: 2rem;
     text-align: right;
-    margin-top: 20px;
-    font-size: 16px;
+    border: 2px solid #E2E8F0;
+    position: relative;
+}
+
+.facture-total::before {
+    display: none;
 }
 
 .facture-total p {
-    margin: 5px 0;
+    margin: 0.75rem 0;
+    font-size: 1.1rem;
+    color: #4A5568;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 300px;
+    margin-left: auto;
+}
+
+.facture-total strong {
+    color: #2D3748;
+    font-weight: 600;
 }
 
 .facture-total .grand-total {
-    font-size: 18px;
-    color: #e74c3c;
+    font-size: 1.4rem;
+    color: #1A202C;
+    font-weight: 800;
+    border-top: 2px solid #E2E8F0;
+    padding-top: 1rem;
+    margin-top: 1rem;
 }
 
+.facture-total .grand-total strong {
+    color: #38B2FF;
+}
+
+/* Footer Section */
 .facture-footer {
     text-align: center;
-    margin-top: 30px;
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
+    margin-top: 2.5rem;
+    border-top: 2px solid #E2E8F0;
+    padding-top: 1.5rem;
+    position: relative;
+}
+
+.facture-footer::before {
+    display: none;
+}
+
+.facture-footer p {
     font-style: italic;
-    color: #555;
+    color: #718096;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Action Buttons */
+.facture-actions {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-back-to-store {
+    padding: 1rem 1.5rem;
+    border: none;
+    background: linear-gradient(135deg, #6B46C1 0%, #553C9A 100%);
+    color: #FFFFFF;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
+    min-width: 180px;
+    justify-content: center;
+}
+
+.btn-back-to-store:hover {
+    background: linear-gradient(135deg, #553C9A 0%, #44318A 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(107, 70, 193, 0.4);
+}
+
+.btn-back-to-store:active {
+    transform: translateY(0);
 }
 
 .btn-print {
-    margin-top: 10px;
-    padding: 8px 15px;
+    padding: 1rem 1.5rem;
     border: none;
-    background: #3498db;
-    color: #fff;
-    border-radius: 6px;
+    background: linear-gradient(135deg, #38B2FF 0%, #1E90FF 100%);
+    color: #FFFFFF;
+    border-radius: 12px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(56, 178, 255, 0.3);
+    min-width: 150px;
+    justify-content: center;
 }
 
 .btn-print:hover {
-    background: #2980b9;
+    background: linear-gradient(135deg, #1E90FF 0%, #1A73E8 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(56, 178, 255, 0.4);
 }
 
-/* Light theme adjustments */
-[data-theme="light"] .facture-container {
-    background: #fff;
-    color: #333;
+.btn-print:active {
+    transform: translateY(0);
 }
 
-[data-theme="light"] .facture-header h1 {
-    color: #2c3e50;
+/* Responsive Design */
+@media (max-width: 768px) {
+    .facture-container {
+        margin: 1rem;
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+    
+    .facture-header h1 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .facture-table th,
+    .facture-table td {
+        padding: 1rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .facture-total {
+        padding: 1.5rem;
+    }
+    
+    .facture-total p {
+        font-size: 1rem;
+        max-width: 100%;
+    }
+    
+    .facture-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-back-to-store,
+    .btn-print {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .edit-actions {
+        flex-direction: column;
+    }
+    
+    .btn-save-client,
+    .btn-cancel-edit {
+        width: 100%;
+    }
+    
+    .client-notification {
+        right: 1rem;
+        left: 1rem;
+        max-width: none;
+    }
 }
 
-[data-theme="light"] .facture-section h2 {
-    color: #555;
+@media (max-width: 480px) {
+    .facture-container {
+        margin: 0.5rem;
+        padding: 1rem;
+    }
+    
+    .facture-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .facture-section h2 {
+        font-size: 1.25rem;
+    }
+    
+    .facture-table {
+        font-size: 0.85rem;
+    }
+    
+    .facture-table th,
+    .facture-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
 }
 
-[data-theme="light"] .facture-table th {
-    background: #3498db;
+/* Print Styles */
+@media print {
+    .facture-container {
+        box-shadow: none;
+        border: none;
+        margin: 0;
+        padding: 1rem;
+        max-width: none;
+    }
+    
+    .facture-actions {
+        display: none;
+    }
+    
+    .facture-container::before {
+        display: none;
+    }
+    
+    .facture-header::after,
+    .facture-section.client-info::before,
+    .facture-total::before,
+    .facture-footer::before {
+        display: none;
+    }
+    
+    .facture-table {
+        box-shadow: none;
+    }
+    
+    .facture-table th {
+        background: #38B2FF !important;
+        color: #FFFFFF !important;
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+    }
 }
 
-[data-theme="light"] .facture-total .grand-total {
-    color: #e74c3c;
-}
-
-[data-theme="light"] .facture-footer {
-    color: #555;
+/* Dark Theme Support */
+@media (prefers-color-scheme: dark) {
+    .facture-container {
+        background: linear-gradient(135deg, #1A202C 0%, #2D3748 100%);
+        color: #F7FAFC;
+        border-color: #4A5568;
+    }
+    
+    .facture-header h1 {
+        color: #F7FAFC;
+    }
+    
+    .facture-section h2 {
+        color: #E2E8F0;
+    }
+    
+    .facture-table td {
+        background: #2D3748;
+        color: #F7FAFC;
+        border-bottom-color: #4A5568;
+    }
+    
+    .facture-table td:first-child {
+        color: #FFFFFF;
+    }
+    
+    .facture-table tr:hover td {
+        background: #4A5568;
+    }
+    
+    .facture-total {
+        background: linear-gradient(135deg, #2D3748 0%, #4A5568 100%);
+        border-color: #4A5568;
+    }
+    
+    .facture-total p {
+        color: #E2E8F0;
+    }
+    
+    .facture-total strong {
+        color: #F7FAFC;
+    }
 }

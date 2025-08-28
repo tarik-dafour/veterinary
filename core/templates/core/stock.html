@@ -1,183 +1,314 @@
 {% extends 'core/base.html' %}
-{% block title %}Stock - VetStock{% endblock %}
 {% load static %}
+
+{% block title %}Stock Management - Veterinary System{% endblock %}
+
 {% block content %}
+<!-- Stock Management Styles -->
 <link rel="stylesheet" href="{% static 'core/css/stock.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
 
-
-<div class="page-header">
-    <h1 class="page-title"><i class="fa-solid fa-cubes-stacked"></i> Gestion de Stock</h1>
-    <p class="page-subtitle">Gérez l'inventaire, les catégories et les fournisseurs de votre clinique vétérinaire</p>
-</div>
-
-<div class="tabs-container">
-    <div class="tabs-header">
-        <button class="tab-button active" onclick="showTab('products')"><i class="fa-solid fa-box"></i> Produits</button>
-        <button class="tab-button" onclick="showTab('categories')"><i class="fa-solid fa-tag"></i> Catégories</button>
-        <button class="tab-button" onclick="showTab('suppliers')"><i class="fa-solid fa-building"></i> Fournisseurs</button>
+<!-- Stock Header -->
+<header class="stock-header" role="banner" aria-label="Stock management overview">
+    <div class="stock-header-content">
+        <div class="stock-header-text">
+            <h1 class="stock-title">
+                <i class="fas fa-boxes-stacked" aria-hidden="true"></i>
+                Stock Management
+            </h1>
+            <p class="stock-subtitle">Manage your veterinary inventory with precision and ease</p>
+        </div>
+        <div class="stock-header-actions">
+            <div class="stock-summary" role="status" aria-live="polite">
+                <div class="summary-item">
+                    <i class="fas fa-boxes-stacked" aria-hidden="true"></i>
+                    <span class="summary-label">Total Items</span>
+                </div>
+                <div class="summary-item">
+                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                    <span class="summary-label">Low Stock</span>
+                </div>
+            </div>
+        </div>
     </div>
+</header>
 
-    <!-- Onglet Produits -->
-    <div id="products" class="tab-content active">
-        <div class="content-grid">
-            <!-- ✅ Modal Ajouter / Modifier Produit -->
-            <div id="produitModal" class="modal" {% if edit_produit %}style="display: block;"{% endif %}>
-              <div class="modal-content">
-                <span class="close" onclick="closeModal('produit')"><i class="fa-solid fa-xmark"></i></span>
+<main class="container" role="main" aria-label="Stock management content">
+    <!-- Statistics Section -->
+    <section class="stats-grid" aria-label="Stock statistics">
+        <article class="stat-card" role="article" aria-labelledby="total-products-stat">
+            <div class="stat-icon" aria-hidden="true">
+                <i class="fas fa-boxes-stacked"></i>
+            </div>
+            <div class="stat-content">
+                <div id="total-products-stat" class="stat-number" aria-label="Total products count">{{ total_products|default:"0" }}</div>
+                <div class="stat-label">Total Products</div>
+            </div>
+        </article>
+        
+        <article class="stat-card" role="article" aria-labelledby="low-stock-stat">
+            <div class="stat-icon" aria-hidden="true">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+                <div id="low-stock-stat" class="stat-number" aria-label="Low stock items count">{{ low_stock_count|default:"0" }}</div>
+                <div class="stat-label">Low Stock Items</div>
+            </div>
+        </article>
+        
+        <article class="stat-card" role="article" aria-labelledby="categories-stat">
+            <div class="stat-icon" aria-hidden="true">
+                <i class="fas fa-tags"></i>
+            </div>
+            <div class="stat-content">
+                <div id="categories-stat" class="stat-number" aria-label="Categories count">{{ categories_count|default:"0" }}</div>
+                <div class="stat-label">Categories</div>
+            </div>
+        </article>
+        
+        <article class="stat-card" role="article" aria-labelledby="suppliers-stat">
+            <div class="stat-icon" aria-hidden="true">
+                <i class="fas fa-building"></i>
+            </div>
+            <div class="stat-content">
+                <div id="suppliers-stat" class="stat-number" aria-label="Suppliers count">{{ fournisseurs_count|default:"0" }}</div>
+                <div class="stat-label">Suppliers</div>
+            </div>
+        </article>
+        
+        <article class="stat-card" role="article" aria-labelledby="expiring-soon-stat">
+            <div class="stat-icon" aria-hidden="true">
+                <i class="fas fa-calendar-times"></i>
+            </div>
+            <div class="stat-content">
+                <div id="expiring-soon-stat" class="stat-number" aria-label="Products expiring soon count">{{ expiring_soon_count|default:"0" }}</div>
+                <div class="stat-label">Expiring Soon</div>
+            </div>
+        </article>
+    </section>
 
-                <h3 class="form-title">
-                  {% if edit_produit %}
-                    <i class="fa-solid fa-file-pen"></i> Modifier le Produit
-                  {% else %}
-                    <i class="fa-solid fa-cart-plus"></i> Ajouter un Nouveau Produit
-                  {% endif %}
-                </h3>
-            
-                <form method="post" action="{% url 'stock' %}">
-                  {% csrf_token %}
-                  <input type="hidden" name="prod_form" value="1">
-                  {% if edit_produit %}
-                    <input type="hidden" name="edit_id" value="{{ edit_produit.id }}">
-                  {% endif %}
-                
-                  <div class="form-group">
-                    <label class="form-label">Nom du Produit</label>
-                    <input type="text" name="nom" class="form-input" 
-                           placeholder="Entrez le nom du produit"
-                           value="{% if edit_produit %}{{ edit_produit.nom }}{% endif %}" required>
-                  </div>
-              
-                  <div class="form-group">
-                    <label class="form-label">Quantité</label>
-                    <input type="number" name="quantite" class="form-input" 
-                           placeholder="Entrez la quantité"
-                           value="{% if edit_produit %}{{ edit_produit.quantite }}{% endif %}" required>
-                  </div>
-              
-                  <div class="form-group">
-                    <label class="form-label">Prix</label>
-                    <input type="number" step="0.01" name="prix" class="form-input" 
-                           placeholder="Entrez le prix"
-                           value="{% if edit_produit %}{{ edit_produit.prix }}{% endif %}" required>
-                  </div>
-              
-                  <div class="form-group">
-                    <label class="form-label">Date d'Expiration</label>
-                    <input type="date" name="date_expiration" class="form-input" 
-                           value="{% if edit_produit %}{{ edit_produit.date_expiration|date:'Y-m-d' }}{% endif %}" required>
-                  </div>
-              
-                  <div class="form-group">
-                    <label class="form-label">Catégorie</label>
-                    <select name="categorie" class="form-select" required>
-                      <option value="">Sélectionnez une catégorie</option>
-                      {% for cat in categories %}
-                        <option value="{{ cat.id }}" {% if edit_produit and edit_produit.categorie.id == cat.id %}selected{% endif %}>
-                          {{ cat.nom }}
-                        </option>
-                      {% endfor %}
-                    </select>
-                  </div>
-               
-                  <div class="form-group">
-                    <label class="form-label">Fournisseur</label>
-                    <select name="fournisseur" class="form-select" required>
-                      <option value="">Sélectionnez un fournisseur</option>
-                      {% for fourn in fournisseurs %}
-                        <option value="{{ fourn.id }}" {% if edit_produit and edit_produit.fournisseur.id == fourn.id %}selected{% endif %}>
-                          {{ fourn.nom }}
-                        </option>
-                      {% endfor %}
-                    </select>
-                  </div>
-               
-                   {% if edit_produit %}
-                     <div class="form-actions">
-                       <button type="submit" class="btn btn-primary">
-                         <i class="fa-solid fa-save"></i> Modifier
-                       </button>
-                       <a href="{% url 'stock' %}{% if search_query %}?search={{ search_query }}{% endif %}" class="btn btn-secondary">
-                         <i class="fa-solid fa-xmark"></i> Annuler
-                       </a>
-                     </div>
-                   {% else %}
-                     <button type="submit" class="btn btn-primary">
-                       <i class="fa-solid fa-cart-plus"></i> Ajouter
-                     </button>
-                   {% endif %}
-                </form>
-              </div>
+    <!-- Tabs Container -->
+    <section class="modern-tabs-container" role="tablist" aria-label="Stock management tabs">
+        <div class="tabs-navigation" role="tablist">
+            <button class="tab-nav-btn active" 
+                    data-tab="products" 
+                    role="tab" 
+                    aria-selected="true" 
+                    aria-controls="products-panel"
+                    id="products-tab">
+                <div class="tab-icon" aria-hidden="true">
+                    <i class="fas fa-boxes-stacked"></i>
+                </div>
+                <span>Products</span>
+            </button>
+            <button class="tab-nav-btn" 
+                    data-tab="categories" 
+                    role="tab" 
+                    aria-selected="false" 
+                    aria-controls="categories-panel"
+                    id="categories-tab">
+                <div class="tab-icon" aria-hidden="true">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <span>Categories</span>
+            </button>
+            <button class="tab-nav-btn" 
+                    data-tab="suppliers" 
+                    role="tab" 
+                    aria-selected="false" 
+                    aria-controls="suppliers-panel"
+                    id="suppliers-tab">
+                <div class="tab-icon" aria-hidden="true">
+                    <i class="fas fa-building"></i>
+                </div>
+                <span>Suppliers</span>
+            </button>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="products-panel" 
+             class="tab-panel active" 
+             role="tabpanel" 
+             aria-labelledby="products-tab">
+            <div class="panel-header">
+                <div class="header-content">
+                    <h2 class="panel-title">
+                        <i class="fas fa-boxes-stacked" aria-hidden="true"></i>
+                        Product Management
+                    </h2>
+                    <p class="panel-description">Add, edit, and manage your product inventory</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-add-product" 
+                            onclick="openAddProductModal()" 
+                            aria-label="Add new product">
+                        <i class="fas fa-plus" aria-hidden="true"></i>
+                        Add Product
+                    </button>
+                </div>
             </div>
 
-            <!-- Liste des Produits -->
-            <div class="table-card">
-                <div class="table-header">
-                    <h3 class="form-title"><i class="fa-solid fa-clipboard-list"></i> Liste des Produits</h3>
-                    <form method="get" class="search-form">
-                        <input type="text" name="search" class="search-input" placeholder="Rechercher un produit..." 
-                               value="{{ search_query }}">
-                        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                        {% if search_query %}
-                            <a class="btn btn-secondary" href="{% url 'stock' %}"><i class="fa-solid fa-xmark"></i></a>
-                        {% endif %}
-                        <a class="btn btn-success" href="{% url 'export_products_csv' %}?search={{ search_query }}">
-                            <i class="fa-solid fa-download"></i>
-                        </a>
-                        <button class="btn btn-primary" onclick="openModal('produit')"><i class="fa-solid fa-cart-plus"></i> Ajouter</button>
-                    </form>
+            <!-- Search and Filter Section -->
+            <div class="search-filter-section">
+                <div class="search-container">
+                    <div class="search-input-group">
+                        <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                        <input type="text" 
+                               id="product-search" 
+                               class="search-input" 
+                               placeholder="Search products..." 
+                               aria-label="Search products">
+                    </div>
+                </div>
+                <div class="filter-container">
+                    <select id="category-filter" class="filter-select" aria-label="Filter by category">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.nom }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="supplier-filter" class="filter-select" aria-label="Filter by supplier">
+                        <option value="">All Suppliers</option>
+                        {% for fournisseur in fournisseurs %}
+                        <option value="{{ fournisseur.id }}">{{ fournisseur.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Products Table -->
+            <div class="table-container">
+                <!-- Bulk Actions Bar -->
+                <div id="bulk-actions-bar" class="bulk-actions-bar" style="display: none;">
+                    <div class="bulk-actions-content">
+                        <span class="bulk-selection-info">
+                            <i class="fas fa-check-square" aria-hidden="true"></i>
+                            <span id="selected-count">0</span> product(s) selected
+                        </span>
+                        <div class="bulk-actions-buttons">
+                            <button class="btn btn-danger btn-bulk-delete" onclick="bulkDeleteProducts()">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
+                                Delete Selected
+                            </button>
+                            <button class="btn btn-secondary btn-clear-selection" onclick="clearProductSelection()">
+                                <i class="fas fa-times" aria-hidden="true"></i>
+                                Clear Selection
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
-                <table class="table">
+                <table class="modern-table" role="table" aria-label="Products list">
                     <thead>
                         <tr>
-                            <th><i class="fa-solid fa-boxes-packing"></i> Nom</th>
-                            <th><i class="fa-solid fa-layer-group"></i> Catégorie</th>
-                            <th><i class="fa-solid fa-arrow-trend-up"></i> Quantité</th>
-                            <th><i class="fa-solid fa-hand-holding-dollar"></i> Prix</th>
-                            <th><i class="fa-solid fa-calendar-day"></i> Expiration</th>
-                            <th><i class="fa-solid fa-truck-field"></i> Fournisseur</th>
-                            <th><i class="fa-solid fa-gears"></i> Actions</th>
+                            <th scope="col" class="th-checkbox">
+                                <input type="checkbox" id="select-all-products" class="select-all-checkbox" onchange="toggleAllProducts(this)">
+                                <label for="select-all-products" class="sr-only">Select all products</label>
+                            </th>
+                            <th scope="col" class="th-image">Image</th>
+                            <th scope="col" class="th-name">Product Name</th>
+                            <th scope="col" class="th-category">Category</th>
+                            <th scope="col" class="th-supplier">Supplier</th>
+                            <th scope="col" class="th-price">Price</th>
+                            <th scope="col" class="th-quantity">Quantity</th>
+                            <th scope="col" class="th-expiration">Expiration</th>
+                            <th scope="col" class="th-status">Status</th>
+                            <th scope="col" class="th-actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for produit in produits %}
-                        <tr>
-                            <td><strong>{{ produit.nom }}</strong></td>
-                            <td>{{ produit.categorie.nom }}</td>
-                            <td>
-                                <span class="stock-badge 
-                                    {% if produit.quantite <= 5 %}stock-low
-                                    {% elif produit.quantite <= 20 %}stock-medium
-                                    {% else %}stock-high{% endif %}">
-                                    {{ produit.quantite }}
+                        {% for product in produits %}
+                        <tr class="table-row" data-product-id="{{ product.id }}">
+                            <td class="td-checkbox">
+                                <input type="checkbox" 
+                                       class="product-checkbox" 
+                                       value="{{ product.id }}"
+                                       onchange="updateProductSelection()">
+                                <label class="sr-only">Select {{ product.nom }}</label>
+                            </td>
+                            <td class="td-image">
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}" 
+                                     alt="{{ product.nom }}" 
+                                     class="product-image"
+                                     loading="lazy">
+                                {% else %}
+                                <div class="product-image-placeholder" aria-label="No image available">
+                                    <i class="fas fa-image" aria-hidden="true"></i>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td class="td-name">
+                                <div class="product-info">
+                                    <div class="product-name">{{ product.nom }}</div>
+                                    {% if product.description %}
+                                    <div class="product-description">{{ product.description|truncatechars:50 }}</div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="td-category">
+                                <span class="category-badge">{{ product.categorie.nom }}</span>
+                            </td>
+                            <td class="td-supplier">
+                                <span class="supplier-name">{{ product.fournisseur.nom }}</span>
+                            </td>
+                            <td class="td-price">
+                                <span class="price-amount">{{ product.prix }} DH</span>
+                            </td>
+                            <td class="td-quantity">
+                                <span class="quantity-display {% if product.quantite <= 10 %}low-stock{% endif %}">
+                                    {{ product.quantite }}
                                 </span>
                             </td>
-                            <td class="price">{{ produit.prix }} MAD</td>
-                            <td>{{ produit.date_expiration|date:'d M Y' }}</td>
-                            <td>{{ produit.fournisseur.nom }}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <a class="btn btn-secondary" href="?edit={{ produit.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
-                                        <i class="fa-solid fa-pen-to-square"></i> Modifier
-                                    </a>
-                                    <a class="btn btn-danger" href="?delete={{ produit.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
-                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
-                                        <i class="fa-solid fa-trash"></i> Supprimer
-                                    </a>
+                            <td class="td-expiration">
+                                <span class="expiration-date">
+                                    {{ product.date_expiration|date:"M d, Y" }}
+                                </span>
+                            </td>
+                            <td class="td-status">
+                                {% if product.quantite <= 10 %}
+                                <span class="status-badge status-warning" aria-label="Low stock">
+                                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                                    Low Stock
+                                </span>
+                                {% elif product.quantite == 0 %}
+                                <span class="status-badge status-danger" aria-label="Out of stock">
+                                    <i class="fas fa-times-circle" aria-hidden="true"></i>
+                                    Out of Stock
+                                </span>
+                                {% else %}
+                                <span class="status-badge status-success" aria-label="In stock">
+                                    <i class="fas fa-check-circle" aria-hidden="true"></i>
+                                    In Stock
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="td-actions">
+                                <div class="action-buttons">
+                                    <button class="btn-edit" 
+                                            onclick="editProduct({{ product.id }})" 
+                                            aria-label="Edit product {{ product.nom }}">
+                                        <i class="fas fa-edit" aria-hidden="true"></i>
+                                    </button>
+                                    <button class="btn-delete" 
+                                            onclick="deleteProduct({{ product.id }})" 
+                                            aria-label="Delete product {{ product.nom }}">
+                                        <i class="fas fa-trash" aria-hidden="true"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
                         {% empty %}
-                        <tr>
-                            <td colspan="7">
+                        <tr class="empty-row">
+                            <td colspan="10" class="empty-message">
                                 <div class="empty-state">
-                                    <div class="empty-state-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
-                                    <h4>Aucun produit trouvé</h4>
-                                    <p>{% if search_query %}Aucun produit ne correspond à votre recherche.{% else %}Commencez par ajouter votre premier produit.{% endif %}</p>
+                                    <i class="fas fa-box-open empty-icon" aria-hidden="true"></i>
+                                    <h3>No Products Found</h3>
+                                    <p>Start by adding your first product to the inventory</p>
+                                    <button class="btn-add-first" onclick="openAddProductModal()">
+                                        <i class="fas fa-plus" aria-hidden="true"></i>
+                                        Add First Product
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -186,219 +317,2200 @@
                 </table>
             </div>
         </div>
-    </div>
 
-    <!-- Onglet Catégories -->
-    <div id="categories" class="tab-content">
-        <div class="Categories-List">
-            <h3 class="form-title">📋 Liste des Catégories</h3>
-            <div class="Categories-card">
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="cat_form" value="1">
-                    {% if cat_to_edit %}
-                        <input type="hidden" name="cat_edit_id" value="{{ cat_to_edit.id }}">
-                    {% endif %}
-                    <input type="text" name="cat_nom" class="Categories-input" placeholder="{% if cat_to_edit %}Modifier la catégorie{% else %}Ajouter une nouvelle catégorie{% endif %}" 
-                           value="{% if cat_to_edit %}{{ cat_to_edit.nom }}{% endif %}" required>
-                    {% if cat_to_edit %}
-                        <div class="btn-group">
-                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Modifier</button>
-                            <a class="btn btn-secondary" href="{% url 'stock' %}"><i class="fa-solid fa-xmark"></i> Annuler</a>
+        <!-- Categories Tab -->
+        <div id="categories-panel" 
+             class="tab-panel" 
+             role="tabpanel" 
+             aria-labelledby="categories-tab"
+             aria-hidden="true">
+            <div class="panel-header">
+                <div class="header-content">
+                    <h2 class="panel-title">
+                        <i class="fas fa-tags" aria-hidden="true"></i>
+                        Category Management
+                    </h2>
+                    <p class="panel-description">Organize your products with categories</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-container">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                            <input type="text" 
+                                   id="category-search" 
+                                   class="search-input" 
+                                   placeholder="Search categories by name or description..."
+                                   aria-label="Search categories">
+                            <button class="search-clear" 
+                                    id="category-search-clear" 
+                                    onclick="clearCategorySearch()" 
+                                    aria-label="Clear search"
+                                    style="display: none;">
+                                <i class="fas fa-times" aria-hidden="true"></i>
+                            </button>
                         </div>
-                    {% else %}
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-tag"></i> Ajouter</button>
-                    {% endif %}
-                </form>
+                    </div>
+                    <button class="btn-add-category" 
+                            onclick="openAddCategoryModal()" 
+                            aria-label="Add new category">
+                        <i class="fas fa-plus" aria-hidden="true"></i>
+                        Add Category
+                    </button>
+                </div>
             </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th><i class="fa-solid fa-tag"></i> Nom</th>
-                            <th><i class="fa-solid fa-cog"></i> Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for cat in categories %}
-                        <tr>
-                            <td><strong>{{ cat.nom }}</strong></td>
-                            <td>
-                                <div class="btn-group">
-                                    <a class="btn btn-secondary" href="?cat_edit={{ cat.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
-                                        <i class="fa-solid fa-pen-to-square"></i> Modifier
-                                    </a>
-                                    <a class="btn btn-danger" href="?cat_delete={{ cat.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
-                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');">
-                                        <i class="fa-solid fa-trash"></i> Supprimer
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="2">
-                                <div class="empty-state">
-                                    <div class="empty-state-icon"><i class="fa-solid fa-tag"></i></div>
-                                    <h4>Aucune catégorie trouvée</h4>
-                                    <p>Commencez par ajouter votre première catégorie.</p>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+
+            <!-- Categories Grid -->
+            <div class="categories-grid">
+                {% for category in categories %}
+                <div class="category-card" data-category-id="{{ category.id }}">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-tag" aria-hidden="true"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3 class="category-name">{{ category.nom }}</h3>
+                            <p class="category-description">{{ category.description|default:"No description" }}</p>
+                        </div>
+                    </div>
+                    <div class="category-actions">
+                        <button class="btn-edit-category" 
+                                onclick="editCategory({{ category.id }})" 
+                                aria-label="Edit category {{ category.nom }}">
+                            <i class="fas fa-edit" aria-hidden="true"></i>
+                        </button>
+                        <button class="btn-delete-category" 
+                                onclick="deleteCategory({{ category.id }})" 
+                                aria-label="Delete category {{ category.nom }}">
+                            <i class="fas fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-categories">
+                    <div class="empty-state">
+                        <i class="fas fa-tags empty-icon" aria-hidden="true"></i>
+                        <h3>No Categories</h3>
+                        <p>Create categories to organize your products</p>
+                        <button class="btn-add-first" onclick="openAddCategoryModal()">
+                            <i class="fas fa-plus" aria-hidden="true"></i>
+                            Add First Category
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
-    </div>
 
-    <!-- Onglet Fournisseurs -->
-    <div id="suppliers" class="tab-content">
-        <div class="table-header">
-            <h3 class="form-title"><i class="fa-solid fa-clipboard-list"></i> Liste des Fournisseurs</h3>
-            <form method="get" class="search-form">
-                <input type="text" name="search" class="search-input" placeholder="Rechercher un fournisseur..." 
-                       value="{{ search_query }}">
-                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                {% if search_query %}
-                    <a class="btn btn-secondary" href="{% url 'stock' %}"><i class="fa-solid fa-xmark"></i></a>
-                {% endif %}
-                <a class="btn btn-success" href="{% url 'export_products_csv' %}?search={{ search_query }}">
-                    <i class="fa-solid fa-download"></i>
-                </a>
-                <button class="btn btn-primary" onclick="openModal('fournisseur')"><i class="fa-solid fa-cart-plus"></i> Ajouter</button>
+        <!-- Suppliers Tab -->
+        <div id="suppliers-panel" 
+             class="tab-panel" 
+             role="tabpanel" 
+             aria-labelledby="suppliers-tab"
+             aria-hidden="true">
+            <div class="panel-header">
+                <div class="header-content">
+                    <h2 class="panel-title">
+                        <i class="fas fa-building" aria-hidden="true"></i>
+                        Supplier Management
+                    </h2>
+                    <p class="panel-description">Manage your product suppliers and contacts</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-container">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                            <input type="text" 
+                                   id="supplier-search" 
+                                   class="search-input" 
+                                   placeholder="Search suppliers by name, phone, email, or address..."
+                                   aria-label="Search suppliers">
+                            <button class="search-clear" 
+                                    id="supplier-search-clear" 
+                                    onclick="clearSupplierSearch()" 
+                                    aria-label="Clear search"
+                                    style="display: none;">
+                                <i class="fas fa-times" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn-add-supplier" 
+                            onclick="openAddSupplierModal()" 
+                            aria-label="Add new supplier">
+                        <i class="fas fa-plus" aria-hidden="true"></i>
+                        Add Supplier
+                    </button>
+                </div>
+            </div>
+
+            <!-- Suppliers Grid -->
+            <div class="suppliers-grid">
+                {% for fournisseur in fournisseurs %}
+                <div class="supplier-card" data-supplier-id="{{ fournisseur.id }}">
+                    <div class="supplier-header">
+                        <div class="supplier-icon">
+                            <i class="fas fa-building" aria-hidden="true"></i>
+                        </div>
+                        <div class="supplier-info">
+                            <h3 class="supplier-name">{{ fournisseur.nom }}</h3>
+                            <div class="supplier-details">
+                                <p class="supplier-phone">{{ fournisseur.telephone|default:"No phone" }}</p>
+                                <p class="supplier-email">{{ fournisseur.email|default:"No email" }}</p>
+                                <p class="supplier-address">{{ fournisseur.adresse|default:"No address" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="supplier-actions">
+                        <button class="btn-edit-supplier" 
+                                onclick="editSupplier({{ fournisseur.id }})" 
+                                aria-label="Edit supplier {{ fournisseur.nom }}">
+                            <i class="fas fa-edit" aria-hidden="true"></i>
+                        </button>
+                        <button class="btn-delete-supplier" 
+                                onclick="deleteSupplier({{ fournisseur.id }})" 
+                                aria-label="Delete supplier {{ fournisseur.nom }}">
+                            <i class="fas fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-suppliers">
+                    <div class="empty-state">
+                        <i class="fas fa-building empty-icon" aria-hidden="true"></i>
+                        <h3>No Suppliers</h3>
+                        <p>Add suppliers to manage your product sources</p>
+                        <button class="btn-add-first" onclick="openAddSupplierModal()">
+                            <i class="fas fa-plus" aria-hidden="true"></i>
+                            Add First Supplier
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Add Product Modal -->
+<div id="addProductModal" class="modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal-overlay" onclick="closeAddProductModal()"></div>
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 id="modal-title" class="modal-title">
+                <i class="fas fa-plus" aria-hidden="true"></i>
+                Add New Product
+            </h2>
+            <button class="modal-close" onclick="closeAddProductModal()" aria-label="Close modal">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="addProductForm" class="product-form" onsubmit="submitAddProduct(event)" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="prod_form" value="1">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="product-name" class="form-label">
+                            <i class="fas fa-box" aria-hidden="true"></i>
+                            Product Name *
+                        </label>
+                        <input type="text" 
+                               id="product-name" 
+                               name="nom" 
+                               class="form-input" 
+                               required 
+                               placeholder="Enter product name"
+                               aria-describedby="product-name-help">
+                        <div id="product-name-help" class="form-help">Enter a descriptive name for the product</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-category" class="form-label">
+                            <i class="fas fa-tag" aria-hidden="true"></i>
+                            Category *
+                        </label>
+                        <select id="product-category" name="categorie" class="form-select" required>
+                            <option value="">Select a category</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-supplier" class="form-label">
+                            <i class="fas fa-building" aria-hidden="true"></i>
+                            Supplier *
+                        </label>
+                        <select id="product-supplier" name="fournisseur" class="form-select" required>
+                            <option value="">Select a supplier</option>
+                            {% for fournisseur in fournisseurs %}
+                            <option value="{{ fournisseur.id }}">{{ fournisseur.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-price" class="form-label">
+                            <i class="fas fa-money-bill" aria-hidden="true"></i>
+                            Price (DH) *
+                        </label>
+                        <input type="number" 
+                               id="product-price" 
+                               name="prix" 
+                               class="form-input" 
+                               required 
+                               min="0" 
+                               step="0.01" 
+                               placeholder="0.00"
+                               aria-describedby="product-price-help">
+                        <div id="product-price-help" class="form-help">Enter the price in Moroccan Dirhams</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-quantity" class="form-label">
+                            <i class="fas fa-boxes-stacked" aria-hidden="true"></i>
+                            Initial Quantity *
+                        </label>
+                        <input type="number" 
+                               id="product-quantity" 
+                               name="quantite" 
+                               class="form-input" 
+                               required 
+                               min="0" 
+                               placeholder="0"
+                               aria-describedby="product-quantity-help">
+                        <div id="product-quantity-help" class="form-help">Enter the initial stock quantity</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-expiration" class="form-label">
+                            <i class="fas fa-calendar" aria-hidden="true"></i>
+                            Expiration Date *
+                        </label>
+                        <input type="date" 
+                               id="product-expiration" 
+                               name="date_expiration" 
+                               class="form-input" 
+                               required
+                               aria-describedby="product-expiration-help">
+                        <div id="product-expiration-help" class="form-help">Select the expiration date</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-description" class="form-label">
+                            <i class="fas fa-align-left" aria-hidden="true"></i>
+                            Description
+                        </label>
+                        <textarea id="product-description" 
+                                  name="description" 
+                                  class="form-textarea" 
+                                  rows="3" 
+                                  placeholder="Enter product description (optional)"
+                                  aria-describedby="product-description-help"></textarea>
+                        <div id="product-description-help" class="form-help">Optional description of the product</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-image" class="form-label">
+                            <i class="fas fa-image" aria-hidden="true"></i>
+                            Product Image
+                        </label>
+                        <input type="file" 
+                               id="product-image" 
+                               name="image" 
+                               class="form-file" 
+                               accept="image/*"
+                               aria-describedby="product-image-help">
+                        <div id="product-image-help" class="form-help">Upload an image (JPG, PNG, GIF - max 5MB)</div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeAddProductModal()">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submit-product-btn">
+                        <i class="fas fa-save" aria-hidden="true"></i>
+                        Add Product
+                    </button>
+                </div>
             </form>
         </div>
-        
-        <!-- Modal Fournisseur -->
-        <div id="fournisseurModal" class="modal" {% if fourn_to_edit %}style="display: block;"{% endif %}>
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('fournisseur')"><i class="fa-solid fa-xmark"></i></span>
-                <h3 class="modal-title">
-                    {% if fourn_to_edit %}
-                        <i class="fa-solid fa-file-pen"></i> Modifier le Fournisseur
-                    {% else %}
-                        <i class="fa-solid fa-file-plus"></i> Ajouter un Nouveau Fournisseur
-                    {% endif %}
-                </h3>
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="fourn_form" value="1">
-                    {% if fourn_to_edit %}
-                        <input type="hidden" name="fourn_edit_id" value="{{ fourn_to_edit.id }}">
-                    {% endif %}
-                
-                    <div class="form-group">
-                        <label class="form-label">Nom du Fournisseur</label>
-                        <input type="text" name="fourn_nom" class="form-input" 
-                               placeholder="Entrez le nom du fournisseur" 
-                               value="{% if fourn_to_edit %}{{ fourn_to_edit.nom }}{% endif %}" required>
-                    </div>
-                
-                    <div class="form-group">
-                        <label class="form-label">Téléphone</label>
-                        <input type="text" name="fourn_telephone" class="form-input" 
-                               placeholder="Entrez le numéro de téléphone" 
-                               value="{% if fourn_to_edit %}{{ fourn_to_edit.telephone }}{% endif %}" required>
-                    </div>
-                
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="fourn_email" class="form-input" 
-                               placeholder="Entrez l'adresse email" 
-                               value="{% if fourn_to_edit %}{{ fourn_to_edit.email }}{% endif %}" required>
-                    </div>
-                
-                    <div class="form-group">
-                        <label class="form-label">Adresse</label>
-                        <input type="text" name="fourn_adresse" class="form-input" 
-                               placeholder="Entrez l'adresse" 
-                               value="{% if fourn_to_edit %}{{ fourn_to_edit.adresse }}{% endif %}" required>
-                    </div>
-                
-                    {% if fourn_to_edit %}
-                        <div class="btn-group">
-                            <button class="btn btn-primary" type="submit">
-                                <i class="fa-solid fa-floppy-disk"></i> Mettre à jour
-                            </button>
-                            <a class="btn btn-secondary" href="{% url 'stock' %}">
-                                <i class="fa-solid fa-xmark"></i> Annuler
-                            </a>
-                        </div>
-                    {% else %}
-                        <button class="btn btn-primary" type="submit">
-                            <i class="fa-solid fa-file-plus"></i> Ajouter
-                        </button>
-                    {% endif %}
-                </form>
-            </div>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th><i class="fa-solid fa-building"></i> Nom</th>
-                    <th><i class="fa-solid fa-phone"></i> Téléphone</th>
-                    <th><i class="fa-solid fa-envelope"></i> Email</th>
-                    <th><i class="fa-solid fa-location-dot"></i> Adresse</th>
-                    <th><i class="fa-solid fa-gear"></i> Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for f in fournisseurs %}
-                <tr>
-                    <td><strong>{{ f.nom }}</strong></td>
-                    <td>{{ f.telephone }}</td>
-                    <td>{{ f.email }}</td>
-                    <td>{{ f.adresse }}</td>
-                    <td>
-                        <div class="btn-group">
-                            <a class="btn btn-secondary" href="?fourn_edit={{ f.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
-                                <i class="fa-solid fa-pen-to-square"></i> Modifier
-                            </a>
-                            <a class="btn btn-danger" href="?fourn_delete={{ f.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
-                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce fournisseur ?');">
-                                <i class="fa-solid fa-trash"></i> Supprimer
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5">
-                        <div class="empty-state">
-                            <div class="empty-state-icon"><i class="fa-solid fa-building"></i></div>
-                            <h4>Aucun fournisseur trouvé</h4>
-                            <p>Commencez par ajouter votre premier fournisseur.</p>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
 </div>
-<script>
-function showTab(tabName) {
-    // Hide all tab contents
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach(content => content.classList.remove('active'));
-    
-    // Remove active class from all tab buttons
-    const tabButtons = document.querySelectorAll('.tab-button');
-    tabButtons.forEach(button => button.classList.remove('active'));
-    
-    // Show selected tab content
-    document.getElementById(tabName).classList.add('active');
-    
-    // Add active class to clicked button
-    event.target.classList.add('active');
-}
-function openModal(ModalID) {
-    document.getElementById(ModalID).style.display = "block";
-}
 
-// ✅ Fonction pour fermer le modal 
-function closeModal(ModalID) {
-    document.getElementById(ModalID).style.display = "none";
-}
+<!-- Add Category Modal -->
+<div id="addCategoryModal" class="modal" role="dialog" aria-labelledby="category-modal-title" aria-hidden="true">
+    <div class="modal-overlay" onclick="closeAddCategoryModal()"></div>
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 id="category-modal-title" class="modal-title">
+                <i class="fas fa-tag" aria-hidden="true"></i>
+                Add New Category
+            </h2>
+            <button class="modal-close" onclick="closeAddCategoryModal()" aria-label="Close modal">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="addCategoryForm" class="category-form" onsubmit="submitAddCategory(event)" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="cat_form" value="1">
+                <div class="form-group">
+                    <label for="category-name" class="form-label">
+                        <i class="fas fa-tag" aria-hidden="true"></i>
+                        Category Name *
+                    </label>
+                    <input type="text" 
+                           id="category-name" 
+                           name="cat_nom" 
+                           class="form-input" 
+                           required 
+                           placeholder="Enter category name"
+                           aria-describedby="category-name-help">
+                    <div id="category-name-help" class="form-help">Enter a descriptive name for the category</div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeAddCategoryModal()">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submit-category-btn">
+                        <i class="fas fa-save" aria-hidden="true"></i>
+                        Add Category
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Category Modal -->
+<div id="editCategoryModal" class="modal" role="dialog" aria-labelledby="edit-category-modal-title" aria-hidden="true">
+    <div class="modal-overlay" onclick="closeEditCategoryModal()"></div>
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 id="edit-category-modal-title" class="modal-title">
+                <i class="fas fa-edit" aria-hidden="true"></i>
+                Edit Category
+            </h2>
+            <button class="modal-close" onclick="closeEditCategoryModal()" aria-label="Close modal">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="editCategoryForm" class="category-form" onsubmit="submitEditCategory(event)" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="cat_form" value="1">
+                <input type="hidden" id="edit-category-id" name="cat_edit_id">
+                <div class="form-group">
+                    <label for="edit-category-name" class="form-label">
+                        <i class="fas fa-tag" aria-hidden="true"></i>
+                        Category Name *
+                    </label>
+                    <input type="text" 
+                           id="edit-category-name" 
+                           name="cat_nom" 
+                           class="form-input" 
+                           required 
+                           placeholder="Enter category name"
+                           aria-describedby="edit-category-name-help">
+                    <div id="edit-category-name-help" class="form-help">Enter a descriptive name for the category</div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeEditCategoryModal()">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submit-edit-category-btn">
+                        <i class="fas fa-save" aria-hidden="true"></i>
+                        Update Category
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Supplier Modal -->
+<div id="addSupplierModal" class="modal" role="dialog" aria-labelledby="supplier-modal-title" aria-hidden="true">
+    <div class="modal-overlay" onclick="closeAddSupplierModal()"></div>
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 id="supplier-modal-title" class="modal-title">
+                <i class="fas fa-building" aria-hidden="true"></i>
+                Add New Supplier
+            </h2>
+            <button class="modal-close" onclick="closeAddSupplierModal()" aria-label="Close modal">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="addSupplierForm" class="supplier-form" onsubmit="submitAddSupplier(event)" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="fourn_form" value="1">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="supplier-name" class="form-label">
+                            <i class="fas fa-building" aria-hidden="true"></i>
+                            Supplier Name *
+                        </label>
+                        <input type="text" 
+                               id="supplier-name" 
+                               name="fourn_nom" 
+                               class="form-input" 
+                               required 
+                               placeholder="Enter supplier name"
+                               aria-describedby="supplier-name-help">
+                        <div id="supplier-name-help" class="form-help">Enter the supplier company name</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="supplier-phone" class="form-label">
+                            <i class="fas fa-phone" aria-hidden="true"></i>
+                            Phone Number *
+                        </label>
+                        <input type="tel" 
+                               id="supplier-phone" 
+                               name="fourn_telephone" 
+                               class="form-input" 
+                               required 
+                               placeholder="Enter phone number"
+                               aria-describedby="supplier-phone-help">
+                        <div id="supplier-phone-help" class="form-help">Enter the supplier contact phone number</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="supplier-email" class="form-label">
+                            <i class="fas fa-envelope" aria-hidden="true"></i>
+                            Email Address *
+                        </label>
+                        <input type="email" 
+                               id="supplier-email" 
+                               name="fourn_email" 
+                               class="form-input" 
+                               required 
+                               placeholder="Enter email address"
+                               aria-describedby="supplier-email-help">
+                        <div id="supplier-email-help" class="form-help">Enter the supplier email address</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="supplier-address" class="form-label">
+                            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                            Address *
+                        </label>
+                        <textarea id="supplier-address" 
+                                  name="fourn_adresse" 
+                                  class="form-textarea" 
+                                  rows="3" 
+                                  required
+                                  placeholder="Enter supplier address"
+                                  aria-describedby="supplier-address-help"></textarea>
+                        <div id="supplier-address-help" class="form-help">Enter the supplier physical address</div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeAddSupplierModal()">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submit-supplier-btn">
+                        <i class="fas fa-save" aria-hidden="true"></i>
+                        Add Supplier
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Supplier Modal -->
+<div id="editSupplierModal" class="modal" role="dialog" aria-labelledby="edit-supplier-modal-title" aria-hidden="true">
+    <div class="modal-overlay" onclick="closeEditSupplierModal()"></div>
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 id="edit-supplier-modal-title" class="modal-title">
+                <i class="fas fa-edit" aria-hidden="true"></i>
+                Edit Supplier
+            </h2>
+            <button class="modal-close" onclick="closeEditSupplierModal()" aria-label="Close modal">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="editSupplierForm" class="supplier-form" onsubmit="submitEditSupplier(event)" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="fourn_form" value="1">
+                <input type="hidden" id="edit-supplier-id" name="fourn_edit_id">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="edit-supplier-name" class="form-label">
+                            <i class="fas fa-building" aria-hidden="true"></i>
+                            Supplier Name *
+                        </label>
+                        <input type="text"id="edit-supplier-name"name="fourn_nom"   class="form-input"required   placeholder="Enter supplier name" aria-describedby="edit-supplier-name-help">
+                        <div id="edit-supplier-name-help" class="form-help">Enter the supplier company name</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-supplier-phone" class="form-label">
+                            <i class="fas fa-phone" aria-hidden="true"></i>
+                            Phone Number *
+                        </label>
+                        <input type="tel" id="edit-supplier-phonname="fourn_telephonclass="form-input" required placeholder="Enter phone numbearia-describedby="edit-supplier-phone-help">
+                        <div id="edit-supplier-phone-help" class="form-help">Enter the supplier contact phone number</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-supplier-email" class="form-label">
+                            <i class="fas fa-envelope" aria-hidden="true"></i>
+                            Email Address *
+                        </label>
+                        <input type="email" 
+                               id="edit-supplier-email" 
+                               name="fourn_email" 
+                               class="form-input" 
+                               required 
+                               placeholder="Enter email address"
+                               aria-describedby="edit-supplier-email-help">
+                        <div id="edit-supplier-email-help" class="form-help">Enter the supplier email address</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-supplier-address" class="form-label">
+                            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                            Address *
+                        </label>
+                        <textarea id="edit-supplier-address" 
+                                  name="fourn_adresse" 
+                                  class="form-textarea" 
+                                  rows="3" 
+                                  required
+                                  placeholder="Enter supplier address"
+                                  aria-describedby="edit-supplier-address-help"></textarea>
+                        <div id="edit-supplier-address-help" class="form-help">Enter the supplier physical address</div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeEditSupplierModal()">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submit-edit-supplier-btn">
+                        <i class="fas fa-save" aria-hidden="true"></i>
+                        Update Supplier
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Stock Management -->
+<script>
+    // Tab Management System
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
+            initializeTabs();
+            initializeSearch();
+            initializeFilters();
+            initializeAccessibility();
+            initializeModals();
+        } catch (error) {
+            console.error('Error initializing stock management:', error);
+        }
+    });
+
+    // Utility function to get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Tab functionality
+    function initializeTabs() {
+        try {
+            const tabButtons = document.querySelectorAll('.tab-nav-btn');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // Update button states
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-selected', 'false');
+                    });
+                    this.classList.add('active');
+                    this.setAttribute('aria-selected', 'true');
+                    
+                    // Update panel visibility
+                    tabPanels.forEach(panel => {
+                        panel.classList.remove('active');
+                        panel.setAttribute('aria-hidden', 'true');
+                    });
+                    
+                    const targetPanel = document.getElementById(targetTab + '-panel');
+                    if (targetPanel) {
+                        targetPanel.classList.add('active');
+                        targetPanel.setAttribute('aria-hidden', 'false');
+                    }
+                });
+            });
+        } catch (error) {
+            console.error('Error initializing tabs:', error);
+        }
+    }
+
+    // Search functionality
+    function initializeSearch() {
+        try {
+            // Initialize product search
+            const productSearchInput = document.getElementById('product-search');
+            if (productSearchInput) {
+                productSearchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const rows = document.querySelectorAll('.table-row');
+                    
+                    rows.forEach(row => {
+                        const productName = row.querySelector('.product-name')?.textContent.toLowerCase() || '';
+                        const productDesc = row.querySelector('.product-description')?.textContent.toLowerCase() || '';
+                        
+                        if (productName.includes(searchTerm) || productDesc.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Initialize supplier search
+            const supplierSearchInput = document.getElementById('supplier-search');
+            if (supplierSearchInput) {
+                supplierSearchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const supplierCards = document.querySelectorAll('.supplier-card');
+                    const clearButton = document.getElementById('supplier-search-clear');
+                    
+                    let hasResults = false;
+                    
+                    supplierCards.forEach(card => {
+                        const supplierName = card.querySelector('.supplier-name')?.textContent.toLowerCase() || '';
+                        const supplierPhone = card.querySelector('.supplier-phone')?.textContent.toLowerCase() || '';
+                        const supplierEmail = card.querySelector('.supplier-email')?.textContent.toLowerCase() || '';
+                        const supplierAddress = card.querySelector('.supplier-address')?.textContent.toLowerCase() || '';
+                        
+                        if (supplierName.includes(searchTerm) || 
+                            supplierPhone.includes(searchTerm) || 
+                            supplierEmail.includes(searchTerm) || 
+                            supplierAddress.includes(searchTerm)) {
+                            card.style.display = '';
+                            hasResults = true;
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                    
+                    // Show/hide clear button
+                    if (clearButton) {
+                        clearButton.style.display = searchTerm ? 'block' : 'none';
+                    }
+                    
+                    // Show no results message if needed
+                    showSupplierSearchResults(searchTerm, hasResults);
+                });
+            }
+
+            // Initialize category search
+            const categorySearchInput = document.getElementById('category-search');
+            if (categorySearchInput) {
+                categorySearchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const categoryCards = document.querySelectorAll('.category-card');
+                    const clearButton = document.getElementById('category-search-clear');
+                    
+                    let hasResults = false;
+                    
+                    categoryCards.forEach(card => {
+                        const categoryName = card.querySelector('.category-name')?.textContent.toLowerCase() || '';
+                        const categoryDescription = card.querySelector('.category-description')?.textContent.toLowerCase() || '';
+                        
+                        if (categoryName.includes(searchTerm) || 
+                            categoryDescription.includes(searchTerm)) {
+                            card.style.display = '';
+                            hasResults = true;
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                    
+                    // Show/hide clear button
+                    if (clearButton) {
+                        clearButton.style.display = searchTerm ? 'block' : 'none';
+                    }
+                    
+                    // Show no results message if needed
+                    showCategorySearchResults(searchTerm, hasResults);
+                });
+            }
+        } catch (error) {
+            console.error('Error initializing search:', error);
+        }
+    }
+
+    // Filter functionality
+    function initializeFilters() {
+        try {
+            const categoryFilter = document.getElementById('category-filter');
+            const supplierFilter = document.getElementById('supplier-filter');
+            
+            if (categoryFilter) {
+                categoryFilter.addEventListener('change', applyFilters);
+            }
+            if (supplierFilter) {
+                supplierFilter.addEventListener('change', applyFilters);
+            }
+        } catch (error) {
+            console.error('Error initializing filters:', error);
+        }
+    }
+
+    function applyFilters() {
+        try {
+            const categoryValue = document.getElementById('category-filter')?.value || '';
+            const supplierValue = document.getElementById('supplier-filter')?.value || '';
+            const rows = document.querySelectorAll('.table-row');
+            
+            rows.forEach(row => {
+                const category = row.querySelector('.category-badge')?.textContent || '';
+                const supplier = row.querySelector('.supplier-name')?.textContent || '';
+                
+                const categoryMatch = !categoryValue || category === categoryValue;
+                const supplierMatch = !supplierValue || supplier === supplierValue;
+                
+                if (categoryMatch && supplierMatch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        } catch (error) {
+            console.error('Error applying filters:', error);
+        }
+    }
+
+    // Modal functionality
+    function initializeModals() {
+        try {
+            // Close modal on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeAddProductModal();
+                    closeAddCategoryModal();
+                    closeEditCategoryModal();
+                    closeAddSupplierModal();
+                    closeEditSupplierModal();
+                }
+            });
+            
+            // Prevent modal close when clicking inside modal content
+            const modalContainers = document.querySelectorAll('.modal-container');
+            modalContainers.forEach(container => {
+                container.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
+        } catch (error) {
+            console.error('Error initializing modals:', error);
+        }
+    }
+
+    // Accessibility enhancements
+    function initializeAccessibility() {
+        try {
+            // Keyboard navigation for tabs
+            const tabButtons = document.querySelectorAll('.tab-nav-btn');
+            tabButtons.forEach((button, index) => {
+                button.addEventListener('keydown', function(e) {
+                    if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        const nextButton = tabButtons[index + 1] || tabButtons[0];
+                        nextButton.focus();
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        const prevButton = tabButtons[index - 1] || tabButtons[tabButtons.length - 1];
+                        prevButton.focus();
+                    }
+                });
+            });
+            
+            // Focus management
+            document.addEventListener('focusin', function(e) {
+                if (e.target.matches('.btn-edit, .btn-delete, .btn-add-product')) {
+                    e.target.closest('tr, .header-actions')?.classList.add('focused');
+                }
+            });
+            
+            document.addEventListener('focusout', function(e) {
+                if (e.target.matches('.btn-edit, .btn-delete, .btn-add-product')) {
+                    e.target.closest('tr, .header-actions')?.classList.remove('focused');
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing accessibility:', error);
+        }
+    }
+
+    // Add Product Modal Functions
+    function openAddProductModal() {
+        try {
+            console.log('openAddProductModal called');
+            const modal = document.getElementById('addProductModal');
+            console.log('Modal element:', modal);
+            
+            if (modal) {
+                console.log('Modal found, adding active class');
+                modal.classList.add('active');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+                
+                // Focus first input
+                setTimeout(() => {
+                    const firstInput = document.getElementById('product-name');
+                    if (firstInput) firstInput.focus();
+                }, 100);
+                
+                console.log('Modal should now be visible');
+            } else {
+                console.error('Modal element not found!');
+            }
+        } catch (error) {
+            console.error('Error opening add product modal:', error);
+        }
+    }
+
+    function closeAddProductModal() {
+        try {
+            const modal = document.getElementById('addProductModal');
+            if (modal) {
+                modal.classList.remove('active');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+                
+                // Reset form
+                document.getElementById('addProductForm').reset();
+                
+                // Remove any error states
+                document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(input => {
+                    input.classList.remove('error');
+                });
+                
+                // Reset modal to add mode
+                document.getElementById('modal-title').innerHTML = '<i class="fas fa-plus" aria-hidden="true"></i> Add New Product';
+                document.getElementById('submit-product-btn').innerHTML = '<i class="fas fa-save" aria-hidden="true"></i> Add Product';
+                
+                // Remove edit ID field if it exists
+                const editIdField = document.getElementById('edit-product-id');
+                if (editIdField) {
+                    editIdField.remove();
+                }
+            }
+        } catch (error) {
+            console.error('Error closing add product modal:', error);
+        }
+    }
+
+    function submitAddProduct(event) {
+        event.preventDefault();
+        
+        try {
+            const form = event.target;
+            const submitBtn = document.getElementById('submit-product-btn');
+            const formData = new FormData(form);
+            
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            // Validate form
+            if (!validateProductForm(formData)) {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                return;
+            }
+            
+            // Check if this is an edit operation
+            const editId = formData.get('edit_id');
+            const isEdit = editId && editId.trim() !== '';
+            
+            // Submit form to Django backend
+            fetch('', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    const message = isEdit ? 'Product updated successfully!' : 'Product added successfully!';
+                    showNotification(message, 'success');
+                    closeAddProductModal();
+                    // Refresh the page to show the updated/new product
+                    location.reload();
+                } else {
+                    throw new Error(isEdit ? 'Failed to update product' : 'Failed to add product');
+                }
+            })
+            .catch(error => {
+                console.error(isEdit ? 'Error updating product:' : 'Error adding product:', error);
+                const errorMessage = isEdit ? 'Error updating product. Please try again.' : 'Error adding product. Please try again.';
+                showNotification(errorMessage, 'error');
+            })
+            .finally(() => {
+                // Reset loading state
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            });
+            
+        } catch (error) {
+            console.error('Error submitting product:', error);
+            showNotification('Error submitting product. Please try again.', 'error');
+            
+            const submitBtn = document.getElementById('submit-product-btn');
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
+    }
+
+    function validateProductForm(formData) {
+        try {
+            let isValid = true;
+            
+            // Reset previous error states
+            document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(input => {
+                input.classList.remove('error');
+            });
+            
+            // Validate required fields
+            const requiredFields = ['nom', 'categorie', 'fournisseur', 'prix', 'quantite', 'date_expiration'];
+            requiredFields.forEach(field => {
+                const value = formData.get(field);
+                if (!value || value.trim() === '') {
+                    const input = document.querySelector(`[name="${field}"]`);
+                    if (input) {
+                        input.classList.add('error');
+                        isValid = false;
+                    }
+                }
+            });
+            
+            // Validate price
+            const price = formData.get('prix');
+            if (price && parseFloat(price) < 0) {
+                const priceInput = document.getElementById('product-price');
+                if (priceInput) {
+                    priceInput.classList.add('error');
+                    isValid = false;
+                }
+            }
+            
+            // Validate quantity
+            const quantity = formData.get('quantite');
+            if (quantity && parseInt(quantity) < 0) {
+                const quantityInput = document.getElementById('product-quantity');
+                if (quantityInput) {
+                    quantityInput.classList.add('error');
+                    isValid = false;
+                }
+            }
+            
+            if (!isValid) {
+                showNotification('Please fill in all required fields correctly.', 'warning');
+            }
+            
+            return isValid;
+        } catch (error) {
+            console.error('Error validating form:', error);
+            return false;
+        }
+    }
+
+    function showNotification(message, type = 'info') {
+        try {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}" aria-hidden="true"></i>
+                    <span>${message}</span>
+                </div>
+                <button class="notification-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            `;
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+            
+        } catch (error) {
+            console.error('Error showing notification:', error);
+        }
+    }
+
+    // Product Management Functions
+    function editProduct(productId) {
+        try {
+            console.log('editProduct called with ID:', productId);
+            
+            // Get product data from the table row
+            const productRow = document.querySelector(`[data-product-id="${productId}"]`);
+            if (!productRow) {
+                console.error('Product row not found for ID:', productId);
+                showNotification('Product not found', 'error');
+                return;
+            }
+            
+            console.log('Product row found:', productRow);
+            
+            // Extract product information from the table
+            const productName = productRow.querySelector('.product-name');
+            const productDescription = productRow.querySelector('.product-description');
+            const productCategory = productRow.querySelector('.category-badge');
+            const productSupplier = productRow.querySelector('.supplier-name');
+            const productPrice = productRow.querySelector('.price-amount');
+            const productQuantity = productRow.querySelector('.quantity-display');
+            
+            if (!productName || !productCategory || !productSupplier || !productPrice || !productQuantity) {
+                console.error('Required product elements not found:', {
+                    name: !!productName,
+                    category: !!productCategory,
+                    supplier: !!productSupplier,
+                    price: !!productPrice,
+                    quantity: !!productQuantity
+                });
+                showNotification('Error: Product data structure incomplete', 'error');
+                return;
+            }
+            
+            const nameValue = productName.textContent;
+            const descriptionValue = productDescription?.textContent || '';
+            const categoryValue = productCategory.textContent;
+            const supplierValue = productSupplier.textContent;
+            const priceValue = productPrice.textContent.replace(' DH', '');
+            const quantityValue = productQuantity.textContent;
+            
+            console.log('Extracted values:', {
+                name: nameValue,
+                description: descriptionValue,
+                category: categoryValue,
+                supplier: supplierValue,
+                price: priceValue,
+                quantity: quantityValue
+            });
+            
+            // Get expiration date from the table
+            const expirationElement = productRow.querySelector('.expiration-date');
+            let productExpiration = '';
+            if (expirationElement) {
+                const dateText = expirationElement.textContent.trim();
+                console.log('Expiration date text:', dateText);
+                if (dateText) {
+                    const date = new Date(dateText);
+                    if (!isNaN(date.getTime())) {
+                        productExpiration = date.toISOString().split('T')[0];
+                        console.log('Converted expiration date:', productExpiration);
+                    }
+                }
+            }
+            
+            // Find the category and supplier IDs
+            const categorySelect = document.getElementById('product-category');
+            const supplierSelect = document.getElementById('product-supplier');
+            
+            if (!categorySelect || !supplierSelect) {
+                console.error('Category or supplier select not found');
+                showNotification('Error: Form elements not found', 'error');
+                return;
+            }
+            
+            // Set form values
+            const nameInput = document.getElementById('product-name');
+            const descriptionInput = document.getElementById('product-description');
+            const priceInput = document.getElementById('product-price');
+            const quantityInput = document.getElementById('product-quantity');
+            
+            if (nameInput) nameInput.value = nameValue;
+            if (descriptionInput) descriptionInput.value = descriptionValue;
+            if (priceInput) priceInput.value = priceValue;
+            if (quantityInput) quantityInput.value = quantityValue;
+            
+            // Set expiration date if available
+            if (productExpiration) {
+                const expirationInput = document.getElementById('product-expiration');
+                if (expirationInput) {
+                    expirationInput.value = productExpiration;
+                }
+            }
+            
+            // Set category
+            for (let option of categorySelect.options) {
+                if (option.textContent === categoryValue) {
+                    option.selected = true;
+                    break;
+                }
+            }
+            
+            // Set supplier
+            for (let option of supplierSelect.options) {
+                if (option.textContent === supplierValue) {
+                    option.selected = true;
+                    break;
+                }
+            }
+            
+            // Change form to edit mode
+            const modalTitle = document.getElementById('modal-title');
+            const submitBtn = document.getElementById('submit-product-btn');
+            
+            if (modalTitle) modalTitle.innerHTML = '<i class="fas fa-edit" aria-hidden="true"></i> Edit Product';
+            if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-save" aria-hidden="true"></i> Update Product';
+            
+            // Add hidden field for edit ID
+            let editIdField = document.getElementById('edit-product-id');
+            if (!editIdField) {
+                editIdField = document.createElement('input');
+                editIdField.type = 'hidden';
+                editIdField.id = 'edit-product-id';
+                editIdField.name = 'edit_id';
+                const form = document.getElementById('addProductForm');
+                if (form) {
+                    form.appendChild(editIdField);
+                }
+            }
+            editIdField.value = productId;
+            
+            console.log('About to open modal...');
+            // Open the modal
+            openAddProductModal();
+            
+        } catch (error) {
+            console.error('Error editing product:', error);
+            showNotification('Error loading product data', 'error');
+        }
+    }
+
+    function deleteProduct(productId) {
+        try {
+            if (confirm('Are you sure you want to delete this product?')) {
+                // Show loading state
+                const deleteBtn = document.querySelector(`[onclick="deleteProduct(${productId})"]`);
+                const originalContent = deleteBtn.innerHTML;
+                deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i>';
+                deleteBtn.disabled = true;
+                
+                // Submit delete request to Django backend
+                fetch(`?delete=${productId}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showNotification('Product deleted successfully!', 'success');
+                        // Refresh the page to show updated list
+                        location.reload();
+                    } else {
+                        throw new Error('Failed to delete product');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting product:', error);
+                    showNotification('Error deleting product. Please try again.', 'error');
+                })
+                .finally(() => {
+                    // Restore button state
+                    deleteBtn.innerHTML = originalContent;
+                    deleteBtn.disabled = false;
+                });
+            }
+        } catch (error) {
+            console.error('Error deleting product:', error);
+            showNotification('Error deleting product. Please try again.', 'error');
+        }
+    }
+
+    // Bulk Selection Functions
+    function toggleAllProducts(checkbox) {
+        try {
+            const productCheckboxes = document.querySelectorAll('.product-checkbox');
+            productCheckboxes.forEach(productCheckbox => {
+                productCheckbox.checked = checkbox.checked;
+            });
+            updateProductSelection();
+        } catch (error) {
+            console.error('Error toggling all products:', error);
+        }
+    }
+
+    function updateProductSelection() {
+        try {
+            const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+            const selectedCount = selectedCheckboxes.length;
+            const bulkActionsBar = document.getElementById('bulk-actions-bar');
+            const selectedCountSpan = document.getElementById('selected-count');
+            const selectAllCheckbox = document.getElementById('select-all-products');
+            
+            // Update selected count
+            if (selectedCountSpan) {
+                selectedCountSpan.textContent = selectedCount;
+            }
+            
+            // Show/hide bulk actions bar
+            if (bulkActionsBar) {
+                if (selectedCount > 0) {
+                    bulkActionsBar.style.display = 'block';
+                } else {
+                    bulkActionsBar.style.display = 'none';
+                }
+            }
+            
+            // Update select all checkbox state
+            if (selectAllCheckbox) {
+                const totalCheckboxes = document.querySelectorAll('.product-checkbox').length;
+                if (selectedCount === 0) {
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = false;
+                } else if (selectedCount === totalCheckboxes) {
+                    selectAllCheckbox.checked = true;
+                    selectAllCheckbox.indeterminate = false;
+                } else {
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = true;
+                }
+            }
+        } catch (error) {
+            console.error('Error updating product selection:', error);
+        }
+    }
+
+    function clearProductSelection() {
+        try {
+            const productCheckboxes = document.querySelectorAll('.product-checkbox');
+            const selectAllCheckbox = document.getElementById('select-all-products');
+            
+            productCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            }
+            
+            updateProductSelection();
+        } catch (error) {
+            console.error('Error clearing product selection:', error);
+        }
+    }
+
+    function bulkDeleteProducts() {
+        try {
+            const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+            const selectedProductIds = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
+            
+            if (selectedProductIds.length === 0) {
+                showNotification('No products selected for deletion', 'warning');
+                return;
+            }
+            
+            // Show confirmation dialog
+            const confirmMessage = `Are you sure you want to delete ${selectedProductIds.length} selected product(s)? This action cannot be undone.`;
+            if (confirm(confirmMessage)) {
+                // Show loading state
+                const bulkDeleteBtn = document.querySelector('.btn-bulk-delete');
+                const originalContent = bulkDeleteBtn.innerHTML;
+                bulkDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Deleting...';
+                bulkDeleteBtn.disabled = true;
+                
+                // Delete products one by one
+                let deletedCount = 0;
+                let errorCount = 0;
+                
+                const deletePromises = selectedProductIds.map(productId => 
+                    fetch(`?delete=${productId}`, {
+                        method: 'GET',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            deletedCount++;
+                        } else {
+                            errorCount++;
+                        }
+                    })
+                    .catch(() => {
+                        errorCount++;
+                    })
+                );
+                
+                Promise.all(deletePromises).then(() => {
+                    // Show results
+                    if (errorCount === 0) {
+                        showNotification(`Successfully deleted ${deletedCount} product(s)!`, 'success');
+                    } else if (deletedCount > 0) {
+                        showNotification(`Deleted ${deletedCount} product(s), ${errorCount} failed`, 'warning');
+                    } else {
+                        showNotification(`Failed to delete any products`, 'error');
+                    }
+                    
+                    // Refresh the page to show updated list
+                    location.reload();
+                });
+            }
+        } catch (error) {
+            console.error('Error bulk deleting products:', error);
+            showNotification('Error during bulk deletion. Please try again.', 'error');
+        }
+    }
+
+    function openAddCategoryModal() {
+        try {
+            const modal = document.getElementById('addCategoryModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.setAttribute('aria-hidden', 'false');
+                
+                // Focus on first input
+                setTimeout(() => {
+                    const firstInput = modal.querySelector('.form-input');
+                    if (firstInput) firstInput.focus();
+                }, 100);
+            }
+        } catch (error) {
+            console.error('Error opening add category modal:', error);
+        }
+    }
+
+    function closeAddCategoryModal() {
+        try {
+            const modal = document.getElementById('addCategoryModal');
+            if (modal) {
+                modal.classList.remove('active');
+                modal.setAttribute('aria-hidden', 'true');
+                
+                // Reset form
+                document.getElementById('addCategoryForm').reset();
+                
+                // Reset any error states
+                document.querySelectorAll('.form-input').forEach(input => {
+                    input.classList.remove('error');
+                });
+            }
+        } catch (error) {
+            console.error('Error closing add category modal:', error);
+        }
+    }
+
+    function submitAddCategory(event) {
+        event.preventDefault();
+        
+        try {
+            const form = event.target;
+            const submitBtn = document.getElementById('submit-category-btn');
+            const formData = new FormData(form);
+            
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            // Validate form
+            const categoryName = formData.get('cat_nom');
+            if (!categoryName || categoryName.trim() === '') {
+                showNotification('Please enter a category name', 'warning');
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                return;
+            }
+            
+            // Submit form to Django backend
+            fetch('', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    showNotification('Category added successfully!', 'success');
+                    closeAddCategoryModal();
+                    // Refresh the page to show the new category
+                    location.reload();
+                } else {
+                    throw new Error('Failed to add category');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding category:', error);
+                showNotification('Error adding category. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Reset loading state
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            });
+            
+        } catch (error) {
+            console.error('Error submitting category:', error);
+            showNotification('Error adding category. Please try again.', 'error');
+            
+            const submitBtn = document.getElementById('submit-category-btn');
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
+    }
+
+    function editCategory(categoryId) {
+        try {
+            // Get category data from the category card
+            const categoryCard = document.querySelector(`[data-category-id="${categoryId}"]`);
+            if (!categoryCard) {
+                showNotification('Category not found', 'error');
+                return;
+            }
+            
+            // Extract category information from the card
+            const categoryName = categoryCard.querySelector('.category-name').textContent;
+            
+            // Set form values
+            document.getElementById('edit-category-id').value = categoryId;
+            document.getElementById('edit-category-name').value = categoryName;
+            
+            // Open the edit modal
+            openEditCategoryModal();
+            
+        } catch (error) {
+            console.error('Error editing category:', error);
+            showNotification('Error loading category data', 'error');
+        }
+    }
+
+    function openEditCategoryModal() {
+        try {
+            const modal = document.getElementById('editCategoryModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.setAttribute('aria-hidden', 'false');
+                
+                // Focus on first input
+                setTimeout(() => {
+                    const firstInput = modal.querySelector('.form-input');
+                    if (firstInput) firstInput.focus();
+                }, 100);
+            }
+        } catch (error) {
+            console.error('Error opening edit category modal:', error);
+        }
+    }
+
+    function closeEditCategoryModal() {
+        try {
+            const modal = document.getElementById('editCategoryModal');
+            if (modal) {
+                modal.classList.remove('active');
+                modal.setAttribute('aria-hidden', 'true');
+                
+                // Reset form
+                document.getElementById('editCategoryForm').reset();
+                
+                // Reset any error states
+                document.querySelectorAll('.form-input').forEach(input => {
+                    input.classList.remove('error');
+                });
+            }
+        } catch (error) {
+            console.error('Error closing edit category modal:', error);
+        }
+    }
+
+    function submitEditCategory(event) {
+        event.preventDefault();
+        
+        try {
+            const form = event.target;
+            const submitBtn = document.getElementById('submit-edit-category-btn');
+            const formData = new FormData(form);
+            
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            // Validate form
+            const categoryName = formData.get('cat_nom');
+            if (!categoryName || categoryName.trim() === '') {
+                showNotification('Please enter a category name', 'warning');
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                return;
+            }
+            
+            // Submit form to Django backend
+            fetch('', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    showNotification('Category updated successfully!', 'success');
+                    closeEditCategoryModal();
+                    // Refresh the page to show the updated category
+                    location.reload();
+                } else {
+                    throw new Error('Failed to update category');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating category:', error);
+                showNotification('Error updating category. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Reset loading state
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            });
+            
+        } catch (error) {
+            console.error('Error submitting category edit:', error);
+            showNotification('Error updating category. Please try again.', 'error');
+            
+            const submitBtn = document.getElementById('submit-edit-category-btn');
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
+    }
+
+    function deleteCategory(categoryId) {
+        try {
+            if (confirm('Are you sure you want to delete this category?')) {
+                // Show loading state
+                const deleteBtn = document.querySelector(`[onclick="deleteCategory(${categoryId})"]`);
+                const originalContent = deleteBtn.innerHTML;
+                deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i>';
+                deleteBtn.disabled = true;
+                
+                // Make AJAX request to delete category
+                fetch(`/delete-category/${categoryId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the category card from the UI
+                        const categoryCard = document.querySelector(`[data-category-id="${categoryId}"]`);
+                        if (categoryCard) {
+                            categoryCard.remove();
+                            
+                            // Update categories count
+                            const categoriesCount = document.getElementById('categories-stat');
+                            if (categoriesCount) {
+                                const currentCount = parseInt(categoriesCount.textContent) || 0;
+                                categoriesCount.textContent = Math.max(0, currentCount - 1);
+                            }
+                            
+                            // Check if no categories left
+                            const categoriesGrid = document.querySelector('#categories-panel .categories-grid');
+                            if (categoriesGrid && categoriesGrid.children.length === 0) {
+                                categoriesGrid.innerHTML = `
+                                    <div class="empty-categories">
+                                        <div class="empty-state">
+                                            <i class="fas fa-tags empty-icon" aria-hidden="true"></i>
+                                            <h3>No Categories</h3>
+                                            <p>Create categories to organize your products</p>
+                                            <button class="btn-add-first" onclick="openAddCategoryModal()">
+                                                <i class="fas fa-plus" aria-hidden="true"></i>
+                                                Add First Category
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        }
+                        
+                        showNotification(data.message, 'success');
+                    } else {
+                        showNotification(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting category:', error);
+                    showNotification('An error occurred while deleting the category. Please try again.', 'error');
+                })
+                .finally(() => {
+                    // Restore button state
+                    deleteBtn.innerHTML = originalContent;
+                    deleteBtn.disabled = false;
+                });
+            }
+        } catch (error) {
+            console.error('Error deleting category:', error);
+            showNotification('An error occurred while deleting the category. Please try again.', 'error');
+        }
+    }
+
+    function openAddSupplierModal() {
+        try {
+            const modal = document.getElementById('addSupplierModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.setAttribute('aria-hidden', 'false');
+                
+                // Focus on first input
+                setTimeout(() => {
+                    const firstInput = modal.querySelector('.form-input');
+                    if (firstInput) firstInput.focus();
+                }, 100);
+            }
+        } catch (error) {
+            console.error('Error opening add supplier modal:', error);
+        }
+    }
+
+    function closeAddSupplierModal() {
+        try {
+            const modal = document.getElementById('addSupplierModal');
+            if (modal) {
+                modal.classList.remove('active');
+                modal.setAttribute('aria-hidden', 'true');
+                
+                // Reset form
+                document.getElementById('addSupplierForm').reset();
+                
+                // Reset any error states
+                document.querySelectorAll('.form-input, .form-textarea').forEach(input => {
+                    input.classList.remove('error');
+                });
+            }
+        } catch (error) {
+            console.error('Error closing add supplier modal:', error);
+        }
+    }
+
+    function submitAddSupplier(event) {
+        event.preventDefault();
+        
+        try {
+            const form = event.target;
+            const submitBtn = document.getElementById('submit-supplier-btn');
+            const formData = new FormData(form);
+            
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            // Validate form
+            const requiredFields = ['fourn_nom', 'fourn_telephone', 'fourn_email', 'fourn_adresse'];
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                const value = formData.get(field);
+                if (!value || value.trim() === '') {
+                    const input = document.querySelector(`[name="${field}"]`);
+                    if (input) {
+                        input.classList.add('error');
+                        isValid = false;
+                    }
+                }
+            });
+            
+            if (!isValid) {
+                showNotification('Please fill in all required fields', 'warning');
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                return;
+            }
+            
+            // Submit form to Django backend
+            fetch('', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    showNotification('Supplier added successfully!', 'success');
+                    closeAddSupplierModal();
+                    // Refresh the page to show the new supplier
+                    location.reload();
+                } else {
+                    throw new Error('Failed to add supplier');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding supplier:', error);
+                showNotification('Error adding supplier. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Reset loading state
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            });
+            
+        } catch (error) {
+            console.error('Error submitting supplier:', error);
+            showNotification('Error adding supplier. Please try again.', 'error');
+            
+            const submitBtn = document.getElementById('submit-supplier-btn');
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
+    }
+
+    function editSupplier(supplierId) {
+        try {
+            console.log('editSupplier called with ID:', supplierId);
+            
+            // Get supplier data from the supplier card
+            const supplierCard = document.querySelector(`[data-supplier-id="${supplierId}"]`);
+            if (!supplierCard) {
+                console.error('Supplier card not found for ID:', supplierId);
+                showNotification('Supplier not found', 'error');
+                return;
+            }
+            
+            console.log('Supplier card found:', supplierCard);
+            
+            // Extract supplier information from the card
+            const supplierName = supplierCard.querySelector('.supplier-name');
+            const supplierPhone = supplierCard.querySelector('.supplier-phone');
+            const supplierEmail = supplierCard.querySelector('.supplier-email');
+            const supplierAddress = supplierCard.querySelector('.supplier-address');
+            
+            if (!supplierName || !supplierPhone || !supplierEmail || !supplierAddress) {
+                console.error('Required supplier elements not found:', {
+                    name: !!supplierName,
+                    phone: !!supplierPhone,
+                    email: !!supplierEmail,
+                    address: !!supplierAddress
+                });
+                showNotification('Error: Supplier data structure incomplete', 'error');
+                return;
+            }
+            
+            const nameValue = supplierName.textContent;
+            const phoneValue = supplierPhone.textContent;
+            const emailValue = supplierEmail.textContent;
+            const addressValue = supplierAddress.textContent;
+            
+            console.log('Extracted supplier values:', {
+                name: nameValue,
+                phone: phoneValue,
+                email: emailValue,
+                address: addressValue
+            });
+            
+            // Set form values
+            document.getElementById('edit-supplier-id').value = supplierId;
+            document.getElementById('edit-supplier-name').value = nameValue;
+            document.getElementById('edit-supplier-phone').value = phoneValue;
+            document.getElementById('edit-supplier-email').value = emailValue;
+            document.getElementById('edit-supplier-address').value = addressValue;
+            
+            // Open the edit modal
+            openEditSupplierModal();
+            
+        } catch (error) {
+            console.error('Error editing supplier:', error);
+            showNotification('Error loading supplier data', 'error');
+        }
+    }
+
+    function openEditSupplierModal() {
+        try {
+            console.log('openEditSupplierModal called');
+            const modal = document.getElementById('editSupplierModal');
+            console.log('Edit supplier modal element:', modal);
+            
+            if (modal) {
+                console.log('Edit supplier modal found, adding active class');
+                modal.classList.add('active');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+                
+                // Focus first input
+                setTimeout(() => {
+                    const firstInput = modal.querySelector('.form-input');
+                    if (firstInput) firstInput.focus();
+                }, 100);
+                
+                console.log('Edit supplier modal should now be visible');
+            } else {
+                console.error('Edit supplier modal element not found!');
+            }
+        } catch (error) {
+            console.error('Error opening edit supplier modal:', error);
+        }
+    }
+
+    function closeEditSupplierModal() {
+        try {
+            const modal = document.getElementById('editSupplierModal');
+            if (modal) {
+                modal.classList.remove('active');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+                
+                // Reset form
+                document.getElementById('editSupplierForm').reset();
+                
+                // Reset any error states
+                document.querySelectorAll('.form-input, .form-textarea').forEach(input => {
+                    input.classList.remove('error');
+                });
+            }
+        } catch (error) {
+            console.error('Error closing edit supplier modal:', error);
+        }
+    }
+
+    function submitEditSupplier(event) {
+        event.preventDefault();
+        
+        try {
+            const form = event.target;
+            const submitBtn = document.getElementById('submit-edit-supplier-btn');
+            const formData = new FormData(form);
+            
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            // Validate form
+            const requiredFields = ['fourn_nom', 'fourn_telephone', 'fourn_email', 'fourn_adresse'];
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                const value = formData.get(field);
+                if (!value || value.trim() === '') {
+                    const input = document.querySelector(`[name="${field}"]`);
+                    if (input) {
+                        input.classList.add('error');
+                        isValid = false;
+                    }
+                }
+            });
+            
+            if (!isValid) {
+                showNotification('Please fill in all required fields', 'warning');
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                return;
+            }
+            
+            // Submit form to Django backend
+            fetch('', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    showNotification('Supplier updated successfully!', 'success');
+                    closeEditSupplierModal();
+                    // Refresh the page to show the updated supplier
+                    location.reload();
+                } else {
+                    throw new Error('Failed to update supplier');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating supplier:', error);
+                showNotification('Error updating supplier. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Reset loading state
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            });
+            
+        } catch (error) {
+            console.error('Error submitting supplier edit:', error);
+            showNotification('Error updating supplier. Please try again.', 'error');
+            
+            const submitBtn = document.getElementById('submit-edit-supplier-btn');
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
+    }
+
+    function deleteSupplier(supplierId) {
+        try {
+            if (confirm('Are you sure you want to delete this supplier?')) {
+                // Show loading state
+                const deleteBtn = document.querySelector(`[onclick="deleteSupplier(${supplierId})"]`);
+                const originalContent = deleteBtn.innerHTML;
+                deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i>';
+                deleteBtn.disabled = true;
+                
+                // Make AJAX request to delete supplier
+                fetch(`/delete-supplier/${supplierId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the supplier card from the UI
+                        const supplierCard = document.querySelector(`[data-supplier-id="${supplierId}"]`);
+                        if (supplierCard) {
+                            supplierCard.remove();
+                            
+                            // Update suppliers count
+                            const suppliersCount = document.getElementById('suppliers-stat');
+                            if (suppliersCount) {
+                                const currentCount = parseInt(suppliersCount.textContent) || 0;
+                                suppliersCount.textContent = Math.max(0, currentCount - 1);
+                            }
+                            
+                            // Check if no suppliers left
+                            const suppliersGrid = document.querySelector('#suppliers-panel .suppliers-grid');
+                            if (suppliersGrid && suppliersGrid.children.length === 0) {
+                                suppliersGrid.innerHTML = `
+                                    <div class="empty-suppliers">
+                                        <div class="empty-state">
+                                            <i class="fas fa-building empty-icon" aria-hidden="true"></i>
+                                            <h3>No Suppliers</h3>
+                                            <p>Add suppliers to manage your product sources</p>
+                                            <button class="btn-add-first" onclick="openAddSupplierModal()">
+                                                <i class="fas fa-plus" aria-hidden="true"></i>
+                                                Add First Supplier
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        }
+                        
+                        showNotification(data.message, 'success');
+                    } else {
+                        showNotification(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting supplier:', error);
+                    showNotification('An error occurred while deleting the supplier. Please try again.', 'error');
+                })
+                .finally(() => {
+                    // Restore button state
+                    deleteBtn.innerHTML = originalContent;
+                    deleteBtn.disabled = false;
+                });
+            }
+        } catch (error) {
+            console.error('Error deleting supplier:', error);
+            showNotification('An error occurred while deleting the supplier. Please try again.', 'error');
+        }
+    }
+
+    function testModal() {
+        try {
+            console.log('Test modal function called');
+            showNotification('Test modal function called', 'info');
+            
+            // Test if modal elements exist
+            const modal = document.getElementById('addProductModal');
+            const form = document.getElementById('addProductForm');
+            const title = document.getElementById('modal-title');
+            const submitBtn = document.getElementById('submit-product-btn');
+            
+            console.log('Modal elements check:', {
+                modal: !!modal,
+                form: !!form,
+                title: !!title,
+                submitBtn: !!submitBtn
+            });
+            
+            if (modal) {
+                console.log('Modal classes:', modal.className);
+                console.log('Modal style:', modal.style.cssText);
+            }
+            
+        } catch (error) {
+            console.error('Error in test modal:', error);
+        }
+    }
+
+    // Supplier search helper functions
+    function showSupplierSearchResults(searchTerm, hasResults) {
+        try {
+            const suppliersGrid = document.querySelector('.suppliers-grid');
+            if (!suppliersGrid) return;
+            
+            // Remove existing no-results message
+            const existingNoResults = suppliersGrid.querySelector('.no-search-results');
+            if (existingNoResults) {
+                existingNoResults.remove();
+            }
+            
+            // If search term exists but no results, show message
+            if (searchTerm && !hasResults) {
+                const noResultsDiv = document.createElement('div');
+                noResultsDiv.className = 'no-search-results';
+                noResultsDiv.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search empty-icon" aria-hidden="true"></i>
+                        <h3>No Suppliers Found</h3>
+                        <p>No suppliers match your search: "<strong>${searchTerm}</strong>"</p>
+                        <button class="btn-clear-search" onclick="clearSupplierSearch()">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                            Clear Search
+                        </button>
+                    </div>
+                `;
+                suppliersGrid.appendChild(noResultsDiv);
+            }
+        } catch (error) {
+            console.error('Error showing supplier search results:', error);
+        }
+    }
+
+    function clearSupplierSearch() {
+        try {
+            const searchInput = document.getElementById('supplier-search');
+            const clearButton = document.getElementById('supplier-search-clear');
+            const suppliersGrid = document.querySelector('.suppliers-grid');
+            
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
+            }
+            
+            if (clearButton) {
+                clearButton.style.display = 'none';
+            }
+            
+            // Show all supplier cards
+            const supplierCards = document.querySelectorAll('.supplier-card');
+            supplierCards.forEach(card => {
+                card.style.display = '';
+            });
+            
+            // Remove no results message
+            const noResults = suppliersGrid?.querySelector('.no-search-results');
+            if (noResults) {
+                noResults.remove();
+            }
+        } catch (error) {
+            console.error('Error clearing supplier search:', error);
+        }
+    }
+
+    // Category search helper functions
+    function showCategorySearchResults(searchTerm, hasResults) {
+        try {
+            const categoriesGrid = document.querySelector('.categories-grid');
+            if (!categoriesGrid) return;
+            
+            // Remove existing no-results message
+            const existingNoResults = categoriesGrid.querySelector('.no-search-results');
+            if (existingNoResults) {
+                existingNoResults.remove();
+            }
+            
+            // If search term exists but no results, show message
+            if (searchTerm && !hasResults) {
+                const noResultsDiv = document.createElement('div');
+                noResultsDiv.className = 'no-search-results';
+                noResultsDiv.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search empty-icon" aria-hidden="true"></i>
+                        <h3>No Categories Found</h3>
+                        <p>No categories match your search: "<strong>${searchTerm}</strong>"</p>
+                        <button class="btn-clear-search" onclick="clearCategorySearch()">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                            Clear Search
+                        </button>
+                    </div>
+                `;
+                categoriesGrid.appendChild(noResultsDiv);
+            }
+        } catch (error) {
+            console.error('Error showing category search results:', error);
+        }
+    }
+
+    function clearCategorySearch() {
+        try {
+            const searchInput = document.getElementById('category-search');
+            const clearButton = document.getElementById('category-search-clear');
+            const categoriesGrid = document.querySelector('.categories-grid');
+            
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
+            }
+            
+            if (clearButton) {
+                clearButton.style.display = 'none';
+            }
+            
+            // Show all category cards
+            const categoryCards = document.querySelectorAll('.category-card');
+            categoryCards.forEach(card => {
+                card.style.display = '';
+            });
+            
+            // Remove no results message
+            const noResults = categoriesGrid?.querySelector('.no-search-results');
+            if (noResults) {
+                noResults.remove();
+            }
+        } catch (error) {
+            console.error('Error clearing category search:', error);
+        }
+    }
 </script>
 {% endblock %}

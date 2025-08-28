@@ -1,116 +1,317 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block title %}Veterinary Management{% endblock %}</title>
-{% load static %}
-<link rel="stylesheet" href="{% static 'core/css/base.css' %}">
-<link href="dist/pattern.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Veterinary Management System - Professional animal care management">
+    <meta name="author" content="Veterinary Management System">
+    <title>{% block title %}Veterinary Management{% endblock %}</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" as="style">
+    <link rel="preload" href="{% static 'core/css/colors.css' %}" as="style">
+    <link rel="preload" href="{% static 'core/css/base.css' %}" as="style">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- Additional CSS -->
+    {% block extra_css %}{% endblock %}
 </head>
 <body class="{% if user.profile.theme == 'light' %}light-theme{% endif %}">
-    <!-- Barre latérale -->
-    <div class="sidebar">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" role="navigation" aria-label="Main navigation">
         <div class="logo-section">
-            <span class="logo-icon"><i class="fa-solid fa-user-doctor"></i></span>
+            <span class="logo-icon" aria-label="Veterinary Management System">
+                <i class="fa-solid fa-user-doctor" aria-hidden="true"></i>
+            </span>
         </div>
         
-        <ul class="nav-menu">
-            <li class="nav-item">
-                <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                    <span class="nav-icon"><i class="fa-solid fa-house-chimney"></i></span>
+        <ul class="nav-menu" role="menubar">
+            <li class="nav-item" role="none">
+                <a href="{% url 'dashboard' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
+                   title="Dashboard"
+                   role="menuitem"
+                   aria-label="Go to Dashboard">
+                    <span class="nav-icon" aria-hidden="true">
+                        <i class="fa-solid fa-house-chimney"></i>
+                    </span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="{% url 'clients' %}" class="nav-link {% if request.resolver_match.url_name == 'clients' %}active{% endif %}">
-                    <span class="nav-icon"><i class="fa-solid fa-user"></i></span>
+            
+            <li class="nav-item" role="none">
+                <a href="{% url 'clients' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'clients' %}active{% endif %}" 
+                   title="Clients"
+                   role="menuitem"
+                   aria-label="Manage Clients">
+                    <span class="nav-icon" aria-hidden="true">
+                        <i class="fa-solid fa-user"></i>
+                    </span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="{% url 'animals' %}" class="nav-link {% if request.resolver_match.url_name == 'animals' %}active{% endif %}">
-                    <span class="nav-icon"><i class="fa-solid fa-paw"></i></span>
+            
+            <li class="nav-item" role="none">
+                <a href="{% url 'animals' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'animals' %}active{% endif %}" 
+                   title="Animals"
+                   role="menuitem"
+                   aria-label="Manage Animals">
+                    <span class="nav-icon" aria-hidden="true">
+                        <i class="fa-solid fa-paw"></i>
+                    </span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="{% url 'reservation' %}" class="nav-link {% if request.resolver_match.url_name == 'reservation' %}active{% endif %}">
-                    <span class="nav-icon"><i class="fa-regular fa-calendar-check"></i></span>
+            
+            <li class="nav-item" role="none">
+                <a href="{% url 'reservation' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'reservation' %}active{% endif %}" 
+                   title="Reservations"
+                   role="menuitem"
+                   aria-label="Manage Reservations">
+                    <span class="nav-icon" aria-hidden="true">
+                        <i class="fa-regular fa-calendar-check"></i>
+                    </span>
                 </a>
             </li>
+            
             {% if user.profile.role == 'admin' or user.profile.role == 'veterinarian' or user.profile.role == 'assistant' or user.is_superuser %}
-            <li class="nav-item">
-                <a href="{% url 'stock' %}" class="nav-link {% if request.resolver_match.url_name == 'stock' %}active{% endif %}">
-                    <span class="nav-icon"><i class="fa-solid fa-boxes-stacked"></i></span>
+            <li class="nav-item" role="none">
+                <a href="{% url 'stock' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'stock' %}active{% endif %}" 
+                   title="Stock"
+                   role="menuitem"
+                   aria-label="Manage Stock">
+                    <span class="nav-icon" aria-hidden="true">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </span>
+                </a>
+            </li>
+            
+            <li class="nav-item" role="none">
+                <a href="{% url 'store' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'store' %}active{% endif %}" 
+                   title="Store"
+                   role="menuitem"
+                   aria-label="Access Store">
+                    <span class="nav-icon" aria-hidden="true">
+                        <i class="fa-solid fa-store"></i>
+                    </span>
                 </a>
             </li>
             {% endif %}
+            
             {% if user.profile.role == 'admin' or user.is_superuser %}
-            <li class="nav-item">
-                <a href="{% url 'users' %}" class="nav-link {% if request.resolver_match.url_name == 'users' %}active{% endif %}">
-                    <span class="nav-icon"><i class="fa-solid fa-user-plus"></i></span>
+            <li class="nav-item" role="none">
+                <a href="{% url 'users' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'users' %}active{% endif %}" 
+                   title="Users"
+                   role="menuitem"
+                   aria-label="Manage Users">
+                    <span class="nav-icon" aria-hidden="true">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </span>
                 </a>
             </li>
             {% endif %}
+            
             {% if user.profile.role == 'admin' or user.profile.role == 'veterinarian' or user.is_superuser %}
-            <li class="nav-item">
-                <a href="{% url 'report' %}" class="nav-link {% if request.resolver_match.url_name == 'report' %}active{% endif %}">
-                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+            <li class="nav-item" role="none">
+                <a href="{% url 'report' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'report' %}active{% endif %}" 
+                   title="Reports"
+                   role="menuitem"
+                   aria-label="View Reports">
+                    <span class="nav-icon" aria-hidden="true">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </span>
                 </a>
             </li>
             {% endif %}
+            
             {% if user.profile.role == 'admin' or user.is_superuser %}
-            <li class="nav-item">
-                <a href="{% url 'facture' %}" class="nav-link {% if request.resolver_match.url_name == 'facture' %}active{% endif %}">
-                    <span class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+            <li class="nav-item" role="none">
+                <a href="{% url 'facture' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'facture' %}active{% endif %}" 
+                   title="Invoices"
+                   role="menuitem"
+                   aria-label="Manage Invoices">
+                    <span class="nav-icon" aria-hidden="true">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                    </span>
                 </a>
             </li>
             {% endif %}
-            <li class="nav-item">
-                <a href="{% url 'settings' %}" class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
-                    <span class="nav-icon"><i class="fa-solid fa-gear"></i></span>
+            
+            <li class="nav-item" role="none">
+                <a href="{% url 'settings' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}" 
+                   title="Settings"
+                   role="menuitem"
+                   aria-label="Access Settings">
+                    <span class="nav-icon" aria-hidden="true">
+                        <i class="fa-solid fa-gear"></i>
+                    </span>
                 </a>
             </li>
-            <li class="nav-item_last">
-                <a href="{% url 'logout' %}" class="nav-link">
-                    <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+            
+            <li class="nav-item nav-item_last" role="none">
+                <a href="{% url 'logout' %}" 
+                   class="nav-link" 
+                   title="Logout"
+                   role="menuitem"
+                   aria-label="Logout from system">
+                    <span class="nav-icon" aria-hidden="true">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </span>
                 </a>
             </li>
         </ul>
-    </div>
+    </nav>
 
-    <!-- Contenu principal -->
-    <div class="main-content">
-        <!-- En-tête -->
-        <div class="top-header">
+    <!-- Main Content Area -->
+    <main class="main-content" role="main">
+        <!-- Top Header -->
+        <header class="top-header" role="banner">
             <div class="welcome-section">
-              <div class="user-avatar">
+                <div class="user-avatar" aria-label="User avatar">
                     {{ user.get_full_name|default:user.username|first|upper }}
                 </div>
                 <div class="welcome-text">
-                    Bienvenue, {% if user.profile.role == 'admin' or user.is_superuser %}Dr.{% endif %} {{ user.get_full_name|default:user.username }} !
+                    <span class="welcome-fr" lang="fr">
+                        Bienvenue, {% if user.profile.role == 'admin' or user.is_superuser %}Dr.{% endif %} {{ user.get_full_name|default:user.username }} !
+                    </span>
+                    <span class="welcome-en" lang="en" style="display: none;">
+                        Welcome, {% if user.profile.role == 'admin' or user.is_superuser %}Dr.{% endif %} {{ user.get_full_name|default:user.username }}!
+                    </span>
                 </div>
             </div>
-
-            <div class="Notification">
-                <div class="notification-icon">
-                    <i class="fa-solid fa-bell"></i>
-                </div>
+            
+            <div class="language-switcher" role="group" aria-label="Language selection">
+                <button class="lang-btn active" 
+                        onclick="switchLanguage('fr')" 
+                        data-lang="fr"
+                        aria-pressed="true"
+                        aria-label="Switch to French">
+                    <i class="fa-solid fa-flag" aria-hidden="true"></i> FR
+                </button>
+                <button class="lang-btn" 
+                        onclick="switchLanguage('en')" 
+                        data-lang="en"
+                        aria-pressed="false"
+                        aria-label="Switch to English">
+                    <i class="fa-solid fa-flag" aria-hidden="true"></i> EN
+                </button>
             </div>
             
             <div class="quick-stats">
                 <div class="quick-stat-item">
-                    <a href="{% url 'logout' %}" style="text-decoration: none; color: inherit;" onclick="return confirm('Êtes-vous sûr de vouloir vous déconnecter ?');">
-                        <div class="stat-avatar"><i class="fa-solid fa-right-from-bracket"></i></div>
+                    <a href="{% url 'logout' %}" 
+                       class="logout-link"
+                       onclick="return confirm('Êtes-vous sûr de vouloir vous déconnecter ? / Are you sure you want to logout?');"
+                       aria-label="Logout from system">
+                        <div class="stat-avatar" title="Logout">
+                            <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+                        </div>
                     </a>
                 </div>
             </div>
-        </div>
+        </header>
 
-        <!-- Zone de contenu -->
+        <!-- Content Area -->
         <div class="content-area">
             <div class="dashboard-container">
                 {% block content %}{% endblock %}
             </div>
         </div>
-    </div>
+    </main>
+    
+    <!-- Language Switcher JavaScript -->
+    <script>
+        // Language switching functionality
+        function switchLanguage(lang) {
+            try {
+                // Update button states
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-pressed', 'false');
+                });
+                
+                const activeBtn = event.target;
+                activeBtn.classList.add('active');
+                activeBtn.setAttribute('aria-pressed', 'true');
+                
+                // Show/hide language-specific content
+                if (lang === 'fr') {
+                    document.querySelectorAll('.welcome-fr').forEach(el => el.style.display = 'inline');
+                    document.querySelectorAll('.welcome-en').forEach(el => el.style.display = 'none');
+                    document.documentElement.lang = 'fr';
+                } else {
+                    document.querySelectorAll('.welcome-fr').forEach(el => el.style.display = 'none');
+                    document.querySelectorAll('.welcome-en').forEach(el => el.style.display = 'inline');
+                    document.documentElement.lang = 'en';
+                }
+                
+                // Store language preference
+                localStorage.setItem('preferred-language', lang);
+                
+                // Update page title for accessibility
+                const currentTitle = document.title;
+                if (lang === 'fr' && !currentTitle.includes('|')) {
+                    document.title = currentTitle + ' | FR';
+                } else if (lang === 'en' && !currentTitle.includes('|')) {
+                    document.title = currentTitle + ' | EN';
+                }
+                
+            } catch (error) {
+                console.error('Error switching language:', error);
+            }
+        }
+        
+        // Initialize language system
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const savedLang = localStorage.getItem('preferred-language') || 'fr';
+                switchLanguage(savedLang);
+                
+                // Update button state
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-pressed', 'false');
+                    if (btn.dataset.lang === savedLang) {
+                        btn.classList.add('active');
+                        btn.setAttribute('aria-pressed', 'true');
+                    }
+                });
+                
+                // Add keyboard navigation for sidebar
+                const sidebar = document.querySelector('.sidebar');
+                const navLinks = sidebar.querySelectorAll('.nav-link');
+                
+                navLinks.forEach((link, index) => {
+                    link.addEventListener('keydown', function(e) {
+                        if (e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            const nextLink = navLinks[index + 1] || navLinks[0];
+                            nextLink.focus();
+                        } else if (e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            const prevLink = navLinks[index - 1] || navLinks[navLinks.length - 1];
+                            prevLink.focus();
+                        }
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error initializing language system:', error);
+            }
+        });
+    </script>
+    
+    <!-- Additional JavaScript -->
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

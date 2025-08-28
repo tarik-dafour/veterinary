@@ -1,69 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - VetStock</title>
-{% load static %}
-<link rel="stylesheet" href="{% static 'core/css/login.css' %}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to Veterinary Management System - Professional animal care management">
+    <meta name="author" content="Veterinary Management System">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Login - Veterinary Management System</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" as="style">
+    
+    <!-- Stylesheets -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'core/css/login.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="login-container">
-       <!-- Left Side - Decorative -->
-        <div class="left-side">
+    <main class="login-container" role="main" aria-label="Login to Veterinary Management System">
+        <!-- Left Side - Decorative -->
+        <section class="left-side" role="banner" aria-label="System introduction">
             <div class="veterinarian-illustration">
-                <div class="vet-scene">
-                    <i class="fa-solid fa-paw"></i>
+                <div class="vet-scene" aria-hidden="true">
+                    <i class="fa-solid fa-paw" aria-label="Veterinary care symbol"></i>
                 </div>
             </div>
-            <h1 class="title">Gestion de Stock Vétérinaire</h1>
-            <div class="icon-veterinary">
-                <div class="icon-circle">
-                    <i class="fa-solid fa-user-plus"></i>
+            <h1 class="title" lang="fr">Gestion de Stock Vétérinaire</h1>
+            <div class="icon-veterinary" aria-label="System features">
+                <div class="icon-circle" aria-label="User management">
+                    <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
                 </div>
-                <div class="icon-circle">
-                    <i class="fa-solid fa-medkit"></i>
+                <div class="icon-circle" aria-label="Medical supplies">
+                    <i class="fa-solid fa-medkit" aria-hidden="true"></i>
                 </div>
-                <div class="icon-circle">
-                    <i class="fa-solid fa-cubes-stacked"></i>
+                <div class="icon-circle" aria-label="Inventory management">
+                    <i class="fa-solid fa-cubes-stacked" aria-hidden="true"></i>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Right Side - Login Form -->
-        <div class="right-side">
+        <section class="right-side" role="main" aria-label="Login form">
             <div class="login-card">
-                <h2>Connexion</h2>
+                <header class="login-header">
+                    <h2 lang="fr">Connexion</h2>
+                    <p class="login-subtitle">Access your veterinary management dashboard</p>
+                </header>
                 
+                <!-- Error Messages -->
                 {% if messages %}
-                    <div class="error-messages">
+                    <div class="error-messages" role="alert" aria-live="polite">
                         <ul>
                             {% for message in messages %}
-                                <li>{{ message }}</li>
+                                <li class="message message-{{ message.tags|default:'error' }}">
+                                    <i class="fa-solid fa-exclamation-triangle" aria-hidden="true"></i>
+                                    {{ message }}
+                                </li>
                             {% endfor %}
                         </ul>
                     </div>
                 {% endif %}
 
-                <form method="post">
+                <!-- Login Form -->
+                <form method="post" class="login-form" aria-label="Login form">
                     {% csrf_token %}
+                    
                     <div class="form-group">
-                        <label for="username">Nom d'utilisateur</label>
-                        <input type="text" name="username" id="username" required>
+                        <label for="username" lang="fr">Nom d'utilisateur</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-user input-icon" aria-hidden="true"></i>
+                            <input 
+                                type="text" 
+                                name="username" 
+                                id="username" 
+                                required 
+                                autocomplete="username"
+                                aria-describedby="username-help"
+                                placeholder="Enter your username"
+                                lang="en">
+                        </div>
+                        <div id="username-help" class="help-text">Enter your registered username</div>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="password">Mot de passe</label>
-                        <input type="password" name="password" id="password" required>
+                        <label for="password" lang="fr">Mot de passe</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+                            <input 
+                                type="password" 
+                                name="password" 
+                                id="password" 
+                                required 
+                                autocomplete="current-password"
+                                aria-describedby="password-help"
+                                placeholder="Enter your password"
+                                lang="en">
+                            <button 
+                                type="button" 
+                                class="password-toggle" 
+                                aria-label="Toggle password visibility"
+                                onclick="togglePasswordVisibility()">
+                                <i class="fa-solid fa-eye" id="password-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div id="password-help" class="help-text">Enter your secure password</div>
                     </div>
-                    <button class="login-btn" type="submit">Se connecter</button>
+                    
+                    <button class="login-btn" type="submit" lang="fr">
+                        <i class="fa-solid fa-sign-in-alt" aria-hidden="true"></i>
+                        Se connecter
+                    </button>
                 </form>
+                
+                <!-- Additional Links -->
+                <footer class="login-footer">
+                    <p class="system-info">
+                        <i class="fa-solid fa-shield-alt" aria-hidden="true"></i>
+                        Secure login system
+                    </p>
+                </footer>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
+
+    <!-- Login Enhancement Script -->
+    <script>
+        // Password visibility toggle
+        function togglePasswordVisibility() {
+            try {
+                const passwordInput = document.getElementById('password');
+                const passwordEye = document.getElementById('password-eye');
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    passwordEye.className = 'fa-solid fa-eye-slash';
+                    passwordEye.setAttribute('aria-label', 'Hide password');
+                } else {
+                    passwordInput.type = 'password';
+                    passwordEye.className = 'fa-solid fa-eye';
+                    passwordEye.setAttribute('aria-label', 'Show password');
+                }
+            } catch (error) {
+                console.error('Error toggling password visibility:', error);
+            }
+        }
+        
+        // Form validation and enhancement
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const loginForm = document.querySelector('.login-form');
+                const usernameInput = document.getElementById('username');
+                const passwordInput = document.getElementById('password');
+                const loginBtn = document.querySelector('.login-btn');
+                
+                // Add loading state to form
+                loginForm.addEventListener('submit', function(e) {
+                    try {
+                        // Show loading state
+                        loginBtn.disabled = true;
+                        loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Connecting...';
+                        loginBtn.setAttribute('aria-label', 'Connecting to system...');
+                        
+                        // Add loading class to form
+                        loginForm.classList.add('loading');
+                        
+                    } catch (error) {
+                        console.error('Error handling form submission:', error);
+                    }
+                });
+                
+                // Real-time validation
+                usernameInput.addEventListener('input', function() {
+                    validateField(this, 'username');
+                });
+                
+                passwordInput.addEventListener('input', function() {
+                    validateField(this, 'password');
+                });
+                
+                // Add keyboard navigation
+                usernameInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        passwordInput.focus();
+                    }
+                });
+                
+                passwordInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        loginForm.submit();
+                    }
+                });
+                
+                // Focus management
+                usernameInput.focus();
+                
+            } catch (error) {
+                console.error('Error initializing login form:', error);
+            }
+        });
+        
+        // Field validation
+        function validateField(field, fieldType) {
+            try {
+                const value = field.value.trim();
+                const formGroup = field.closest('.form-group');
+                const helpText = formGroup.querySelector('.help-text');
+                
+                // Remove existing validation classes
+                formGroup.classList.remove('valid', 'invalid');
+                
+                if (value.length === 0) {
+                    formGroup.classList.add('invalid');
+                    helpText.textContent = `${fieldType === 'username' ? 'Username' : 'Password'} is required`;
+                    helpText.className = 'help-text error';
+                } else if (fieldType === 'username' && value.length < 3) {
+                    formGroup.classList.add('invalid');
+                    helpText.textContent = 'Username must be at least 3 characters';
+                    helpText.className = 'help-text error';
+                } else if (fieldType === 'password' && value.length < 6) {
+                    formGroup.classList.add('invalid');
+                    helpText.textContent = 'Password must be at least 6 characters';
+                    helpText.className = 'help-text error';
+                } else {
+                    formGroup.classList.add('valid');
+                    helpText.textContent = fieldType === 'username' ? 'Username looks good!' : 'Password looks good!';
+                    helpText.className = 'help-text success';
+                }
+            } catch (error) {
+                console.error('Error validating field:', error);
+            }
+        }
+        
+        // Add visual feedback for form interactions
+        document.addEventListener('focusin', function(e) {
+            try {
+                if (e.target.matches('input, button')) {
+                    e.target.closest('.form-group, .login-btn')?.classList.add('focused');
+                }
+            } catch (error) {
+                console.error('Error handling focus:', error);
+            }
+        });
+        
+        document.addEventListener('focusout', function(e) {
+            try {
+                if (e.target.matches('input, button')) {
+                    e.target.closest('.form-group, .login-btn')?.classList.remove('focused');
+                }
+            } catch (error) {
+                console.error('Error handling blur:', error);
+            }
+        });
+    </script>
 </body>
 </html>

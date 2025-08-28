@@ -1,156 +1,431 @@
-/* --- CSS Variables --- */
+/* ================================
+   🌟 Premium Veterinary Dashboard CSS
+   ================================ */
+
+/* 🎨 Colors - Updated to match Store page */
 :root {
-  --font-family: "Kumbh Sans", sans-serif;
-  --bg-dark: #111827;
-  --bg-card: #1f2937;
-  --border-color: #374151;
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
-  --accent-blue: #3b82f6;
-  --accent-purple: #8b5cf6;
-  --accent-green: #22c55e;
-  --accent-orange: #f97316;
+    --primary-blue: #38B2FF;
+    --secondary-blue: #1E90FF;
+    --dark-blue: #1A73E8;
+    --accent-green: #10B981;
+    --accent-orange: #F59E0B;
+    --accent-red: #F56565;
+    --main-text: #1A202C;
+    --sub-text: #718096;
+    --light-bg: #F7FAFC;
+    --border-color: #E2E8F0;
+    --card-bg: #FFFFFF;
+    --hover-bg: #F8FAFC;
 }
 
-/* --- Dashboard Layout --- */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  padding: 1.5rem;
+
+
+/* 📊 Dashboard Grid - Updated for Row-based Layout */
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+    height: 100%    ;
+    margin: 0;
+    padding: 30px;
+    box-sizing: border-box;
 }
 
-/* --- KPI Cards --- */
+/* Dashboard Rows */
+.dashboard-row {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Row 1: KPI Cards - 4 columns */
+.kpi-row {
+    grid-template-columns: repeat(4, 1fr);
+    min-height: 120px;
+}
+
+/* Row 2: Appointments | Calendar - 2 columns */
+.appointments-calendar-row {
+    grid-template-columns: 1fr 1fr;
+    min-height: 400px;
+}
+
+/* Row 3: Low Stock | Quick Actions - 2 columns */
+.stock-actions-row {
+    grid-template-columns: 1fr 1fr;
+    min-height: 300px;
+}
+
+/* Row 4: Team Members - 1 column (full width) */
+.team-row {
+    grid-template-columns: 1fr;
+    min-height: 200px;
+}
+
+/* 🔹 Cards & Panels Base */
+.kpi-card,
+.appointments-panel,
+.calendar-panel,
+.low-stock-panel,
+.quick-actions-panel,
+.team-panel {
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+    background: var(--card-bg);
+    backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.kpi-card:hover,
+.appointments-panel:hover,
+.calendar-panel:hover,
+.low-stock-panel:hover,
+.quick-actions-panel:hover,
+.team-panel:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    border-color: var(--primary-blue);
+}
+
+/* 🔥 Animated Gradient Border - Updated colors */
 .kpi-card {
-  background-color: var(--bg-card);
-  border-radius: 16px;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border: 1px solid var(--border-color);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
 }
 
-.kpi-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+.kpi-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue), var(--dark-blue), var(--accent-green));
+    background-size: 400% 400%;
+    animation: borderGradient 8s ease infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
 }
 
+@keyframes borderGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 📌 KPI Content */
 .kpi-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: 100%;
+}
+
+.kpi-content {
+    flex: 1;
+}
+
+.kpi-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    box-shadow: 6px 6px 12px rgba(0,0,0,0.1),
+                -6px -6px 12px rgba(255,255,255,0.7);
+    border-radius: 12px;
+    padding: 8px;
+    display: inline-block;
+    color: var(--primary-blue);
+    background: var(--light-bg);
 }
 
 .kpi-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
+    font-size: 14px;
+    color: var(--sub-text);
+    font-weight: 500;
+    margin-bottom: 8px;
 }
 
 .kpi-value {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--main-text);
+    animation: fadeInUp 0.8s ease both;
+    margin-bottom: 8px;
 }
 
-.kpi-trend .trend-label {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
+.kpi-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
-.kpi-header > div:last-child i {
-  font-size: 2rem;
-  opacity: 0.8;
+.trend-label {
+    font-size: 12px;
+    color: var(--sub-text);
 }
 
-/* KPI Card Color Variants */
-.kpi-card.clients { border-left: 5px solid var(--accent-blue); }
-.kpi-card.clients i { color: var(--accent-blue); }
-
-.kpi-card.total-clients { border-left: 5px solid var(--accent-purple); }
-.kpi-card.total-clients i { color: var(--accent-purple); }
-
-.kpi-card.animals { border-left: 5px solid var(--accent-green); }
-.kpi-card.animals i { color: var(--accent-green); }
-
-.kpi-card.reservations { border-left: 5px solid var(--accent-orange); }
-.kpi-card.reservations i { color: var(--accent-orange); }
-
-/* --- Main Content Sections --- */
-.chart-section {
-  padding: 0 1.5rem 1.5rem;
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.bottom-section {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+/* 🗂 Panels */
+.panel-header {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 12px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue), var(--dark-blue));
 }
 
-@media (min-width: 992px) {
-  .bottom-section {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.panel-content {
+    font-size: 14px;
+    color: var(--sub-text);
 }
 
-/* --- Shared Card Styles for Sections --- */
-.team-section,
-.calendar-card,
-.list-card {
-  background-color: var(--bg-card);
-  padding: 1.5rem;
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
+/* Appointments Panel */
+.appointments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-/* --- Team Section --- */
-.team-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
+.appointment-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--light-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
 }
 
-.team-members {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 1.5rem;
+.appointment-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--primary-blue);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.appointment-info {
+    flex: 1;
+}
+
+.appointment-service {
+    font-weight: 600;
+    color: var(--main-text);
+    font-size: 14px;
+}
+
+.appointment-client {
+    font-size: 12px;
+    color: var(--sub-text);
+}
+
+.appointment-time {
+    font-weight: 600;
+    color: var(--primary-blue);
+    font-size: 12px;
+}
+
+.appointments-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--primary-blue);
+    color: white;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 12px;
+}
+
+/* Calendar Panel */
+#calendar {
+    height: 600px;
+    width: 100%;
+    min-height: 600px;
+    color: #000000;
+}
+
+.calendar-panel {
+    min-height: 650px;
+}
+
+/* Calendar Text Styling */
+#calendar .fc {
+    color: #000000;
+}
+
+#calendar .fc-toolbar-title {
+    color: #000000;
+    font-weight: 600;
+}
+
+#calendar .fc-button {
+    color: #000000;
+}
+
+#calendar .fc-daygrid-day-number {
+    color: #000000;
+}
+
+#calendar .fc-col-header-cell {
+    color: #000000;
+    font-weight: 600;
+}
+
+#calendar .fc-event {
+    color: #000000;
+}
+
+#calendar .fc-event-title {
+    color: #000000;
+}
+
+#calendar .fc-day-today {
+    background-color: rgba(56, 178, 255, 0.1);
+}
+
+#calendar .fc-daygrid-day.fc-day-today {
+    background-color: rgba(56, 178, 255, 0.1);
+}
+
+/* Low Stock Panel */
+.stock-alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.stock-alert-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--light-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.stock-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--accent-orange);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.stock-info {
+    flex: 1;
+}
+
+.stock-name {
+    font-weight: 600;
+    color: var(--main-text);
+    font-size: 14px;
+}
+
+.stock-details {
+    font-size: 12px;
+    color: var(--sub-text);
+}
+
+.quantity-badge {
+    background: var(--accent-red);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Quick Actions Panel */
+.quick-actions-content {
+    padding: 10px 0;
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    background: var(--light-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--main-text);
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.action-item:hover {
+    background: var(--hover-bg);
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(56, 178, 255, 0.15);
+}
+
+.action-item i {
+    font-size: 24px;
+    color: var(--primary-blue);
+}
+
+.action-item span {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Team Panel */
+.team-members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
 }
 
 .team-member {
-  background-color: #273142;
-  border-radius: 12px;
-  padding: 1.5rem 1rem;
-  text-align: center;
-  border: 1px solid transparent;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-}
-
-.team-member:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-  border-color: var(--accent-blue);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: var(--light-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
 }
 
 .member-avatar {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8rem;
-  font-weight: bold;
-  position: relative;
-  margin: 0 auto 1rem;
-  border: 3px solid var(--bg-card);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 48px;
+    height: 48px;
+    background: var(--primary-blue);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
+    position: relative;
 }
 
 .status-dot {
@@ -159,191 +434,223 @@
     right: 2px;
     width: 12px;
     height: 12px;
-    background-color: var(--accent-green);
+    background: var(--accent-green);
     border-radius: 50%;
-    border: 2px solid var(--bg-card);
-    box-shadow: 0 0 5px var(--accent-green);
+    border: 2px solid white;
+}
+
+.member-info {
+    flex: 1;
 }
 
 .member-name {
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--text-primary);
-  margin-bottom: 0.25rem;
+    font-weight: 600;
+    color: var(--main-text);
+    font-size: 14px;
+    margin-bottom: 4px;
 }
 
 .member-role {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  font-style: italic;
+    font-size: 12px;
+    color: var(--sub-text);
 }
 
-.appointments-today {
-  margin-top: 1.5rem;
-  background-color: #111827;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: var(--text-secondary);
-  font-weight: 500;
+/* Empty States */
+.appointment-item.empty,
+.stock-alert-item.empty,
+.team-member.empty {
+    opacity: 0.6;
+    text-align: center;
+    justify-content: center;
 }
 
-.appointments-today i {
-  color: var(--accent-blue);
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .kpi-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .appointments-calendar-row,
+    .stock-actions-row {
+        grid-template-columns: 1fr;
+    }
+    
+    #calendar {
+        height: 550px;
+        min-height: 550px;
+    }
+    
+    .calendar-panel {
+        min-height: 600px;
+    }
 }
 
-/* --- List Card (Appointments & Stock) --- */
-.list-card {
-  display: flex;
-  flex-direction: column;
+@media (max-width: 768px) {
+    .dashboard {
+        gap: 25px;
+        padding: 25px;
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .dashboard-row {
+        gap: 25px;
+    }
+    
+    .kpi-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .team-members-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #calendar {
+        height: 450px;
+        min-height: 450px;
+    }
+    
+    .calendar-panel {
+        min-height: 500px;
+    }
+    
+    .kpi-card,
+    .appointments-panel,
+    .calendar-panel,
+    .low-stock-panel,
+    .quick-actions-panel,
+    .team-panel {
+        padding: 20px;
+    }
+    
+    .kpi-icon {
+        font-size: 24px;
+        padding: 6px;
+    }
+    
+    .kpi-value {
+        font-size: 20px;
+    }
+    
+    .panel-header {
+        font-size: 14px;
+        padding: 8px;
+    }
 }
 
-.list-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
+@media (max-width: 480px) {
+    .dashboard {
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .dashboard-row {
+        gap: 20px;
+    }
+    
+    #calendar {
+        height: 400px;
+        min-height: 400px;
+    }
+    
+    .calendar-panel {
+        min-height: 450px;
+    }
+    
+    .kpi-card,
+    .appointments-panel,
+    .calendar-panel,
+    .low-stock-panel,
+    .quick-actions-panel,
+    .team-panel {
+        padding: 18px;
+        border-radius: 16px;
+    }
+    
+    .kpi-icon {
+        font-size: 20px;
+        padding: 5px;
+    }
+    
+    .kpi-value {
+        font-size: 18px;
+    }
+    
+    .panel-header {
+        font-size: 13px;
+        padding: 6px;
+    }
+    
+    .action-item {
+        padding: 12px;
+    }
+    
+    .action-item i {
+        font-size: 20px;
+    }
 }
 
-.list-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem 0.5rem;
-  border-bottom: 1px solid var(--border-color);
-  transition: background-color 0.2s ease;
-  border-radius: 8px;
+/* Dashboard Notification Styles */
+.dashboard-notification {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e2e8f0;
+    padding: 1rem 1.5rem;
+    z-index: 2000;
+    max-width: 400px;
+    animation: slideInRight 0.3s ease-out;
+    color: #000000;
 }
 
-.list-item:last-child {
-  border-bottom: none;
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #000000;
 }
 
-.list-item:hover {
-  background-color: #374151;
+.notification-content i {
+    font-size: 1.25rem;
+    color: #000000;
 }
 
-.item-icon {
-  font-size: 1.2rem;
-  color: var(--accent-blue);
-  width: 30px;
-  text-align: center;
-}
-
-.item-info {
-  flex-grow: 1;
-}
-
-.item-name {
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.item-subtitle {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-}
-
-.item-time {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-.list-card .list-item:nth-child(odd) .item-time {
-  color: var(--accent-green);
-}
-
-/* --- Calendar Section --- */
-.calendar-section {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-top: 2rem;
-}
-
-.calendar-section h2 {
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border-color);
-  color: var(--text-primary);
-  font-size: 1.5rem;
-}
-
-/* --- FullCalendar Custom Styling --- */
-.fc {
-    /* General Text */
-    color: var(--border-color);
-    --fc-border-color: var(--border-color);
-    --fc-today-bg-color: rgba(59, 130, 246, 0.15); /* Semi-transparent blue */
-    --fc-event-bg-color: var(--accent-blue);
-    --fc-event-border-color: var(--accent-blue);
-    --fc-event-text-color: var(--bg-dark);
-}
-
-/* Toolbar */
-.fc .fc-toolbar-title {
-    font-size: 1.25rem !important;
-    color: var(--text-primary);
-}
-
-.fc .fc-button {
-    background: var(--bg-card-hover);
-    border: 1px solid var(--border-color) !important;
-    color: var(--text-primary) !important;
-    box-shadow: none !important;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.fc .fc-button:hover, .fc .fc-button:active {
-    background-color: var(--bg-card-hover) !important;
-    color: var(--text-primary);
-}
-
-.fc .fc-button-primary:not(:disabled).fc-button-active {
-    background-color: var(--accent-blue) !important;
-    color: var(--bg-dark) !important;
-    border-color: var(--accent-blue) !important;
-}
-
-/* Calendar Views */
-.fc .fc-daygrid-day-frame, .fc .fc-col-header-cell {
-    border: 1px solid var(--border-color);
-}
-
-.fc .fc-daygrid-day-number {
-    color: var(--text-secondary);
-    padding: 0.5em;
-}
-
-.fc .fc-day-today .fc-daygrid-day-number {
-    font-weight: bold;
-    color: var(--accent-blue);
-}
-
-.fc-theme-standard .fc-list-day-cushion, .fc-theme-standard .fc-list-table th {
-    background-color: var(--bg-dark);
-}
-
-/* Events */
-.fc-event {
-    border-radius: 4px !important;
-    padding: 3px 6px !important;
+.notification-content span {
+    color: #000000;
     font-weight: 500;
+}
+
+.notification-info i {
+    color: #000000;
+}
+
+.notification-success i {
+    color: #000000;
+}
+
+.notification-error i {
+    color: #000000;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: #000000;
     cursor: pointer;
-    transition: opacity 0.2s ease;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    margin-left: auto;
+    transition: all 0.2s ease;
 }
 
-.fc-event:hover {
-    opacity: 0.85;
-}
-
-.fc-daygrid-event-dot {
-    border-color: var(--accent-purple) !important;
-}
-
-.fc-h-event {
-    border: 1px solid var(--accent-blue) !important;
-    background-color: var(--accent-blue) !important;
+.notification-close:hover {
+    background: #f7fafc;
+    color: #000000;
 }

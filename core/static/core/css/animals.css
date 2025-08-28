@@ -1,4 +1,4 @@
-/* Page Header */
+/* Page Header - Same as Reservation */
 .page-header {
     background: linear-gradient(135deg, #3a7bd5, #00d2ff);
     padding: 30px 35px;
@@ -8,22 +8,37 @@
     animation: fadeSlide 0.8s ease;
 }
 
-/* Animations */
-@keyframes fadeSlide {
-    from { opacity: 0; transform: translateY(-15px); }
-    to { opacity: 1; transform: translateY(0); }
+.page-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+.page-title i {
+    font-size: 1.4rem;
+    color: rgba(255, 255, 255, 0.9);
 }
 
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+.page-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    font-weight: 400;
 }
-/* Form Elements */
+
+/* Container - Full Width */
+.container {
+    width: 100%;
+    margin: 0;
+    padding: 0 2rem;
+    max-width: none;
+}
+
+/* Form Elements - Same as Reservation */
 .form-title {
     font-size: 1.6rem;
     font-weight: 700;
@@ -44,16 +59,6 @@
 .form-group {
     margin-bottom: 1.5rem;
 }
-
-/* Form Actions */
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-    justify-content: flex-start;
-    align-items: center;
-}
-
 .form-label {
     display: block;
     margin-bottom: 0.5rem;
@@ -75,20 +80,35 @@
 }
 
 .form-input:focus,
-.form-select:focus {
+.form-select:focus,
+.form-textarea:focus {
     border-color: #3a7bd5;
     box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.15);
     outline: none;
 }
 
-/* Table Card */
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Form Actions - Same as Reservation */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* Table Card - Same as Reservation */
 .table-card {
     background: #fff;
     border-radius: 16px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
     scrollbar-width: thin;
     scrollbar-color: #3a7bd5 #f9f9f9;
-    overflow-y: auto;
+    overflow-y: auto;   
     overflow-x: auto;   
     max-height: 700px;
     max-width: 100%;
@@ -96,7 +116,7 @@
     animation: fadeIn 0.8s ease-out;
 }
 
-/* ✅ Scrollbar Style */
+/* Scrollbar Style */
 .table-card::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -116,6 +136,7 @@
     background: #2d62aa;
 }
 
+/* Table Header - Same as Reservation */
 .table-header {
     padding: 1.8rem;
     display: flex;
@@ -126,7 +147,7 @@
     gap: 1.2rem;
 }
 
-/* Table */
+/* Table - Same as Reservation */
 .table {
     width: 100%;
     border-collapse: separate;
@@ -163,19 +184,7 @@
     text-align: center;
 }
 
-/* Status Badges */
-.status-badge {
-    padding: 0.5rem 1rem;
-    border-radius: 25px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: inline-block;
-    text-align: center;
-    min-width: 120px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.08);
-}
-
-/* Buttons */
+/* Buttons - Same as Reservation */
 .btn {
     padding: 0.8rem 1.5rem;
     border-radius: 10px;
@@ -244,7 +253,7 @@
     gap: 0.8rem;
 }
 
-/* Search Form */
+/* Search Form - Same as Reservation */
 .search-form {
     display: flex;
     gap: 0.8rem;
@@ -267,7 +276,7 @@
     outline: none;
 }
 
-/* Modal */
+/* Modal - Same as Reservation */
 .modal {
     display: none;
     position: fixed;
@@ -324,7 +333,7 @@
     color: #333;
 }
 
-/* Empty State */
+/* Empty State - Same as Reservation */
 .empty-state {
     text-align: center;
     padding: 4rem 1.5rem;
@@ -350,15 +359,7 @@
     margin: 0 auto;
 }
 
-/* Date Time Column */
-.date-time {
-    white-space: nowrap;
-    font-family: monospace;
-    font-size: 0.9rem;
-    color: #555;
-}
-
-/* Animations */
+/* Animations - Same as Reservation */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -376,11 +377,11 @@
 
 @keyframes pulse {
     0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 0.8; }
     100% { transform: scale(1); opacity: 1; }
 }
 
-/* Responsive */
+/* Responsive Design - Same as Reservation */
 @media (max-width: 1024px) {
     .content-grid {
         grid-template-columns: 1fr;

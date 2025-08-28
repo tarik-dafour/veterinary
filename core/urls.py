@@ -9,6 +9,8 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('reservation/', views.reservation, name='reservation'),
     path('stock/', views.stock, name='stock'),
+    path('store/', views.store, name='store'),
+
     path('logs/', views.logs, name='logs'),
     path('clients/', views.clients, name='clients'),
     path('animals/', views.animals, name='animals'),
@@ -27,4 +29,8 @@ urlpatterns = [
     path('export/users/csv/', views.export_users_csv, name='export_users_csv'),
     # All appointments API
     path('api/all_appointments/', views.all_appointments, name='all_appointments'),
+    # Category Management URLs
+    path('delete-category/<int:category_id>/', views.delete_category, name='delete_category'),
+    # Supplier Management URLs
+    path('delete-supplier/<int:supplier_id>/', views.delete_supplier, name='delete_supplier'),
 ]

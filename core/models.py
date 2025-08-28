@@ -112,6 +112,8 @@ class Produit(models.Model):
     date_ajout = models.DateField(auto_now_add=True)
     date_expiration = models.DateField()
     fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='products/', blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.nom
