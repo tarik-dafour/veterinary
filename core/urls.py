@@ -24,6 +24,10 @@ urlpatterns = [
     path('export/products/csv/', views.export_products_csv, name='export_products_csv'),
     path('export/logs/csv/', views.export_logs_csv, name='export_logs_csv'),
     path('export/reports/csv/', views.export_reports_csv, name='export_reports_csv'),
+    # Bulk Delete URLs
+    path('bulk-delete/clients/', views.bulk_delete_clients, name='bulk_delete_clients'),
+    path('bulk-delete/animals/', views.bulk_delete_animals, name='bulk_delete_animals'),
+    path('bulk-delete/reservations/', views.bulk_delete_reservations, name='bulk_delete_reservations'),
     # User Management URLs
     path('users/', views.users, name='users'),
     path('export/users/csv/', views.export_users_csv, name='export_users_csv'),

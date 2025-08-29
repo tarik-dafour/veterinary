@@ -10,6 +10,7 @@ from .utils import log_login, log_logout, log_create, log_update, log_delete, lo
 from django.db import models
 import csv
 from django.http import HttpResponse
+import json
 
 def root_redirect(request):
     return redirect('dashboard')
@@ -1178,6 +1179,161 @@ def delete_supplier(request, supplier_id):
             return JsonResponse({
                 'success': False,
                 'message': f'Error deleting supplier: {str(e)}'
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    }, status=405)
+
+@login_required(login_url='login')
+def bulk_delete_clients(request):
+    """
+    Bulk delete multiple clients via AJAX request
+    """
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            client_ids = data.get('client_ids', [])
+            
+            if not client_ids:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'No clients selected for deletion'
+                }, status=400)
+            
+            # Get the clients to delete
+            clients_to_delete = Client.objects.filter(id__in=client_ids)
+            
+            if not clients_to_delete.exists():
+                return JsonResponse({
+                    'success': False,
+                    'message': 'No valid clients found for deletion'
+                }, status=400)
+            
+            # Log the deletion of each client
+            deleted_clients = []
+            for client in clients_to_delete:
+                client_name = f"{client.prenom} {client.nom}"
+                deleted_clients.append(client_name)
+                log_delete(request, 'Client', client.id, f"Client: {client_name}")
+            
+            # Delete all selected clients
+            clients_to_delete.delete()
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Successfully deleted {len(deleted_clients)} client(s): {", ".join(deleted_clients)}'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Error deleting clients: {str(e)}'
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    }, status=405)
+
+
+@login_required(login_url='login')
+def bulk_delete_animals(request):
+    """
+    Bulk delete multiple animals via AJAX request
+    """
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            animal_ids = data.get('animal_ids', [])
+            
+            if not animal_ids:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'No animals selected for deletion'
+                }, status=400)
+            
+            # Get the animals to delete
+            animals_to_delete = Animal.objects.filter(id__in=animal_ids)
+            
+            if not animals_to_delete.exists():
+                return JsonResponse({
+                    'success': False,
+                    'message': 'No valid animals found for deletion'
+                }, status=400)
+            
+            # Log the deletion of each animal
+            deleted_animals = []
+            for animal in animals_to_delete:
+                animal_name = animal.nom
+                deleted_animals.append(animal_name)
+                log_delete(request, 'Animal', animal.id, f"Animal: {animal_name}")
+            
+            # Delete all selected animals
+            animals_to_delete.delete()
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Successfully deleted {len(deleted_animals)} animal(s): {", ".join(deleted_animals)}'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Error deleting animals: {str(e)}'
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    }, status=405)
+
+
+@login_required(login_url='login')
+def bulk_delete_reservations(request):
+    """
+    Bulk delete multiple reservations via AJAX request
+    """
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            reservation_ids = data.get('reservation_ids', [])
+            
+            if not reservation_ids:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'No reservations selected for deletion'
+                }, status=400)
+            
+            # Get the reservations to delete
+            reservations_to_delete = Reservation.objects.filter(id__in=reservation_ids)
+            
+            if not reservations_to_delete.exists():
+                return JsonResponse({
+                    'success': False,
+                    'message': 'No valid reservations found for deletion'
+                }, status=400)
+            
+            # Log the deletion of each reservation
+            deleted_reservations = []
+            for reservation in reservations_to_delete:
+                reservation_info = f"{reservation.client.prenom} {reservation.client.nom} - {reservation.animal.nom}"
+                deleted_reservations.append(reservation_info)
+                log_delete(request, 'Reservation', reservation.id, f"Reservation: {reservation_info}")
+            
+            # Delete all selected reservations
+            reservations_to_delete.delete()
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Successfully deleted {len(deleted_reservations)} reservation(s): {", ".join(deleted_reservations)}'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Error deleting reservations: {str(e)}'
             }, status=500)
     
     return JsonResponse({

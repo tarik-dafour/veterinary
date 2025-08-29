@@ -158,6 +158,8 @@
                 </a>
             </li>
             
+
+            
             <li class="nav-item nav-item_last" role="none">
                 <a href="{% url 'logout' %}" 
                    class="nav-link" 
@@ -181,37 +183,44 @@
                     {{ user.get_full_name|default:user.username|first|upper }}
                 </div>
                 <div class="welcome-text">
-                    <span class="welcome-fr" lang="fr">
-                        Bienvenue, {% if user.profile.role == 'admin' or user.is_superuser %}Dr.{% endif %} {{ user.get_full_name|default:user.username }} !
+                    <span class="welcome-fr" lang="fr" style="display: none;">
+                        Bienvenue, {% if user.profile.role == 'admin' or user.is_superuser %}Dr.{% endif %} {{ user.get_full_name|default:user.username }}!
                     </span>
-                    <span class="welcome-en" lang="en" style="display: none;">
+                    <span class="welcome-en" lang="en">
                         Welcome, {% if user.profile.role == 'admin' or user.is_superuser %}Dr.{% endif %} {{ user.get_full_name|default:user.username }}!
                     </span>
                 </div>
             </div>
             
-            <div class="language-switcher" role="group" aria-label="Language selection">
-                <button class="lang-btn active" 
-                        onclick="switchLanguage('fr')" 
-                        data-lang="fr"
-                        aria-pressed="true"
-                        aria-label="Switch to French">
-                    <i class="fa-solid fa-flag" aria-hidden="true"></i> FR
-                </button>
-                <button class="lang-btn" 
-                        onclick="switchLanguage('en')" 
-                        data-lang="en"
-                        aria-pressed="false"
-                        aria-label="Switch to English">
-                    <i class="fa-solid fa-flag" aria-hidden="true"></i> EN
-                </button>
-            </div>
+
+            
+
             
             <div class="quick-stats">
+                <!-- Language Switcher -->
+                <div class="quick-stat-item">
+                    <div class="language-switcher" role="group" aria-label="Language selection">
+                        <button class="lang-btn" 
+                                onclick="switchLanguage('fr')" 
+                                data-lang="fr"
+                                aria-pressed="false"
+                                aria-label="Switch to French">
+                            <i class="fa-solid fa-flag" aria-hidden="true"></i> FR
+                        </button>
+                        <button class="lang-btn active" 
+                                onclick="switchLanguage('en')" 
+                                data-lang="en"
+                                aria-pressed="true"
+                                aria-label="Switch to English">
+                            <i class="fa-solid fa-flag" aria-hidden="true"></i> EN
+                        </button>
+                    </div>
+                </div>
+                
                 <div class="quick-stat-item">
                     <a href="{% url 'logout' %}" 
                        class="logout-link"
-                       onclick="return confirm('Êtes-vous sûr de vouloir vous déconnecter ? / Are you sure you want to logout?');"
+                       onclick="return confirm('Are you sure you want to logout?');"
                        aria-label="Logout from system">
                         <div class="stat-avatar" title="Logout">
                             <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
@@ -230,63 +239,11 @@
     </main>
     
     <!-- Language Switcher JavaScript -->
+    <script src="{% static 'core/js/language-switcher.js' %}"></script>
     <script>
-        // Language switching functionality
-        function switchLanguage(lang) {
-            try {
-                // Update button states
-                document.querySelectorAll('.lang-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.setAttribute('aria-pressed', 'false');
-                });
-                
-                const activeBtn = event.target;
-                activeBtn.classList.add('active');
-                activeBtn.setAttribute('aria-pressed', 'true');
-                
-                // Show/hide language-specific content
-                if (lang === 'fr') {
-                    document.querySelectorAll('.welcome-fr').forEach(el => el.style.display = 'inline');
-                    document.querySelectorAll('.welcome-en').forEach(el => el.style.display = 'none');
-                    document.documentElement.lang = 'fr';
-                } else {
-                    document.querySelectorAll('.welcome-fr').forEach(el => el.style.display = 'none');
-                    document.querySelectorAll('.welcome-en').forEach(el => el.style.display = 'inline');
-                    document.documentElement.lang = 'en';
-                }
-                
-                // Store language preference
-                localStorage.setItem('preferred-language', lang);
-                
-                // Update page title for accessibility
-                const currentTitle = document.title;
-                if (lang === 'fr' && !currentTitle.includes('|')) {
-                    document.title = currentTitle + ' | FR';
-                } else if (lang === 'en' && !currentTitle.includes('|')) {
-                    document.title = currentTitle + ' | EN';
-                }
-                
-            } catch (error) {
-                console.error('Error switching language:', error);
-            }
-        }
-        
-        // Initialize language system
+        // Initialize keyboard navigation for sidebar
         document.addEventListener('DOMContentLoaded', function() {
             try {
-                const savedLang = localStorage.getItem('preferred-language') || 'fr';
-                switchLanguage(savedLang);
-                
-                // Update button state
-                document.querySelectorAll('.lang-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.setAttribute('aria-pressed', 'false');
-                    if (btn.dataset.lang === savedLang) {
-                        btn.classList.add('active');
-                        btn.setAttribute('aria-pressed', 'true');
-                    }
-                });
-                
                 // Add keyboard navigation for sidebar
                 const sidebar = document.querySelector('.sidebar');
                 const navLinks = sidebar.querySelectorAll('.nav-link');
@@ -306,7 +263,7 @@
                 });
                 
             } catch (error) {
-                console.error('Error initializing language system:', error);
+                console.error('Error initializing sidebar navigation:', error);
             }
         });
     </script>

@@ -75,7 +75,7 @@
                     <button class="cart-button" onclick="openCartModal()" aria-label="Open shopping cart">
                         <i class="fas fa-shopping-cart" aria-hidden="true"></i>
                         <span class="cart-count" id="cart-count" aria-label="Items in cart">0</span>
-                        <span class="cart-total" id="cart-total" aria-label="Cart total">$0.00</span>
+                        <span class="cart-total" id="cart-total" aria-label="Cart total">0.00 MAD</span>
                     </button>
                 </div>
             </div>
@@ -110,7 +110,7 @@
                 <p class="product-description">{{ produit.description|default:"No description available" }}</p>
                 
                 <div class="product-details">
-                    <div class="product-price">${{ produit.prix }}</div>
+                    <div class="product-price">{{ produit.prix }} MAD</div>
                     <div class="product-stock">
                         <span class="stock-label">Stock:</span>
                         {% if produit.quantite > 0 %}
@@ -196,7 +196,7 @@
         <div class="cart-modal-footer">
             <div class="cart-summary">
                 <div class="cart-summary-label">Total:</div>
-                <div class="cart-summary-total" id="modal-cart-total" aria-label="Cart total amount">$0.00</div>
+                <div class="cart-summary-total" id="modal-cart-total" aria-label="Cart total amount">0.00 MAD</div>
             </div>
             
             <div class="cart-actions">
@@ -494,14 +494,14 @@ function updateCart() {
             console.log('Updated cart count:', totalItems);
         }
         if (cartTotal) {
-            cartTotal.textContent = '$' + total.toFixed(2);
-            console.log('Updated cart total:', '$' + total.toFixed(2));
+                    cartTotal.textContent = total.toFixed(2) + ' MAD';
+        console.log('Updated cart total:', total.toFixed(2) + ' MAD');
         }
         
         // Update modal cart
         if (modalCartTotal) {
-            modalCartTotal.textContent = '$' + total.toFixed(2);
-            console.log('Updated modal cart total:', '$' + total.toFixed(2));
+                    modalCartTotal.textContent = total.toFixed(2) + ' MAD';
+        console.log('Updated modal cart total:', total.toFixed(2) + ' MAD');
         }
         
         // Save cart to localStorage
@@ -542,7 +542,7 @@ function updateCartModal() {
                 const itemElement = document.createElement('div');
                 itemElement.className = 'cart-item';
                 itemElement.setAttribute('role', 'listitem');
-                itemElement.setAttribute('aria-label', `${item.name}, quantity: ${item.quantity}, price: $${item.price.toFixed(2)}`);
+                itemElement.setAttribute('aria-label', `${item.name}, quantity: ${item.quantity}, price: ${item.price.toFixed(2)} MAD`);
                 
                 itemElement.innerHTML = `
                     <div class="cart-item-header">
@@ -551,7 +551,7 @@ function updateCartModal() {
                         </div>
                         <div class="cart-item-info">
                             <div class="cart-item-name">${item.name}</div>
-                            <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+                            <div class="cart-item-price">${item.price.toFixed(2)} MAD</div>
                         </div>
                     </div>
                     <div class="cart-item-controls">
@@ -699,4 +699,8 @@ function testCart() {
 // Log that test function is available
 console.log('Cart test function available: testCart()');
 </script>
+
+<!-- Language Switcher Script -->
+<script src="{% static 'core/js/language-switcher.js' %}"></script>
+
 {% endblock %}

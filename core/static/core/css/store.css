@@ -1,6 +1,6 @@
 /* Store Header */
 .store-header {
-    background: linear-gradient(135deg, #38B2FF, #1E90FF, #1A73E8);
+    background: linear-gradient(135deg, #013847, #43C0AF);
     color: #fff;
     padding: 2rem;
     border-radius: 18px;
@@ -21,18 +21,19 @@
 }
 
 .store-title {
-    font-size: 2rem;
-    margin-bottom: 0.3rem;
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    color: #fff;
+    gap: 1rem;
 }
 
 .store-subtitle {
-    font-size: 1rem;
-    opacity: 0.9;
-    color: #fff;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    font-weight: 400;
 }
 
 .store-header-actions {

@@ -1,32 +1,26 @@
-/* ================================
-   🌟 Premium Veterinary Dashboard CSS
-   ================================ */
-
-/* 🎨 Colors - Updated to match Store page */
+/* 🎨 Colors - Updated to match new color scheme */
 :root {
-    --primary-blue: #38B2FF;
-    --secondary-blue: #1E90FF;
-    --dark-blue: #1A73E8;
-    --accent-green: #10B981;
-    --accent-orange: #F59E0B;
-    --accent-red: #F56565;
-    --main-text: #1A202C;
-    --sub-text: #718096;
-    --light-bg: #F7FAFC;
-    --border-color: #E2E8F0;
+    --primary-blue: #43C0AF;
+    --secondary-blue: #71B5D8;
+    --dark-blue: #013847;
+    --accent-green: #43C0AF;
+    --accent-orange: #CDA37B;
+    --accent-red: #FF6B6B;
+    --main-text: #013847;
+    --sub-text: #71B5D8;
+    --light-bg: #E2ECED;
+    --border-color: #E2ECED;
     --card-bg: #FFFFFF;
-    --hover-bg: #F8FAFC;
+    --hover-bg: #E2ECED;
 }
 
-
-
-/* 📊 Dashboard Grid - Updated for Row-based Layout */
+/* Dashboard Grid - Updated for Row-based Layout */
 .dashboard {
     display: flex;
     flex-direction: column;
     gap: 30px;
     width: 100%;
-    height: 100%    ;
+    height: 100%;
     margin: 0;
     padding: 30px;
     box-sizing: border-box;
@@ -131,8 +125,7 @@
 .kpi-icon {
     font-size: 28px;
     margin-bottom: 10px;
-    box-shadow: 6px 6px 12px rgba(0,0,0,0.1),
-                -6px -6px 12px rgba(255,255,255,0.7);
+    box-shadow: 6px 6px 12px rgba(0,0,0,0.1), -6px -6px 12px rgba(255,255,255,0.7);
     border-radius: 12px;
     padding: 8px;
     display: inline-block;
@@ -179,7 +172,7 @@
     padding: 10px;
     border-radius: 12px;
     color: #fff;
-    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue), var(--dark-blue));
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
 }
 
 .panel-content {
@@ -242,7 +235,7 @@
     align-items: center;
     gap: 8px;
     padding: 12px;
-    background: var(--primary-blue);
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
     color: white;
     border-radius: 8px;
     font-size: 14px;
@@ -273,7 +266,7 @@
 }
 
 #calendar .fc-button {
-    color: #000000;
+    color: #fff;
 }
 
 #calendar .fc-daygrid-day-number {
@@ -294,11 +287,11 @@
 }
 
 #calendar .fc-day-today {
-    background-color: rgba(56, 178, 255, 0.1);
+    background-color: rgba(253, 253, 253, 0.527);
 }
 
 #calendar .fc-daygrid-day.fc-day-today {
-    background-color: rgba(56, 178, 255, 0.1);
+    background-color: rgba(67, 192, 175, 0.1);
 }
 
 /* Low Stock Panel */
@@ -342,7 +335,7 @@
 
 .stock-details {
     font-size: 12px;
-    color: var(--sub-text);
+    color: var(--main-text);
 }
 
 .quantity-badge {
@@ -464,185 +457,47 @@
     justify-content: center;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .kpi-row {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .appointments-calendar-row,
-    .stock-actions-row {
-        grid-template-columns: 1fr;
-    }
-    
-    #calendar {
-        height: 550px;
-        min-height: 550px;
-    }
-    
-    .calendar-panel {
-        min-height: 600px;
-    }
-}
-
-@media (max-width: 768px) {
-    .dashboard {
-        gap: 25px;
-        padding: 25px;
-        height: auto;
-        min-height: 100vh;
-    }
-    
-    .dashboard-row {
-        gap: 25px;
-    }
-    
-    .kpi-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .quick-actions {
-        grid-template-columns: 1fr;
-    }
-    
-    .team-members-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    #calendar {
-        height: 450px;
-        min-height: 450px;
-    }
-    
-    .calendar-panel {
-        min-height: 500px;
-    }
-    
-    .kpi-card,
-    .appointments-panel,
-    .calendar-panel,
-    .low-stock-panel,
-    .quick-actions-panel,
-    .team-panel {
-        padding: 20px;
-    }
-    
-    .kpi-icon {
-        font-size: 24px;
-        padding: 6px;
-    }
-    
-    .kpi-value {
-        font-size: 20px;
-    }
-    
-    .panel-header {
-        font-size: 14px;
-        padding: 8px;
-    }
-}
-
-@media (max-width: 480px) {
-    .dashboard {
-        gap: 20px;
-        padding: 20px;
-    }
-    
-    .dashboard-row {
-        gap: 20px;
-    }
-    
-    #calendar {
-        height: 400px;
-        min-height: 400px;
-    }
-    
-    .calendar-panel {
-        min-height: 450px;
-    }
-    
-    .kpi-card,
-    .appointments-panel,
-    .calendar-panel,
-    .low-stock-panel,
-    .quick-actions-panel,
-    .team-panel {
-        padding: 18px;
-        border-radius: 16px;
-    }
-    
-    .kpi-icon {
-        font-size: 20px;
-        padding: 5px;
-    }
-    
-    .kpi-value {
-        font-size: 18px;
-    }
-    
-    .panel-header {
-        font-size: 13px;
-        padding: 6px;
-    }
-    
-    .action-item {
-        padding: 12px;
-    }
-    
-    .action-item i {
-        font-size: 20px;
-    }
-}
-
-/* Dashboard Notification Styles */
 .dashboard-notification {
-    position: fixed;
+     position: fixed;
     top: 2rem;
     right: 2rem;
     background: white;
     border-radius: 0.5rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     border: 1px solid #e2e8f0;
+    color: #000000;
     padding: 1rem 1.5rem;
     z-index: 2000;
     max-width: 400px;
     animation: slideInRight 0.3s ease-out;
-    color: #000000;
 }
 
 .notification-content {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: #000000;
 }
 
 .notification-content i {
     font-size: 1.25rem;
-    color: #000000;
-}
-
-.notification-content span {
-    color: #000000;
-    font-weight: 500;
 }
 
 .notification-info i {
-    color: #000000;
+    color: #4299e1;
 }
 
 .notification-success i {
-    color: #000000;
+    color: #48bb78;
 }
 
 .notification-error i {
-    color: #000000;
+    color: #f56565;
 }
 
 .notification-close {
     background: none;
     border: none;
-    color: #000000;
+    color: #718096;
     cursor: pointer;
     padding: 0.25rem;
     border-radius: 0.25rem;
@@ -652,5 +507,25 @@
 
 .notification-close:hover {
     background: #f7fafc;
-    color: #000000;
+    color: #4a5568;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-notification {
+        top: 1rem;
+        right: 1rem;
+        left: 1rem;
+        max-width: none;
+    }
 }

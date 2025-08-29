@@ -3,14 +3,15 @@
 {% block content %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'core/css/animals.css' %}">
+<script src="{% static 'core/js/animals.js' %}"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
    
 <div class="page-header">
-    <h1 class="page-title"><i class="fa-solid fa-paw"></i> Gestion des animaux</h1>
-    <p class="page-subtitle">Gérez les animaux de votre clinique vétérinaire et leurs informations</p>
+    <h1 class="page-title"><i class="fa-solid fa-paw"></i> Animal Management</h1>
+    <p class="page-subtitle">Manage the animals in your veterinary clinic and their information</p>
 </div>
 
 <!-- Edit Animal Modal -->
@@ -18,30 +19,30 @@
 <div id="editAnimalModal" class="modal" style="display: block;">
     <div class="modal-content">
         <span class="close" onclick="closeEditAnimalModal()"><i class="fa-solid fa-xmark"></i></span>
-        <h3><i class="fa-solid fa-edit"></i> Modifier l'Animal</h3>
+        <h3><i class="fa-solid fa-edit"></i> Edit Animal</h3>
         <form id="editAnimalForm" method="post" action="{% url 'animals' %}">
             {% csrf_token %}
             <input type="hidden" name="edit_id" value="{{ edit_animal.id }}">
             <div class="form-group">
-                <label class="form-label">Nom de l'animal</label>
+                <label class="form-label">Animal Name</label>
                 <input type="text" name="nom" class="form-input" value="{{ edit_animal.nom }}" required>
             </div>
             <div class="form-group">
                 <label class="form-label">Type</label>
-                <input type="text" name="type" class="form-input" placeholder="Ex : Chien, Chat, Oiseau" value="{{ edit_animal.type }}" required>
+                <input type="text" name="type" class="form-input" placeholder="Ex: Dog, Cat, Bird" value="{{ edit_animal.type }}" required>
             </div>
             <div class="form-group">
-                <label class="form-label">Race</label>
+                <label class="form-label">Breed</label>
                 <input type="text" name="race" class="form-input" value="{{ edit_animal.race }}" required>
             </div>
             <div class="form-group">
-                <label class="form-label">Âge</label>
+                <label class="form-label">Age</label>
                 <input type="number" name="age" class="form-input" value="{{ edit_animal.age }}" required>
             </div>
             <div class="form-group">
-                <label class="form-label">Propriétaire (Client)</label>
+                <label class="form-label">Owner (Client)</label>
                 <select name="client" class="form-select" required>
-                    <option value="">Sélectionnez un client</option>
+                    <option value="">Select a client</option>
                     {% for client in clients %}
                         <option value="{{ client.id }}" {% if client.id == edit_animal.client.id %}selected{% endif %}>
                             {{ client.prenom }} {{ client.nom }}
@@ -50,8 +51,8 @@
                 </select>
             </div>
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Modifier</button>
-                <a href="{% url 'animals' %}{% if search_query %}?search={{ search_query }}{% endif %}" class="btn btn-secondary">Annuler</a>
+                <button type="submit" class="btn btn-primary">Update</button>
+                <a href="{% url 'animals' %}{% if search_query %}?search={{ search_query }}{% endif %}" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>
@@ -62,9 +63,9 @@
     <!-- Liste des animaux -->
     <div class="table-card">
         <div class="table-header">
-            <h3 class="form-title"><i class="fa-solid fa-paw"></i> Liste des animaux</h3>
+            <h3 class="form-title"><i class="fa-solid fa-paw"></i> Animal List</h3>
             <form method="get" class="search-form">
-                <input type="text" name="search" class="search-input" placeholder="Rechercher des animaux..." 
+                <input type="text" name="search" class="search-input" placeholder="Search for animals..." 
                        value="{{ search_query }}">
                 <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                 {% if search_query %}
@@ -81,102 +82,222 @@
         <div id="animalModal" class="modal">
             <div class="modal-content">
               <span class="close" onclick="closeAnimalModal()"><i class="fa-solid fa-xmark"></i></span>
-              <h3><i class="fa-solid fa-plus"></i> Ajouter un Animal</h3>
+              <h3><i class="fa-solid fa-plus"></i> Add an Animal</h3>
               <form id="addAnimalForm" method="post" action="{% url 'animals' %}">
                   {% csrf_token %}
                   <div class="form-group">
-                      <label class="form-label">Nom de l'animal</label>
+                      <label class="form-label">Animal Name</label>
                       <input type="text" name="nom" class="form-input" required>
                   </div>
                   <div class="form-group">
                       <label class="form-label">Type</label>
-                      <input type="text" name="type" class="form-input" placeholder="Ex : Chien, Chat, Oiseau" required>
+                      <input type="text" name="type" class="form-input" placeholder="Ex: Dog, Cat, Bird" required>
                   </div>
                   <div class="form-group">
-                      <label class="form-label">Race</label>
+                      <label class="form-label">Breed</label>
                       <input type="text" name="race" class="form-input" required>
                   </div>
                   <div class="form-group">
-                      <label class="form-label">Âge</label>
+                      <label class="form-label">Age</label>
                       <input type="number" name="age" class="form-input" required>
                   </div>
                   <div class="form-group">
-                      <label class="form-label">Propriétaire (Client)</label>
+                      <label class="form-label">Owner (Client)</label>
                       <select name="client" class="form-select" required>
-                          <option value="">Sélectionnez un client</option>
+                          <option value="">Select a client</option>
                           {% for client in clients %}
                               <option value="{{ client.id }}">{{ client.prenom }} {{ client.nom }}</option>
                           {% endfor %}
                       </select>
                   </div>
-                  <button type="submit" class="btn btn-primary">Ajouter</button>
+                  <button type="submit" class="btn btn-primary">Add</button>
               </form>
             </div>
         </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th><i class="fa-solid fa-paw"></i> Nom</th>
-                    <th><i class="fa-solid fa-tag"></i> Type</th>
-                    <th><i class="fa-solid fa-dog"></i> Race</th>
-                    <th><i class="fa-solid fa-calendar"></i> Âge</th>
-                    <th><i class="fa-solid fa-user"></i> Propriétaire</th>
-                    <th><i class="fa-solid fa-cog"></i> Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for animal in animals %}
-                <tr>
-                    <td><strong>{{ animal.nom }}</strong></td>
-                    <td>
-                        <span class="animal-type-badge 
-                            {% if animal.type|lower == 'dog' %}type-dog
-                            {% elif animal.type|lower == 'cat' %}type-cat
-                            {% elif animal.type|lower == 'bird' %}type-bird
-                            {% else %}type-other{% endif %}">
-                            {{ animal.type }}
-                        </span>
-                    </td>
-                    <td>{{ animal.race }}</td>
-                    <td>{{ animal.age }} ans</td>
-                    <td>{{ animal.client.prenom }} {{ animal.client.nom }}</td>
-                    <td>
-                        <div class="btn-group">
-                            <a class="btn btn-secondary" href="?edit={{ animal.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </a>
-                            <a class="btn btn-danger" href="?delete={{ animal.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
-                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet animal ?');">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">🐾</div>
-                            <h4>Aucun animal trouvé</h4>
-                            <p>{% if search_query %}Aucun animal ne correspond à vos critères de recherche.{% else %}Commencez par ajouter votre premier animal.{% endif %}</p>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <!-- Bulk Actions Bar -->
+        <div id="bulk-actions-bar" class="bulk-actions-bar" style="display: none;">
+            <div class="bulk-actions-content">
+                <span class="bulk-selection-count">0 animals selected</span>
+                <div class="bulk-actions-buttons">
+                    <button type="button" class="btn btn-danger" onclick="deleteSelectedAnimals()">
+                        <i class="fa-solid fa-trash"></i> Delete Selection
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="clearSelection()">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="selectAll" class="select-all-checkbox" onchange="toggleSelectAll()">
+                        </th>
+                        <th><i class="fa-solid fa-paw"></i> Name</th>
+                        <th><i class="fa-solid fa-tag"></i> Type</th>
+                        <th><i class="fa-solid fa-dog"></i> Breed</th>
+                        <th><i class="fa-solid fa-calendar"></i> Age</th>
+                        <th><i class="fa-solid fa-user"></i> Owner</th>
+                        <th><i class="fa-solid fa-cog"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for animal in animals %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="animal-checkbox" value="{{ animal.id }}" onchange="updateBulkActions()">
+                        </td>
+                        <td><strong>{{ animal.nom }}</strong></td>
+                        <td>
+                            <span class="animal-type-badge 
+                                {% if animal.type|lower == 'dog' %}type-dog
+                                {% elif animal.type|lower == 'cat' %}type-cat
+                                {% elif animal.type|lower == 'bird' %}type-bird
+                                {% else %}type-other{% endif %}">
+                                {{ animal.type }}
+                            </span>
+                        </td>
+                        <td>{{ animal.race }}</td>
+                        <td>{{ animal.age }} years</td>
+                        <td>{{ animal.client.prenom }} {{ animal.client.nom }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a class="btn btn-secondary" href="?edit={{ animal.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a class="btn btn-danger" href="?delete={{ animal.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                                   onclick="return confirm('Are you sure you want to delete this animal?');">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🐾</div>
+                                                            <h4>No animals found</h4>
+                            <p>{% if search_query %}No animals match your search criteria.{% else %}Start by adding your first animal.{% endif %}</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
+<!-- Bulk Selection JavaScript -->
 <script>
-  function openAnimalModal() {
-    document.getElementById("animalModal").style.display = "block";
-  }
-  function closeAnimalModal() {
-    document.getElementById("animalModal").style.display = "none";
-  }
-  function closeEditAnimalModal() {
-    document.getElementById("editAnimalModal").style.display = "none";
-  }
+    // Bulk selection functionality
+    function toggleSelectAll() {
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const animalCheckboxes = document.querySelectorAll('.animal-checkbox');
+        
+        animalCheckboxes.forEach(checkbox => {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+        
+        updateBulkActions();
+    }
+    
+    function updateBulkActions() {
+        const animalCheckboxes = document.querySelectorAll('.animal-checkbox:checked');
+        const bulkActionsBar = document.getElementById('bulk-actions-bar');
+        const bulkSelectionCount = document.querySelector('.bulk-selection-count');
+        const selectAllCheckbox = document.getElementById('selectAll');
+        
+        if (animalCheckboxes.length > 0) {
+            bulkActionsBar.style.display = 'block';
+            bulkSelectionCount.textContent = `${animalCheckboxes.length} animal(s) selected`;
+            
+            // Update select all checkbox state
+            const totalCheckboxes = document.querySelectorAll('.animal-checkbox');
+            selectAllCheckbox.checked = animalCheckboxes.length === totalCheckboxes.length;
+            selectAllCheckbox.indeterminate = animalCheckboxes.length > 0 && animalCheckboxes.length < totalCheckboxes.length;
+        } else {
+            bulkActionsBar.style.display = 'none';
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+        }
+    }
+    
+    function clearSelection() {
+        const animalCheckboxes = document.querySelectorAll('.animal-checkbox');
+        const selectAllCheckbox = document.getElementById('selectAll');
+        
+        animalCheckboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+        updateBulkActions();
+    }
+    
+    function deleteSelectedAnimals() {
+        const animalCheckboxes = document.querySelectorAll('.animal-checkbox:checked');
+        
+        if (animalCheckboxes.length === 0) {
+            alert('Please select animals to delete.');
+            return;
+        }
+        
+        if (!confirm(`Are you sure you want to delete ${animalCheckboxes.length} selected animal(s)?`)) {
+            confirm('Are you sure you want to delete the selected animals?');
+            return;
+        }
+        
+        const animalIds = Array.from(animalCheckboxes).map(checkbox => checkbox.value);
+        
+        // Send bulk delete request
+        fetch('{% url "bulk_delete_animals" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                animal_ids: animalIds
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove deleted rows from table
+                animalCheckboxes.forEach(checkbox => {
+                    checkbox.closest('tr').remove();
+                });
+                
+                // Clear selection and hide bulk actions
+                clearSelection();
+                
+                // Show success message
+                showNotification(data.message, 'success');
+                
+                // Reload page to refresh data
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showNotification(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('An error occurred while deleting animals.', 'error');
+        });
+    }
+    
+    // Initialize bulk actions
+    document.addEventListener('DOMContentLoaded', function() {
+        updateBulkActions();
+    });
 </script>
 
 {% endblock %}

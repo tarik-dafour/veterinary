@@ -157,9 +157,28 @@
               </div>
             </div>
         </div>
+        
+        <!-- Bulk Actions Bar -->
+        <div id="bulk-actions-bar" class="bulk-actions-bar" style="display: none;">
+            <div class="bulk-actions-content">
+                <span class="bulk-selection-count">0 reservations selected</span>
+                <div class="bulk-actions-buttons">
+                    <button type="button" class="btn btn-danger" onclick="deleteSelectedReservations()">
+                        <i class="fa-solid fa-trash"></i> Delete Selection
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="clearSelection()">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <table class="table">
             <thead>
                 <tr>
+                    <th>
+                        <input type="checkbox" id="selectAll" class="select-all-checkbox" onchange="toggleSelectAll()">
+                    </th>
                     <th><i class="fa-solid fa-user"></i> Client</th>
                     <th><i class="fa-solid fa-paw"></i> Animal</th>
                     <th><i class="fa-solid fa-calendar"></i> Date & Heure</th>
@@ -172,6 +191,9 @@
             <tbody>
                 {% for reservation in reservations %}
                 <tr>
+                    <td>
+                        <input type="checkbox" class="reservation-checkbox" value="{{ reservation.id }}" onchange="updateBulkActions()">
+                    </td>
                     <td><strong>{{ reservation.client.prenom }} {{ reservation.client.nom }}</strong></td>
                     <td>{{ reservation.animal.nom }} ({{ reservation.animal.type }})</td>
                     <td class="date-time">{{ reservation.date_reservation|date:'d M Y H:i' }}</td>
@@ -205,7 +227,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7">
+                    <td colspan="8">
                         <div class="empty-state">
                             <div class="empty-state-icon"><i class="fa-solid fa-calendar"></i></div>
                             <h4>Aucun rendez-vous trouvé</h4>
@@ -239,5 +261,116 @@
             }
         }
     </script>
+    
+    <!-- Bulk Selection JavaScript -->
+    <script>
+        // Bulk selection functionality
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const reservationCheckboxes = document.querySelectorAll('.reservation-checkbox');
+            
+            reservationCheckboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+            
+            updateBulkActions();
+        }
+        
+        function updateBulkActions() {
+            const reservationCheckboxes = document.querySelectorAll('.reservation-checkbox:checked');
+            const bulkActionsBar = document.getElementById('bulk-actions-bar');
+            const bulkSelectionCount = document.querySelector('.bulk-selection-count');
+            const selectAllCheckbox = document.getElementById('selectAll');
+            
+            if (reservationCheckboxes.length > 0) {
+                bulkActionsBar.style.display = 'block';
+                bulkSelectionCount.textContent = `${reservationCheckboxes.length} reservation(s) selected`;
+                
+                // Update select all checkbox state
+                const totalCheckboxes = document.querySelectorAll('.reservation-checkbox');
+                selectAllCheckbox.checked = reservationCheckboxes.length === totalCheckboxes.length;
+                selectAllCheckbox.indeterminate = reservationCheckboxes.length > 0 && reservationCheckboxes.length < totalCheckboxes.length;
+            } else {
+                bulkActionsBar.style.display = 'none';
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            }
+        }
+        
+        function clearSelection() {
+            const reservationCheckboxes = document.querySelectorAll('.reservation-checkbox');
+            const selectAllCheckbox = document.getElementById('selectAll');
+            
+            reservationCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+            updateBulkActions();
+        }
+        
+        function deleteSelectedReservations() {
+            const reservationCheckboxes = document.querySelectorAll('.reservation-checkbox:checked');
+            
+            if (reservationCheckboxes.length === 0) {
+                alert('Please select reservations to delete.');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to delete ${reservationCheckboxes.length} selected reservation(s)?`)) {
+                return;
+            }
+            
+            const reservationIds = Array.from(reservationCheckboxes).map(checkbox => checkbox.value);
+            
+            // Send bulk delete request
+            fetch('{% url "bulk_delete_reservations" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    reservation_ids: reservationIds
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove deleted rows from table
+                    reservationCheckboxes.forEach(checkbox => {
+                        checkbox.closest('tr').remove();
+                    });
+                    
+                    // Clear selection and hide bulk actions
+                    clearSelection();
+                    
+                    // Show success message
+                    alert(data.message);
+                    
+                    // Reload page to refresh data
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while deleting reservations.');
+            });
+        }
+        
+        // Initialize bulk actions
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBulkActions();
+        });
+    </script>
 </body>
+
+<!-- Language Switcher Script -->
+<script src="{% static 'core/js/language-switcher.js' %}"></script>
+
 {% endblock %}

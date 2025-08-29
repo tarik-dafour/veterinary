@@ -90,12 +90,7 @@
     <!-- Tabs Container -->
     <section class="modern-tabs-container" role="tablist" aria-label="Stock management tabs">
         <div class="tabs-navigation" role="tablist">
-            <button class="tab-nav-btn active" 
-                    data-tab="products" 
-                    role="tab" 
-                    aria-selected="true" 
-                    aria-controls="products-panel"
-                    id="products-tab">
+            <button class="tab-nav-btn active" data-tab="products" role="tab" aria-selected="true" aria-controls="products-panel" id="products-tab">
                 <div class="tab-icon" aria-hidden="true">
                     <i class="fas fa-boxes-stacked"></i>
                 </div>
@@ -153,11 +148,7 @@
                 <div class="search-container">
                     <div class="search-input-group">
                         <i class="fas fa-search search-icon" aria-hidden="true"></i>
-                        <input type="text" 
-                               id="product-search" 
-                               class="search-input" 
-                               placeholder="Search products..." 
-                               aria-label="Search products">
+                        <input type="text" id="product-search" class="search-input" placeholder="Search products..." aria-label="Search products">
                     </div>
                 </div>
                 <div class="filter-container">
@@ -336,16 +327,8 @@
                     <div class="search-container">
                         <div class="search-input-wrapper">
                             <i class="fas fa-search search-icon" aria-hidden="true"></i>
-                            <input type="text" 
-                                   id="category-search" 
-                                   class="search-input" 
-                                   placeholder="Search categories by name or description..."
-                                   aria-label="Search categories">
-                            <button class="search-clear" 
-                                    id="category-search-clear" 
-                                    onclick="clearCategorySearch()" 
-                                    aria-label="Clear search"
-                                    style="display: none;">
+                            <input type="text" id="category-search" class="search-input" placeholder=" Search categories by name or description..." aria-label="Search categories">
+                            <button class="search-clear"  id="category-search-clear"  onclick="clearCategorySearch()"  aria-label="Clear search" style="display: none;">
                                 <i class="fas fa-times" aria-hidden="true"></i>
                             </button>
                         </div>
@@ -1051,7 +1034,6 @@
                     
                     categoryCards.forEach(card => {
                         const categoryName = card.querySelector('.category-name')?.textContent.toLowerCase() || '';
-                        const categoryDescription = card.querySelector('.category-description')?.textContent.toLowerCase() || '';
                         
                         if (categoryName.includes(searchTerm) || 
                             categoryDescription.includes(searchTerm)) {
@@ -2513,4 +2495,8 @@
         }
     }
 </script>
+
+<!-- Language Switcher Script -->
+<script src="{% static 'core/js/language-switcher.js' %}"></script>
+
 {% endblock %}
