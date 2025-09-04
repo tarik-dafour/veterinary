@@ -20,17 +20,17 @@
 <main class="dashboard" role="main" aria-label="Dashboard Overview">
     <!-- Row 1: KPI Cards Section -->
     <section class="dashboard-row kpi-row" aria-label="Key Performance Indicators">
-        <article class="kpi-card new-clients" role="article" aria-labelledby="new-clients-title">
+        <article class="kpi-card total-revenue" role="article" aria-labelledby="total-revenue-title">
             <div class="kpi-header">
                 <div class="kpi-content">
-                    <h3 id="new-clients-title" class="kpi-title">New Clients</h3>
-                    <div class="kpi-value" aria-label="New clients this month">{{ new_clients_this_month|default:"0" }}</div>
+                    <h3 id="total-revenue-title" class="kpi-title">Total Revenue</h3>
+                    <div class="kpi-value" aria-label="Total revenue from appointments">{{ total_revenue|default:"0.00" }} MAD</div>
                     <div class="kpi-trend trend-up">
-                        <span class="trend-label">This month</span>
+                        <span class="trend-label">From appointments</span>
                     </div>
                 </div>
                 <div class="kpi-icon" aria-hidden="true">
-                    <i class="fa-solid fa-user-plus"></i>
+                    <i class="fa-solid fa-coins"></i>
                 </div>
             </div>
         </article>
