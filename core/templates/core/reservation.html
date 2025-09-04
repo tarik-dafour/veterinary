@@ -209,12 +209,7 @@
                     <td class="date-time">{{ reservation.date_reservation|date:'d M Y H:i' }}</td>
                     <td>{{ reservation.service }}</td>
                     <td>
-                        <span class="status-badge 
-                            {% if reservation.statut == 'Scheduled' %}status-scheduled
-                            {% elif reservation.statut == 'Confirmed' %}status-confirmed
-                            {% elif reservation.statut == 'Completed' %}status-completed
-                            {% elif reservation.statut == 'Cancelled' %}status-cancelled
-                            {% else %}status-pending{% endif %}">
+                        <span class="status-badge">
                             {% if reservation.statut == 'Scheduled' %}Planifié
                             {% elif reservation.statut == 'Confirmed' %}Confirmé
                             {% elif reservation.statut == 'Completed' %}Terminé
@@ -234,6 +229,9 @@
                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?');">
                                 <i class="fa-solid fa-trash"></i>
                             </a>
+                            <button class="btn btn-facture" onclick="generateFacture({{ reservation.id }})" title="Générer Facture">
+                                <i class="fa-solid fa-file-invoice"></i>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -261,6 +259,7 @@
             document.getElementById("reservationModal").style.display = "none";
         }
         
+
         function closeEditReservationModal() {
             document.getElementById("editReservationModal").style.display = "none";
         }
@@ -379,10 +378,63 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateBulkActions();
         });
+        // Function to generate facture for a reservation
+        function generateFacture(reservationId) {
+            try {
+                console.log('Generating facture for reservation ID:', reservationId);
+                
+                // Show loading notification
+                showNotification('Génération de la facture en cours...', 'info');
+                
+                // Get reservation data from the current page
+                const reservationRow = document.querySelector(`input[value="${reservationId}"]`)?.closest('tr');
+                if (!reservationRow) {
+                    showNotification('Données de réservation non trouvées', 'error');
+                    return;
+                }
+                
+                // Extract reservation data from the table row
+                const cells = reservationRow.querySelectorAll('td');
+                const clientName = cells[1]?.textContent?.trim() || 'N/A';
+                const animalInfo = cells[2]?.textContent?.trim() || 'N/A';
+                const dateTime = cells[3]?.textContent?.trim() || 'N/A';
+                const service = cells[4]?.textContent?.trim() || 'N/A';
+                const status = cells[5]?.textContent?.trim() || 'N/A';
+                const price = cells[6]?.textContent?.trim() || '0.00 MAD';
+                
+                // Parse animal name and type
+                const animalMatch = animalInfo.match(/^(.+?)\s*\((.+?)\)$/);
+                const animalName = animalMatch ? animalMatch[1] : animalInfo;
+                const animalType = animalMatch ? animalMatch[2] : 'N/A';
+                
+                // Generate facture content
+                const factureContent = generateFactureContent({
+                    id: reservationId,
+                    clientName: clientName,
+                    animalName: animalName,
+                    animalType: animalType,
+                    dateTime: dateTime,
+                    service: service,
+                    status: status,
+                    price: price
+                });
+                
+                // Simulate facture generation
+                setTimeout(() => {
+                    // Create and display facture modal
+                    showFactureModal(factureContent);
+                    showNotification('Facture générée avec succès!', 'success');
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error generating facture:', error);
+                showNotification('Erreur lors de la génération de la facture', 'error');
+            }
+        }
     </script>
 </body>
 
 <!-- Language Switcher Script -->
 <script src="{% static 'core/js/language-switcher.js' %}"></script>
-
+<script src="{% static 'core/js/reservation-management.js' %}"></script>
 {% endblock %}
