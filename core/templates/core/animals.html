@@ -71,10 +71,10 @@
                 {% if search_query %}
                     <a class="btn btn-secondary" href="{% url 'animals' %}"><i class="fa-solid fa-times"></i></a>
                 {% endif %}
-                <a class="btn btn-success" href="{% url 'export_animals_csv' %}?search={{ search_query }}">
+                <a class="btn btn-primary" href="{% url 'export_animals_csv' %}?search={{ search_query }}">
                     <i class="fa-solid fa-download"></i>
                 </a>
-                <button type="button" class="btn btn-success" onclick="openAnimalModal()">
+                <button type="button" class="btn btn-primary" onclick="openAnimalModal()">
                     <i class="fa-solid fa-plus"></i>
                 </button>
             </form>

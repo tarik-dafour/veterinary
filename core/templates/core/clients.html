@@ -134,7 +134,7 @@
                    aria-label="Export clients to CSV">
                     <i class="fa-solid fa-download" aria-hidden="true"></i>
                 </a>
-                <button type="button" class="btn btn-success" onclick="openClientModal()" aria-label="Add new client">
+                <button type="button" class="btn btn-primary" onclick="openClientModal()" aria-label="Add new client">
                     <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
                 </button>
             </div>
@@ -247,10 +247,10 @@
                     </td>
                     <td class="td-actions">
                         <div class="action-buttons">
-                            <button class="btn btn-edit" onclick="editClient({{ client.id }})" aria-label="Edit client {{ client.prenom }} {{ client.nom }}">
+                            <button class="btn btn-secondary" onclick="editClient( client.id)" aria-label="Edit client {{ client.prenom }} {{ client.nom }}">
                                 <i class="fa-solid fa-edit" aria-hidden="true"></i>
                             </button>
-                            <button class="btn btn-delete" onclick="deleteClient({{ client.id }})" aria-label="Delete client {{ client.prenom }} {{ client.nom }}" style="background: linear-gradient(135deg, #dc3545, #ff6b6b);color: white;">
+                            <button class="btn btn-danger" onclick="deleteClient( client.id)" aria-label="Delete client {{ client.prenom }} {{ client.nom }}" style="background: linear-gradient(135deg, #dc3545, #ff6b6b);color: white;">
                                 <i class="fa-solid fa-trash" aria-hidden="true"></i>
                             </button>
                         </div>

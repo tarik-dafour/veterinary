@@ -1,6 +1,6 @@
 /* Page Header */
 .page-header {
-    background: linear-gradient(135deg, #013847, #43C0AF);
+    background: #E2ECED;
     padding: 30px 35px;
     border-radius: 20px;
     margin-bottom: 35px;
@@ -15,6 +15,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    color : #013847;
 }
 
 .page-title i {
@@ -24,7 +25,7 @@
 
 .page-subtitle {
     font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: #4a5568;
     margin: 0;
     font-weight: 400;
 }
@@ -43,7 +44,7 @@
 }
 
 .form-title i {
-    color: #43C0AF;
+    color: #013847;
     font-size: 1.4rem;
 }
 
@@ -198,14 +199,13 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #43C0AF, #013847);
+    background:#013847;
     color: white;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #013847, #43C0AF);
+    background: #013847;
     transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(67, 192, 175, 0.3);
 }
 
 .btn-secondary {
@@ -215,8 +215,8 @@
 }
 
 .btn-secondary:hover {
-    background: #71B5D8;
-    color: white;
+    background: #E2ECED;
+    color: #013847;
     transform: translateY(-2px);
 }
 
@@ -231,10 +231,6 @@
     box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
 }
 
-.btn-success {
-    background: linear-gradient(135deg, #43C0AF, #71B5D8);
-    color: white;
-}
 
 .btn-success:hover {
     background: linear-gradient(135deg, #71B5D8, #43C0AF);
