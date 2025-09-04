@@ -143,7 +143,7 @@ def dashboard(request):
     
     # Calculate revenue from products (since reservations don't have price)
     total_revenue = sum(product.prix * product.quantite for product in Produit.objects.all())
-    
+    total_revenue_reservations_termined = sum(res.prix for res in Reservation.objects.filter(statut='Completed'))
     # Recent products for revenue calculation
     recent_products = Produit.objects.filter(
         date_ajout__gte=timezone.now().date() - timedelta(days=30)
@@ -186,6 +186,7 @@ def dashboard(request):
         'total_products': total_products,
         'new_clients_this_month': new_clients_this_month,
         'total_revenue': total_revenue,
+        'total_revenue_reservations_termined': total_revenue_reservations_termined,
         'monthly_revenue': monthly_revenue,
         'stock_alerts': stock_alerts,
         'upcoming_appointments': upcoming_appointments,
@@ -220,6 +221,7 @@ def reservation(request):
         date_reservation = request.POST.get('date_reservation')
         service = request.POST.get('service')
         statut = request.POST.get('statut')
+        prix = request.POST.get('prix')
         note = request.POST.get('note')
         if edit_id:
             reservation = get_object_or_404(Reservation, id=edit_id)
@@ -228,6 +230,7 @@ def reservation(request):
             reservation.date_reservation = date_reservation
             reservation.service = service
             reservation.statut = statut
+            reservation.prix = prix
             reservation.note = note
             reservation.save()
         else:
@@ -238,6 +241,7 @@ def reservation(request):
                     date_reservation=date_reservation,
                     service=service,
                     statut=statut,
+                    prix=prix,
                     note=note
                 )
         return redirect('reservation')

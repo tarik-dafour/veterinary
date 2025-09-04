@@ -84,6 +84,7 @@ class Reservation(models.Model):
     date_reservation = models.DateTimeField()
     service = models.CharField(max_length=100)
     statut = models.CharField(max_length=50)
+    prix = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     note = models.TextField(blank=True, null=True)
 
     def __str__(self):

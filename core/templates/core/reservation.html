@@ -70,6 +70,11 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Prix</label>
+                    <input type="number" name="prix" class="form-input" 
+                           value="{{ edit_reservation.prix }}" required>
+                </div>
+                <div class="form-group">
                     <label class="form-label">Notes</label>
                     <textarea name="note" class="form-textarea" placeholder="Notes supplémentaires sur le rendez-vous">{{ edit_reservation.note|default:"" }}</textarea>
                 </div>
@@ -149,6 +154,10 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Prix</label>
+                        <input type="number" name="prix" class="form-input" required>
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Notes</label>
                         <textarea name="note" class="form-textarea" placeholder="Notes supplémentaires sur le rendez-vous"></textarea>
                     </div>
@@ -184,6 +193,7 @@
                     <th><i class="fa-solid fa-calendar"></i> Date & Heure</th>
                     <th><i class="fa-solid fa-hospital"></i> Service</th>
                     <th><i class="fa-solid fa-chart-bar"></i> Statut</th>
+                    <th><i class="fa-solid fa-money-bill"></i> Prix</th>
                     <th><i class="fa-solid fa-file-alt"></i> Notes</th>
                     <th><i class="fa-solid fa-cog"></i> Actions</th>
                 </tr>
@@ -212,6 +222,8 @@
                             {% else %}En attente{% endif %}
                         </span>
                     </td>
+                    <td>{{ reservation.prix|default:"-" }} MAD</td>
+
                     <td>{{ reservation.note|default:"-" }}</td>
                     <td>
                         <div class="btn-group">
