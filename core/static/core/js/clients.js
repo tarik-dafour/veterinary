@@ -1,3 +1,12 @@
+
+document.addEventListener('DOMContentLoaded', function() {
+        // The bulk selection functionality is already implemented in clients.js
+        // This script ensures proper initialization
+        if (typeof initializeBulkSelection === 'function') {
+            initializeBulkSelection();
+        }
+    });
+
 // Client Management JavaScript Functions
 document.addEventListener('DOMContentLoaded', function() {
     try {

@@ -27,6 +27,12 @@
     --gradient-error: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
 }
 
+html,body {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+    overflow-x: hidden;
+}
+
 /* ===== MODAL STYLES ===== */
 .modal {
     display: none;
@@ -70,6 +76,8 @@
     position: relative;
     z-index: 1;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes modalSlideIn {
@@ -132,6 +140,113 @@
     padding: 2rem;
     max-height: calc(90vh - 120px);
     overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-blue) var(--bg-lighter);
+}
+
+/* Custom scrollbar for modal body */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: var(--bg-lighter);
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: var(--primary-blue);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-blue-dark);
+}
+
+/* Smooth scrolling */
+.modal-body {
+    scroll-behavior: smooth;
+}
+
+/* Scroll indicators for modal body */
+.modal-body::before,
+.modal-body::after {
+    content: '';
+    position: sticky;
+    display: block;
+    height: 1px;
+    background: linear-gradient(to bottom, var(--bg-white), transparent);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.modal-body::before {
+    top: 0;
+    margin-bottom: -1px;
+}
+
+.modal-body::after {
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg-white), transparent);
+    margin-top: -1px;
+}
+
+/* Focus styles for scrollable content */
+.modal-body:focus {
+    outline: 2px solid var(--primary-blue);
+    outline-offset: -2px;
+}
+
+/* Scroll snap for better UX */
+.modal-body {
+    scroll-snap-type: y proximity;
+}
+
+/* Add scroll padding for better spacing */
+.modal-body {
+    scroll-padding: 1rem;
+}
+
+/* Enhanced scrolling for long content */
+.modal-body {
+    -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+}
+
+/* Scroll shadow effects */
+.modal-container.scrollable::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), transparent);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.modal-container.scrollable::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.8), transparent);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Keyboard navigation for scrolling */
+.modal-body:focus-within {
+    scroll-behavior: smooth;
+}
+
+/* Better scrollbar visibility on hover */
+.modal-body:hover::-webkit-scrollbar-thumb {
+    background: var(--primary-blue-dark);
 }
 
 /* ===== FORM STYLES ===== */
@@ -406,7 +521,7 @@
 .btn-edit-category,
 .btn-edit-supplier {
     background: var(--bg-lighter);
-    color: var(--text-secondary);
+    color: black;
     border: 2px solid var(--border-light);
     width: 44px;
     height: 44px;
@@ -419,8 +534,8 @@
 .btn-edit:hover,
 .btn-edit-category:hover,
 .btn-edit-supplier:hover {
-    background: var(--primary-blue);
-    color: white;
+    background: var(--bg-lighter);
+    color: black;
     border-color: var(--primary-blue);
     transform: scale(1.1);
     box-shadow: var(--shadow-md);
@@ -450,8 +565,8 @@
 .btn-delete:hover,
 .btn-delete-category:hover,
 .btn-delete-supplier:hover {
-    background: var(--error-red);
-    color: white;
+    background: rgba(239, 68, 68, 0.1);
+    color:var(--error-red);
     border-color: var(--error-red);
     transform: scale(1.1);
     box-shadow: var(--shadow-md);
@@ -777,6 +892,11 @@
         padding: 1.5rem;
     }
     
+    .modal-body {
+        max-height: calc(100vh - 100px);
+        scroll-padding: 0.5rem;
+    }
+    
     .modal-title {
         font-size: 1.25rem;
     }
@@ -838,7 +958,7 @@
 
 /* ===== STOCK HEADER ===== */
 .stock-header {
-    background: linear-gradient(135deg, #013847, #43C0AF);
+    background:#E2ECED;
     padding: 30px 35px;
     border-radius: 20px;
     margin-bottom: 35px;
@@ -854,6 +974,7 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 2rem;
+    color: #013847;
 }
 
 .stock-header-text {
@@ -867,6 +988,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    
 }
 
 .stock-title i {
@@ -1133,7 +1255,7 @@
 
 .search-icon {
     position: absolute;
-    left: 1.5rem;
+    left: 0.2rem;
     color: var(--text-secondary);
     font-size: 1.125rem;
     z-index: 1;
@@ -1886,13 +2008,13 @@
 
 .btn-edit-category {
     background: var(--bg-lighter);
-    color: var(--primary-blue);
+    color: black;
     border: 1px solid var(--border-light);
 }
 
 .btn-edit-category:hover {
-    background: var(--primary-blue);
-    color: white;
+    background: var(--bg-lighter);
+    color:black;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(56, 178, 255, 0.3);
 }
@@ -1904,8 +2026,8 @@
 }
 
 .btn-delete-category:hover {
-    background: var(--error-red);
-    color: white;
+    background: var(--bg-lighter);
+    color:  var(--error-red);
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
 }

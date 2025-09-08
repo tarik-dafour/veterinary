@@ -78,7 +78,7 @@
 
 /* Page Header */
 .page-header {
-    background: linear-gradient(135deg, #013847, #43C0AF);
+    background: #E2ECED;
     padding: 30px 35px;
     border-radius: 20px;
     margin-bottom: 35px;
@@ -93,11 +93,17 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    color: #013847;
 }
 
 .page-title i {
-    font-size: 2.5rem;
-    opacity: 0.9;
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color:  #013847;
 }
 
 .page-subtitle {
@@ -105,6 +111,7 @@
     color: rgba(255, 255, 255, 0.9);
     margin: 0;
     font-weight: 400;
+    color: #013847;
 }
 
 /* Form Elements */
@@ -121,7 +128,7 @@
 }
 
 .form-title i {
-    color: #43C0AF;
+    color: #013847;
     font-size: 1.4rem;
 }
 
@@ -318,20 +325,20 @@
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #013847, #43C0AF);
+    background:  linear-gradient(135deg, #43C0AF, #013847) ;
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(67, 192, 175, 0.3);
 }
 
 .btn-secondary {
     background: #E2ECED;
-    color: #013847;
+    color: #000000;
     border: 1px solid #71B5D8;
 }
 
 .btn-secondary:hover {
-    background: #71B5D8;
-    color: white;
+    background: #E2ECED;
+    color: black;
     transform: translateY(-2px);
 }
 

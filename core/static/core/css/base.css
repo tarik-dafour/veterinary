@@ -5,6 +5,115 @@
     box-sizing: border-box;
 }
 
+/* ===== GLOBAL MODAL SCROLLING ENHANCEMENTS ===== */
+/* Enhanced modal scrolling for all modals */
+.modal-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-blue, #38B2FF) var(--bg-lighter, #EDF2F7);
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom scrollbar for all modal bodies */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: var(--bg-lighter, #EDF2F7);
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: var(--primary-blue, #38B2FF);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-blue-dark, #1E90FF);
+}
+
+/* Modal container enhancements */
+.modal-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+/* Scroll indicators for modals */
+.modal-body::before,
+.modal-body::after {
+    content: '';
+    position: sticky;
+    display: block;
+    height: 1px;
+    background: linear-gradient(to bottom, var(--bg-white, #FFFFFF), transparent);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.modal-body::before {
+    top: 0;
+    margin-bottom: -1px;
+}
+
+.modal-body::after {
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg-white, #FFFFFF), transparent);
+    margin-top: -1px;
+}
+
+/* Focus styles for scrollable modals */
+.modal-body:focus {
+    outline: 2px solid var(--primary-blue, #38B2FF);
+    outline-offset: -2px;
+}
+
+/* Scroll snap for better UX */
+.modal-body {
+    scroll-snap-type: y proximity;
+    scroll-padding: 1rem;
+}
+
+/* Better scrollbar visibility on hover */
+.modal-body:hover::-webkit-scrollbar-thumb {
+    background: var(--primary-blue-dark, #1E90FF);
+}
+
+/* Mobile responsive scrolling */
+@media (max-width: 768px) {
+    .modal-body {
+        max-height: calc(100vh - 80px);
+        scroll-padding: 0.5rem;
+    }
+    
+    .modal-container {
+        max-height: 95vh;
+        margin: 1rem;
+    }
+    
+    /* Thinner scrollbar on mobile */
+    .modal-body::-webkit-scrollbar {
+        width: 6px;
+    }
+}
+
+/* Touch device enhancements */
+@media (hover: none) and (pointer: coarse) {
+    .modal-body {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: auto; /* Disable smooth scrolling on touch devices for better performance */
+    }
+    
+    .modal-body::-webkit-scrollbar {
+        width: 4px;
+    }
+}
+
 html {
     scroll-behavior: smooth;
     font-size: 16px;
@@ -192,27 +301,6 @@ body {
     box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
 }
 
-/* Language Notification */
-.language-notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: var(--success);
-    color: var(--white);
-    padding: 1rem 1.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-weight: 500;
-    animation: slideInRight 0.3s ease-out;
-}
-
-.language-notification i {
-    font-size: 1.25rem;
-}
 
 @keyframes slideInRight {
     from {
@@ -279,6 +367,26 @@ body {
     box-shadow: 0 4px 15px rgba(56, 178, 255, 0.3);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 2px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    position: relative;
+}
+
+.user-avatar .avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.user-avatar .avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    color: var(--white);
+    font-weight: 700;
 }
 
 .user-avatar:hover {
@@ -293,65 +401,9 @@ body {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Language Switcher */
-.language-switcher {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-}
-
-/* Language Switcher in Header (near logout) */
-.quick-stats .language-switcher {
-    gap: 0.25rem;
-    padding: 0.25rem;
-}
-
-.quick-stats .language-switcher .lang-btn {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
-    min-height: 35px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-}
 
 
 
-.lang-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: var(--white);
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-size: 0.875rem;
-    font-weight: 500;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.lang-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.lang-btn.active {
-    background: var(--sidebar-active);
-    border-color: var(--sidebar-active);
-    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
-}
-
-.lang-btn:focus {
-    outline: 2px solid rgba(255, 255, 255, 0.5);
-    outline-offset: 2px;
-}
 
 /* Quick Stats */
 .quick-stats {
@@ -436,9 +488,6 @@ body {
         gap: 0.75rem;
     }
     
-    .language-switcher {
-        justify-content: center;
-    }
     
     .quick-stats {
         justify-content: center;
@@ -485,10 +534,6 @@ body {
         font-size: 0.875rem;
     }
     
-    .lang-btn {
-        padding: 0.375rem 0.75rem;
-        font-size: 0.75rem;
-    }
     
     .user-avatar,
     .stat-avatar {
@@ -538,14 +583,6 @@ body {
         gap: 0.5rem;
     }
     
-    .language-switcher {
-        gap: 0.5rem;
-    }
-    
-    .lang-btn {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.75rem;
-    }
 }
 
 /* ===== ACCESSIBILITY FEATURES ===== */
@@ -563,9 +600,6 @@ body {
     .logo-section,
     .user-avatar,
     .stat-avatar,
-    .lang-btn {
-        transition: none !important;
-    }
 }
 
 @media (prefers-contrast: high) {
@@ -594,7 +628,6 @@ body {
 
 /* ===== FOCUS STYLES ===== */
 .nav-link:focus,
-.lang-btn:focus,
 .stat-avatar:focus {
     outline: 2px solid var(--white);
     outline-offset: 2px;

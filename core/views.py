@@ -58,6 +58,17 @@ def settings_view(request):
             
             profile.phone = request.POST.get('phone', '')
             profile.address = request.POST.get('address', '')
+            
+            # Handle avatar upload
+            if 'avatar' in request.FILES:
+                profile.avatar = request.FILES['avatar']
+            
+            # Handle avatar removal
+            if request.POST.get('remove_avatar') == 'true':
+                if profile.avatar:
+                    profile.avatar.delete(save=False)
+                profile.avatar = None
+            
             profile.save()
             
             # Log profile update
@@ -588,6 +599,7 @@ def clients(request):
             models.Q(telephone__icontains=search_query) |
             models.Q(email__icontains=search_query)
         )
+    
     if request.method == 'POST':
         edit_id = request.POST.get('edit_id')
         if edit_id:
@@ -623,8 +635,10 @@ def clients(request):
         all_clients = qs
         client_to_edit = get_object_or_404(Client, id=request.GET.get('edit'))
         return render(request, 'core/clients.html', {'clients': all_clients, 'edit_client': client_to_edit, 'search_query': search_query})
+    
     all_clients = qs
     return render(request, 'core/clients.html', {'clients': all_clients, 'search_query': search_query})
+
 
 @veterinarian_required
 def report(request):

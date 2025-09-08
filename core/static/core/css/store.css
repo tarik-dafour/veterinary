@@ -1,7 +1,13 @@
+html,body {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+    overflow-x: hidden;
+}
+
 /* Store Header */
 .store-header {
-    background: linear-gradient(135deg, #013847, #43C0AF);
-    color: #fff;
+    background: #E2ECED;
+    color:#013847;
     padding: 2rem;
     border-radius: 18px;
     margin-bottom: 2rem;
@@ -14,6 +20,7 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 1rem;
+    color: #013847;
 }
 
 .store-header-text {
@@ -27,11 +34,12 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    color: #013847;
 }
 
 .store-subtitle {
     font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: #013847;
     margin: 0;
     font-weight: 400;
 }
@@ -45,6 +53,7 @@
     display: flex;
     gap: 1.5rem;
     flex-wrap: wrap;
+    color: #013847;
 }
 
 .summary-item {
@@ -1082,6 +1091,7 @@
     
     .store-title {
         font-size: 1.5rem;
+        color: #013847;
     }
     
 

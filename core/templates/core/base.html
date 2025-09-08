@@ -31,11 +31,7 @@
         
         <ul class="nav-menu" role="menubar">
             <li class="nav-item" role="none">
-                <a href="{% url 'dashboard' %}" 
-                   class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
-                   title="Dashboard"
-                   role="menuitem"
-                   aria-label="Go to Dashboard">
+                <a href="{% url 'dashboard' %}"  class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"  title="Dashboard" role="menuitem" aria-label="Go to Dashboard">
                     <span class="nav-icon" aria-hidden="true">
                         <i class="fa-solid fa-house-chimney"></i>
                     </span>
@@ -180,43 +176,22 @@
         <header class="top-header" role="banner">
             <div class="welcome-section">
                 <div class="user-avatar" aria-label="User avatar">
-                    {{ user.get_full_name|default:user.username|first|upper }}
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar-image">
+                    {% else %}
+                        <div class="avatar-placeholder">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="welcome-text">
-                    <span class="welcome-fr" lang="fr" style="display: none;">
+                    <span>
                         Bienvenue, {% if user.profile.role == 'admin' or user.is_superuser %}Dr.{% endif %} {{ user.get_full_name|default:user.username }}!
-                    </span>
-                    <span class="welcome-en" lang="en">
-                        Welcome, {% if user.profile.role == 'admin' or user.is_superuser %}Dr.{% endif %} {{ user.get_full_name|default:user.username }}!
                     </span>
                 </div>
             </div>
             
-
-            
-
-            
-            <div class="quick-stats">
-                <!-- Language Switcher -->
-                <div class="quick-stat-item">
-                    <div class="language-switcher" role="group" aria-label="Language selection">
-                        <button class="lang-btn" 
-                                onclick="switchLanguage('fr')" 
-                                data-lang="fr"
-                                aria-pressed="false"
-                                aria-label="Switch to French">
-                            <i class="fa-solid fa-flag" aria-hidden="true"></i> FR
-                        </button>
-                        <button class="lang-btn active" 
-                                onclick="switchLanguage('en')" 
-                                data-lang="en"
-                                aria-pressed="true"
-                                aria-label="Switch to English">
-                            <i class="fa-solid fa-flag" aria-hidden="true"></i> EN
-                        </button>
-                    </div>
-                </div>
-                
+            <div class="quick-stats">  
                 <div class="quick-stat-item">
                     <a href="{% url 'logout' %}" 
                        class="logout-link"
@@ -238,35 +213,8 @@
         </div>
     </main>
     
-    <!-- Language Switcher JavaScript -->
-    <script src="{% static 'core/js/language-switcher.js' %}"></script>
-    <script>
-        // Initialize keyboard navigation for sidebar
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                // Add keyboard navigation for sidebar
-                const sidebar = document.querySelector('.sidebar');
-                const navLinks = sidebar.querySelectorAll('.nav-link');
-                
-                navLinks.forEach((link, index) => {
-                    link.addEventListener('keydown', function(e) {
-                        if (e.key === 'ArrowDown') {
-                            e.preventDefault();
-                            const nextLink = navLinks[index + 1] || navLinks[0];
-                            nextLink.focus();
-                        } else if (e.key === 'ArrowUp') {
-                            e.preventDefault();
-                            const prevLink = navLinks[index - 1] || navLinks[navLinks.length - 1];
-                            prevLink.focus();
-                        }
-                    });
-                });
-                
-            } catch (error) {
-                console.error('Error initializing sidebar navigation:', error);
-            }
-        });
-    </script>
+    <!-- Base JavaScript -->
+    <script src="{% static 'core/js/base.js' %}"></script>
     
     <!-- Additional JavaScript -->
     {% block extra_js %}{% endblock %}

@@ -311,12 +311,12 @@
 }
 
 .btn-primary {
-    background: #013847;
+    background:  linear-gradient(135deg, #43C0AF, #013847);
     color: white;
 }
 
 .btn-primary:hover {
-    background: #013847;
+    background:  linear-gradient(135deg, #43C0AF, #013847);
     transform: translateY(-3px);
 }
 
@@ -333,14 +333,16 @@
 }
 
 .btn-danger {
-    background: linear-gradient(135deg, #FF6B6B, #FF5252);
+    background: linear-gradient(135deg, #FF5252, #FF5252);
     color: white;
+    margin-right: 50px;
 }
 
 .btn-danger:hover {
     background: linear-gradient(135deg, #FF5252, #FF6B6B);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+
 }
 
 .btn-success {
@@ -357,6 +359,19 @@
 .btn-group {
     display: flex;
     gap: 0.8rem;
+}
+
+/* Center action buttons inside table cells and stack vertically */
+.table td .btn-group {
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+/* Remove extra spacing that prevents centering in action cells */
+.table td .btn-danger {
+    margin-right: 0;
 }
 
 /* Search Form */

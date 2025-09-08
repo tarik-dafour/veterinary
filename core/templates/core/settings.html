@@ -25,21 +25,51 @@
 <!-- Carte d'information utilisateur -->
 <div class="settings-card">
     <div class="user-info">
+        <div class="user-avatar">
+            {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar-image">
+            {% else %}
+                <div class="avatar-placeholder">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            {% endif %}
+            <button type="button" class="avatar-upload-btn" onclick="document.getElementById('avatar-upload').click()">
+                <i class="fa-solid fa-camera"></i>
+            </button>
+        </div>
         <div class="user-details">
             <h3>{{ user.get_full_name|default:user.username }}</h3>
             <p>{{ user.email }}</p>
             {% if profile %}
                 <span class="role-badge">{{ profile.get_role_display }}</span>
             {% endif %}
+            <div class="avatar-actions">
+                <button type="button" class="btn btn-sm btn-primary" onclick="document.getElementById('avatar-upload').click()">
+                    <i class="fa-solid fa-plus"></i> Ajouter Photo
+                </button>
+                {% if profile.avatar %}
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('avatar-upload').click()">
+                        <i class="fa-solid fa-edit"></i> Modifier
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="removeAvatar()">
+                        <i class="fa-solid fa-trash"></i> Supprimer
+                    </button>
+                {% endif %}
+            </div>
         </div>
     </div>
+    <!-- Hidden file input for avatar upload -->
+    <form method="post" id="avatar-form" enctype="multipart/form-data" style="display: none;">
+        {% csrf_token %}
+        <input type="file" id="avatar-upload" name="avatar" accept="image/*" onchange="uploadAvatar(this)">
+    </form>
 </div>
 
 <div class="settings-container">
     <!-- Paramètres du profil -->
     <div class="settings-card">
         <h3 class="card-title"><i class="fa-solid fa-user"></i> Paramètres du profil</h3>
-        <form method="post" class="settings-form">
+        <form method="post" class="settings-form" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
                 <label class="form-label">Prénom</label>
@@ -128,6 +158,25 @@
             </a>
         </div>
     </div>
+    <div class="settings-card">
+        <h3 class="card-title"><i class="fa-solid fa-gear"></i> Gestion the Equipe</h3>
+        <div class="manage-team">
+            <div class="card-equipes">
+                <h3 class="card-title"><i class="fa-solid fa-users"></i> Equipes</h3>
+                <div class="card-equipes-content">
+                    
+                </div>
+    </div>
+
+</div>
+
+<div class="settings-card">
+    <h3 class="card-title"><i class="fa-solid fa-gear"></i> Management les roles</h3>
+    <div class="manage-roles">
+        <div class="card-roles">
+
+        </div>
+    </div>
 </div>
 
 <!-- Zone de danger -->
@@ -151,7 +200,103 @@
     </div>
 </div>
 
-<!-- Language Switcher Script -->
-<script src="{% static 'core/js/language-switcher.js' %}"></script>
+<script src="{% static 'core/js/settings.js' %}"></script>
+
+<script>
+// Avatar functionality
+function uploadAvatar(input) {
+    if (input.files && input.files[0]) {
+        // Show loading state
+        const buttons = document.querySelectorAll('.avatar-actions .btn');
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Upload...';
+        });
+        
+        // Create form data
+        const formData = new FormData();
+        formData.append('avatar', input.files[0]);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        formData.append('update_profile', 'true');
+        
+        // Upload via fetch
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Reload page to show new avatar
+                window.location.reload();
+            } else {
+                throw new Error('Upload failed');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erreur lors de l\'upload de la photo. Veuillez réessayer.');
+            // Reset buttons
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.innerHTML = btn.getAttribute('data-original-text') || btn.innerHTML;
+            });
+        });
+    }
+}
+
+function removeAvatar() {
+    if (confirm('Êtes-vous sûr de vouloir supprimer votre photo de profil ?')) {
+        // Show loading state
+        const buttons = document.querySelectorAll('.avatar-actions .btn');
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Suppression...';
+        });
+        
+        // Create form data for removal
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        formData.append('update_profile', 'true');
+        formData.append('remove_avatar', 'true');
+        
+        // Submit removal request
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Reload page to show removed avatar
+                window.location.reload();
+            } else {
+                throw new Error('Removal failed');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erreur lors de la suppression de la photo. Veuillez réessayer.');
+            // Reset buttons
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.innerHTML = btn.getAttribute('data-original-text') || btn.innerHTML;
+            });
+        });
+    }
+}
+
+// Store original button text for restoration
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.avatar-actions .btn');
+    buttons.forEach(btn => {
+        btn.setAttribute('data-original-text', btn.innerHTML);
+    });
+});
+</script>
 
 {% endblock %}
