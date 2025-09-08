@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth'
+                    right: 'dayGridMonth,listWeek',
                 },
                 events: window.calendarEventsUrl || "/api/appointments/",
                 editable: true,
