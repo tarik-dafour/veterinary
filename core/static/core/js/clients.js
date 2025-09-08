@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeClientManagement() {
     try {
-        // Form validation
+        // Form validat<!-- Language Switcher Script -->ion
         initializeFormValidation();
         
         // Modal management
