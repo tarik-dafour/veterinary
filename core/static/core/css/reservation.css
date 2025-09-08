@@ -376,12 +376,12 @@ html,body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #43C0AF, #013847);
+    background: #013847;
     color: white;
 }
 
 .btn-primary:hover {
-    background:  linear-gradient(135deg, #43C0AF, #013847) ;
+    background: #013847 ;
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(67, 192, 175, 0.3);
 }
@@ -795,32 +795,6 @@ html,body {
     transition: all 0.2s ease;
 }
 
-/* Status styling in facture */
-.status-confirmé, .status-confirmed {
-    color: #059669;
-    font-weight: 600;
-}
-
-.status-planifié, .status-scheduled {
-    color: #3B82F6;
-    font-weight: 600;
-}
-
-.status-terminé, .status-completed {
-    color: #8B5CF6;
-    font-weight: 600;
-}
-
-.status-annulé, .status-cancelled {
-    color: #EF4444;
-    font-weight: 600;
-}
-
-.status-en attente, .status-pending {
-    color: #F59E0B;
-    font-weight: 600;
-}
-
 /* Responsive Facture Modal */
 @media (max-width: 768px) {
     .facture-modal-content {
@@ -887,12 +861,12 @@ html,body {
 }
 
 .btn-success {
-    background: linear-gradient(135deg, #43C0AF, #71B5D8);
+    background: #013847;
     color: white;
 }
 
 .btn-success:hover {
-    background: linear-gradient(135deg, #71B5D8, #43C0AF);
+    background: #013847;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(67, 192, 175, 0.3);
 }
@@ -938,22 +912,21 @@ html,body {
 }
 
 .table td:last-child .btn-secondary:hover {
-    background: #71B5D8;
-    color: white;
+    background: #E2ECED;
+    color: #013847;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(113, 181, 216, 0.3);
 }
 
 .table td:last-child .btn-facture {
-    background: linear-gradient(135deg, #6B46C1, #8B5CF6);
-    color: white;
-    border: 1px solid #6B46C1;
+    background: #E2E8F0;
+    color: #013847;
+    border: 1px solid #71B5D8;
 }
 
 .table td:last-child .btn-facture:hover {
-    background: linear-gradient(135deg, #8B5CF6, #6B46C1);
+    background: #E2E8F0;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(107, 70, 193, 0.3);
 }
 
 .table td:last-child .btn-danger {

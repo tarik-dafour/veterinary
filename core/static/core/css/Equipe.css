@@ -238,12 +238,12 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #43C0AF, #013847);
+    background: #013847;
     color: white;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #013847, #43C0AF);
+    background: #013847;
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(67, 192, 175, 0.3);
 }
@@ -272,12 +272,12 @@
 }
 
 .btn-success {
-    background: linear-gradient(135deg, #43C0AF, #71B5D8);
+    background: #013847;
     color: white;
 }
 
 .btn-success:hover {
-    background: linear-gradient(135deg, #71B5D8, #43C0AF);
+    background: #013847;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(67, 192, 175, 0.3);
 }
