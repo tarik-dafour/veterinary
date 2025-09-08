@@ -22,51 +22,75 @@
     {% endfor %}
 {% endif %}
 
-<!-- Carte d'information utilisateur -->
-<div class="settings-card">
-    <div class="user-info">
-        <div class="user-avatar">
-            {% if profile.avatar %}
-                <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar-image">
-            {% else %}
-                <div class="avatar-placeholder">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-            {% endif %}
-            <button type="button" class="avatar-upload-btn" onclick="document.getElementById('avatar-upload').click()">
-                <i class="fa-solid fa-camera"></i>
-            </button>
-        </div>
-        <div class="user-details">
-            <h3>{{ user.get_full_name|default:user.username }}</h3>
-            <p>{{ user.email }}</p>
-            {% if profile %}
-                <span class="role-badge">{{ profile.get_role_display }}</span>
-            {% endif %}
-            <div class="avatar-actions">
-                <button type="button" class="btn btn-sm btn-primary" onclick="document.getElementById('avatar-upload').click()">
-                    <i class="fa-solid fa-plus"></i> Ajouter Photo
-                </button>
-                {% if profile.avatar %}
-                    <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('avatar-upload').click()">
-                        <i class="fa-solid fa-edit"></i> Modifier
-                    </button>
-                    <button type="button" class="btn btn-sm btn-danger" onclick="removeAvatar()">
-                        <i class="fa-solid fa-trash"></i> Supprimer
-                    </button>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    <!-- Hidden file input for avatar upload -->
-    <form method="post" id="avatar-form" enctype="multipart/form-data" style="display: none;">
-        {% csrf_token %}
-        <input type="file" id="avatar-upload" name="avatar" accept="image/*" onchange="uploadAvatar(this)">
-    </form>
-</div>
+<!-- User info card moved inside settings-container below -->
 
 <div class="settings-container">
-    <!-- Paramètres du profil -->
+    <!-- Carte d'information utilisateur (now top-left) -->
+    <div class="settings-card">
+        <div class="user-info">
+            <div class="user-avatar">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar-image">
+                {% else %}
+                    <div class="avatar-placeholder">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                {% endif %}
+                <button type="button" class="avatar-upload-btn" onclick="document.getElementById('avatar-upload').click()">
+                    <i class="fa-solid fa-camera"></i>
+                </button>
+            </div>
+            <div class="user-details">
+                <h3>{{ user.get_full_name|default:user.username }}</h3>
+                <p>{{ user.email }}</p>
+                {% if profile %}
+                    <span class="role-badge">{{ profile.get_role_display }}</span>
+                {% endif %}
+                <div class="avatar-actions">
+                    <button type="button" class="btn btn-Ajouter" onclick="document.getElementById('avatar-upload').click()">
+                        <i class="fa-solid fa-plus"></i> Ajouter Photo
+                    </button>
+                    {% if profile.avatar %}
+                        <button type="button" class="btn btn-Modifier" onclick="document.getElementById('avatar-upload').click()">
+                            <i class="fa-solid fa-edit"></i> Modifier
+                        </button>
+                        <button type="button" class="btn btn-Supprimer" onclick="removeAvatar()">
+                            <i class="fa-solid fa-trash"></i> Supprimer
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- Hidden file input for avatar upload -->
+        <form method="post" id="avatar-form" enctype="multipart/form-data" style="display: none;">
+            {% csrf_token %}
+            <input type="file" id="avatar-upload" name="avatar" accept="image/*" onchange="uploadAvatar(this)">
+        </form>
+    </div>
+    <!-- Actions rapides (now top-right) -->
+    <div class="settings-card">
+        <h3 class="card-title"><i class="fa-solid fa-bolt"></i> Actions rapides</h3>
+
+        <div class="quick-actions">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="fa-solid fa-house"></i> Aller au tableau de bord
+            </a>
+            
+            <a href="{% url 'users' %}" class="btn btn-secondary">
+                <i class="fa-solid fa-users"></i> Gérer l'équipe
+            </a>
+            
+            <a href="{% url 'logs' %}" class="btn btn-secondary">
+                <i class="fa-solid fa-file-alt"></i> Voir les journaux d'activité
+            </a>
+            
+            <a href="{% url 'report' %}" class="btn btn-secondary">
+                <i class="fa-solid fa-chart-line"></i> Envoyer des rapports
+            </a>
+        </div>
+    </div>
+
+    <!-- Paramètres du profil (moved down) -->
     <div class="settings-card">
         <h3 class="card-title"><i class="fa-solid fa-user"></i> Paramètres du profil</h3>
         <form method="post" class="settings-form" enctype="multipart/form-data">
@@ -136,45 +160,24 @@
         </form>
     </div>
 
-    <!-- Actions rapides -->
-    <div class="settings-card">
-        <h3 class="card-title"><i class="fa-solid fa-bolt"></i> Actions rapides</h3>
+    </div>
+    <!-- Sections below are outside of the main settings card container -->
 
-        <div class="quick-actions">
-            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
-                <i class="fa-solid fa-house"></i> Aller au tableau de bord
-            </a>
-            
-            <a href="{% url 'users' %}" class="btn btn-secondary">
-                <i class="fa-solid fa-users"></i> Gérer l'équipe
-            </a>
-            
-            <a href="{% url 'logs' %}" class="btn btn-secondary">
-                <i class="fa-solid fa-file-alt"></i> Voir les journaux d'activité
-            </a>
-            
-            <a href="{% url 'report' %}" class="btn btn-secondary">
-                <i class="fa-solid fa-chart-line"></i> Envoyer des rapports
-            </a>
+<div class="settings-getio">
+    <h3 class="card-title"><i class="fa-solid fa-gear"></i> Gestion de l'équipe</h3>
+    <div class="manage-team">
+        <div class="card-equipes">
+            <h3 class="card-title"><i class="fa-solid fa-users"></i> Equipes</h3>
+            <div class="card-equipes-content">
+            </div>
         </div>
     </div>
-    <div class="settings-card">
-        <h3 class="card-title"><i class="fa-solid fa-gear"></i> Gestion the Equipe</h3>
-        <div class="manage-team">
-            <div class="card-equipes">
-                <h3 class="card-title"><i class="fa-solid fa-users"></i> Equipes</h3>
-                <div class="card-equipes-content">
-                    
-                </div>
-    </div>
-
 </div>
 
-<div class="settings-card">
-    <h3 class="card-title"><i class="fa-solid fa-gear"></i> Management les roles</h3>
+<div class="settings-getio">
+    <h3 class="card-title"><i class="fa-solid fa-gear"></i> Management des rôles</h3>
     <div class="manage-roles">
         <div class="card-roles">
-
         </div>
     </div>
 </div>
