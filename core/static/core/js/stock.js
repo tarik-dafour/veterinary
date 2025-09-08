@@ -1,4 +1,5 @@
 // Stock Page JavaScript Functionality
+console.log('Stock.js loaded successfully!');
 
 // Tab Management System
 document.addEventListener('DOMContentLoaded', function() {
@@ -264,7 +265,7 @@ function initializeAccessibility() {
 }
 
 // Add Product Modal Functions
-function openAddProductModal() {
+window.openAddProductModal = function() {
     try {
         console.log('openAddProductModal called');
         const modal = document.getElementById('addProductModal');
@@ -275,6 +276,11 @@ function openAddProductModal() {
             modal.classList.add('active');
             modal.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
+            
+            // Check if modal is visible
+            console.log('Modal classes:', modal.className);
+            console.log('Modal display style:', window.getComputedStyle(modal).display);
+            console.log('Modal visibility:', window.getComputedStyle(modal).visibility);
             
             // Focus first input
             setTimeout(() => {
@@ -291,7 +297,7 @@ function openAddProductModal() {
     }
 }
 
-function closeAddProductModal() {
+window.closeAddProductModal = function() {
     try {
         const modal = document.getElementById('addProductModal');
         if (modal) {
@@ -481,3 +487,765 @@ function clearCategorySearch() {
         console.error('Error clearing category search:', error);
     }
 }
+
+// Product Management Functions
+window.editProduct = function(productId) {
+    try {
+        console.log('editProduct called with ID:', productId);
+        console.log('Product ID type:', typeof productId);
+        
+        // Get product data from the table row
+        const row = document.querySelector(`tr[data-product-id="${productId}"]`);
+        if (!row) {
+            console.error('Product row not found for ID:', productId);
+            showNotification('Product not found', 'error');
+            return;
+        }
+        
+        // Extract product data from the row
+        const productName = row.querySelector('.product-name')?.textContent || '';
+        const productDescription = row.querySelector('.product-description')?.textContent || '';
+        const categoryName = row.querySelector('.category-badge')?.textContent || '';
+        const supplierName = row.querySelector('.supplier-name')?.textContent || '';
+        const priceText = row.querySelector('.price-amount')?.textContent || '';
+        const quantityText = row.querySelector('.quantity-display')?.textContent || '';
+        const expirationText = row.querySelector('.expiration-date')?.textContent || '';
+        
+        // Parse price (remove 'DH' and convert to number)
+        const price = parseFloat(priceText.replace(' DH', '')) || 0;
+        
+        // Parse quantity
+        const quantity = parseInt(quantityText) || 0;
+        
+        // Parse expiration date (convert from "M d, Y" format to "YYYY-MM-DD")
+        let expirationDate = '';
+        if (expirationText) {
+            try {
+                const date = new Date(expirationText);
+                expirationDate = date.toISOString().split('T')[0];
+            } catch (e) {
+                console.error('Error parsing expiration date:', e);
+            }
+        }
+        
+        // Open the add product modal
+        console.log('Opening add product modal...');
+        openAddProductModal();
+        
+        // Update modal title and button
+        document.getElementById('modal-title').innerHTML = '<i class="fas fa-edit" aria-hidden="true"></i> Edit Product';
+        document.getElementById('submit-product-btn').innerHTML = '<i class="fas fa-save" aria-hidden="true"></i> Update Product';
+        
+        // Add hidden input for edit ID
+        let editIdField = document.getElementById('edit-product-id');
+        if (!editIdField) {
+            editIdField = document.createElement('input');
+            editIdField.type = 'hidden';
+            editIdField.id = 'edit-product-id';
+            editIdField.name = 'edit_id';
+            document.getElementById('addProductForm').appendChild(editIdField);
+        }
+        editIdField.value = productId;
+        
+        // Populate form fields
+        document.getElementById('product-name').value = productName;
+        document.getElementById('product-description').value = productDescription;
+        document.getElementById('product-price').value = price;
+        document.getElementById('product-quantity').value = quantity;
+        document.getElementById('product-expiration').value = expirationDate;
+        
+        // Set category (find by name)
+        const categorySelect = document.getElementById('product-category');
+        if (categorySelect) {
+            for (let option of categorySelect.options) {
+                if (option.textContent === categoryName) {
+                    option.selected = true;
+                    break;
+                }
+            }
+        }
+        
+        // Set supplier (find by name)
+        const supplierSelect = document.getElementById('product-supplier');
+        if (supplierSelect) {
+            for (let option of supplierSelect.options) {
+                if (option.textContent === supplierName) {
+                    option.selected = true;
+                    break;
+                }
+            }
+        }
+        
+        console.log('Product data populated for editing');
+        
+    } catch (error) {
+        console.error('Error editing product:', error);
+        showNotification('Error loading product for editing', 'error');
+    }
+}
+
+window.deleteProduct = function(productId) {
+    try {
+        // Get product data for confirmation
+        const row = document.querySelector(`tr[data-product-id="${productId}"]`);
+        if (!row) {
+            showNotification('Product not found', 'error');
+            return;
+        }
+        
+        const productName = row.querySelector('.product-name')?.textContent || 'Unknown Product';
+        
+        // Show confirmation dialog
+        if (confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = window.location.href;
+            
+            // Add CSRF token
+            const csrfToken = getCookie('csrftoken');
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+            
+            // Add delete parameter
+            const deleteInput = document.createElement('input');
+            deleteInput.type = 'hidden';
+            deleteInput.name = 'delete';
+            deleteInput.value = productId;
+            form.appendChild(deleteInput);
+            
+            // Submit form
+            document.body.appendChild(form);
+            form.submit();
+        }
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        showNotification('Error deleting product', 'error');
+    }
+}
+
+// Category Management Functions
+window.editCategory = function(categoryId) {
+    try {
+        console.log('editCategory called with ID:', categoryId);
+        
+        // Get category data from the card
+        const card = document.querySelector(`div[data-category-id="${categoryId}"]`);
+        if (!card) {
+            console.error('Category card not found for ID:', categoryId);
+            showNotification('Category not found', 'error');
+            return;
+        }
+        
+        const categoryName = card.querySelector('.category-name')?.textContent || '';
+        
+        // Open the edit category modal
+        openEditCategoryModal();
+        
+        // Populate form fields
+        document.getElementById('edit-category-id').value = categoryId;
+        document.getElementById('edit-category-name').value = categoryName;
+        
+        console.log('Category data populated for editing');
+        
+    } catch (error) {
+        console.error('Error editing category:', error);
+        showNotification('Error loading category for editing', 'error');
+    }
+}
+
+window.deleteCategory = function(categoryId) {
+    try {
+        // Get category data for confirmation
+        const card = document.querySelector(`div[data-category-id="${categoryId}"]`);
+        if (!card) {
+            showNotification('Category not found', 'error');
+            return;
+        }
+        
+        const categoryName = card.querySelector('.category-name')?.textContent || 'Unknown Category';
+        
+        // Show confirmation dialog
+        if (confirm(`Are you sure you want to delete "${categoryName}"? This action cannot be undone.`)) {
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = window.location.href;
+            
+            // Add CSRF token
+            const csrfToken = getCookie('csrftoken');
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+            
+            // Add delete category parameter
+            const deleteInput = document.createElement('input');
+            deleteInput.type = 'hidden';
+            deleteInput.name = 'delete_category';
+            deleteInput.value = categoryId;
+            form.appendChild(deleteInput);
+            
+            // Submit form
+            document.body.appendChild(form);
+            form.submit();
+        }
+    } catch (error) {
+        console.error('Error deleting category:', error);
+        showNotification('Error deleting category', 'error');
+    }
+}
+
+// Supplier Management Functions
+window.editSupplier = function(supplierId) {
+    try {
+        console.log('editSupplier called with ID:', supplierId);
+        
+        // Get supplier data from the card
+        const card = document.querySelector(`div[data-supplier-id="${supplierId}"]`);
+        if (!card) {
+            console.error('Supplier card not found for ID:', supplierId);
+            showNotification('Supplier not found', 'error');
+            return;
+        }
+        
+        const supplierName = card.querySelector('.supplier-name')?.textContent || '';
+        const supplierPhone = card.querySelector('.supplier-phone')?.textContent || '';
+        const supplierEmail = card.querySelector('.supplier-email')?.textContent || '';
+        const supplierAddress = card.querySelector('.supplier-address')?.textContent || '';
+        
+        // Open the edit supplier modal
+        openEditSupplierModal();
+        
+        // Populate form fields
+        document.getElementById('edit-supplier-id').value = supplierId;
+        document.getElementById('edit-supplier-name').value = supplierName;
+        document.getElementById('edit-supplier-phone').value = supplierPhone;
+        document.getElementById('edit-supplier-email').value = supplierEmail;
+        document.getElementById('edit-supplier-address').value = supplierAddress;
+        
+        console.log('Supplier data populated for editing');
+        
+    } catch (error) {
+        console.error('Error editing supplier:', error);
+        showNotification('Error loading supplier for editing', 'error');
+    }
+}
+
+window.deleteSupplier = function(supplierId) {
+    try {
+        // Get supplier data for confirmation
+        const card = document.querySelector(`div[data-supplier-id="${supplierId}"]`);
+        if (!card) {
+            showNotification('Supplier not found', 'error');
+            return;
+        }
+        
+        const supplierName = card.querySelector('.supplier-name')?.textContent || 'Unknown Supplier';
+        
+        // Show confirmation dialog
+        if (confirm(`Are you sure you want to delete "${supplierName}"? This action cannot be undone.`)) {
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = window.location.href;
+            
+            // Add CSRF token
+            const csrfToken = getCookie('csrftoken');
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+            
+            // Add delete supplier parameter
+            const deleteInput = document.createElement('input');
+            deleteInput.type = 'hidden';
+            deleteInput.name = 'delete_supplier';
+            deleteInput.value = supplierId;
+            form.appendChild(deleteInput);
+            
+            // Submit form
+            document.body.appendChild(form);
+            form.submit();
+        }
+    } catch (error) {
+        console.error('Error deleting supplier:', error);
+        showNotification('Error deleting supplier', 'error');
+    }
+}
+
+// Modal Functions for Categories and Suppliers
+function openAddCategoryModal() {
+    try {
+        const modal = document.getElementById('addCategoryModal');
+        if (modal) {
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus first input
+            setTimeout(() => {
+                const firstInput = document.getElementById('category-name');
+                if (firstInput) firstInput.focus();
+            }, 100);
+        }
+    } catch (error) {
+        console.error('Error opening add category modal:', error);
+    }
+}
+
+function closeAddCategoryModal() {
+    try {
+        const modal = document.getElementById('addCategoryModal');
+        if (modal) {
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            
+            // Reset form
+            document.getElementById('addCategoryForm').reset();
+        }
+    } catch (error) {
+        console.error('Error closing add category modal:', error);
+    }
+}
+
+function openEditCategoryModal() {
+    try {
+        const modal = document.getElementById('editCategoryModal');
+        if (modal) {
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus first input
+            setTimeout(() => {
+                const firstInput = document.getElementById('edit-category-name');
+                if (firstInput) firstInput.focus();
+            }, 100);
+        }
+    } catch (error) {
+        console.error('Error opening edit category modal:', error);
+    }
+}
+
+function closeEditCategoryModal() {
+    try {
+        const modal = document.getElementById('editCategoryModal');
+        if (modal) {
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            
+            // Reset form
+            document.getElementById('editCategoryForm').reset();
+        }
+    } catch (error) {
+        console.error('Error closing edit category modal:', error);
+    }
+}
+
+function openAddSupplierModal() {
+    try {
+        const modal = document.getElementById('addSupplierModal');
+        if (modal) {
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus first input
+            setTimeout(() => {
+                const firstInput = document.getElementById('supplier-name');
+                if (firstInput) firstInput.focus();
+            }, 100);
+        }
+    } catch (error) {
+        console.error('Error opening add supplier modal:', error);
+    }
+}
+
+function closeAddSupplierModal() {
+    try {
+        const modal = document.getElementById('addSupplierModal');
+        if (modal) {
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            
+            // Reset form
+            document.getElementById('addSupplierForm').reset();
+        }
+    } catch (error) {
+        console.error('Error closing add supplier modal:', error);
+    }
+}
+
+function openEditSupplierModal() {
+    try {
+        const modal = document.getElementById('editSupplierModal');
+        if (modal) {
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus first input
+            setTimeout(() => {
+                const firstInput = document.getElementById('edit-supplier-name');
+                if (firstInput) firstInput.focus();
+            }, 100);
+        }
+    } catch (error) {
+        console.error('Error opening edit supplier modal:', error);
+    }
+}
+
+function closeEditSupplierModal() {
+    try {
+        const modal = document.getElementById('editSupplierModal');
+        if (modal) {
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            
+            // Reset form
+            document.getElementById('editSupplierForm').reset();
+        }
+    } catch (error) {
+        console.error('Error closing edit supplier modal:', error);
+    }
+}
+
+// Form Submission Handlers
+function submitAddProduct(event) {
+    try {
+        event.preventDefault();
+        
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        // Show loading state
+        const submitBtn = document.getElementById('submit-product-btn');
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        
+        // Submit form
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                throw new Error('Failed to save product');
+            }
+        })
+        .catch(error => {
+            console.error('Error saving product:', error);
+            showNotification('Error saving product', 'error');
+        })
+        .finally(() => {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        });
+        
+    } catch (error) {
+        console.error('Error submitting add product form:', error);
+        showNotification('Error submitting form', 'error');
+    }
+}
+
+function submitAddCategory(event) {
+    try {
+        event.preventDefault();
+        
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        // Show loading state
+        const submitBtn = document.getElementById('submit-category-btn');
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        
+        // Submit form
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                throw new Error('Failed to save category');
+            }
+        })
+        .catch(error => {
+            console.error('Error saving category:', error);
+            showNotification('Error saving category', 'error');
+        })
+        .finally(() => {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        });
+        
+    } catch (error) {
+        console.error('Error submitting add category form:', error);
+        showNotification('Error submitting form', 'error');
+    }
+}
+
+function submitEditCategory(event) {
+    try {
+        event.preventDefault();
+        
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        // Show loading state
+        const submitBtn = document.getElementById('submit-edit-category-btn');
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        
+        // Submit form
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                throw new Error('Failed to update category');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating category:', error);
+            showNotification('Error updating category', 'error');
+        })
+        .finally(() => {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        });
+        
+    } catch (error) {
+        console.error('Error submitting edit category form:', error);
+        showNotification('Error submitting form', 'error');
+    }
+}
+
+function submitAddSupplier(event) {
+    try {
+        event.preventDefault();
+        
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        // Show loading state
+        const submitBtn = document.getElementById('submit-supplier-btn');
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        
+        // Submit form
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                throw new Error('Failed to save supplier');
+            }
+        })
+        .catch(error => {
+            console.error('Error saving supplier:', error);
+            showNotification('Error saving supplier', 'error');
+        })
+        .finally(() => {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        });
+        
+    } catch (error) {
+        console.error('Error submitting add supplier form:', error);
+        showNotification('Error submitting form', 'error');
+    }
+}
+
+function submitEditSupplier(event) {
+    try {
+        event.preventDefault();
+        
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        // Show loading state
+        const submitBtn = document.getElementById('submit-edit-supplier-btn');
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        
+        // Submit form
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                throw new Error('Failed to update supplier');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating supplier:', error);
+            showNotification('Error updating supplier', 'error');
+        })
+        .finally(() => {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        });
+        
+    } catch (error) {
+        console.error('Error submitting edit supplier form:', error);
+        showNotification('Error submitting form', 'error');
+    }
+}
+
+// Bulk Actions
+function updateProductSelection() {
+    try {
+        const checkboxes = document.querySelectorAll('.product-checkbox');
+        const selectAllCheckbox = document.getElementById('select-all-products');
+        const bulkActionsBar = document.getElementById('bulk-actions-bar');
+        const selectedCount = document.getElementById('selected-count');
+        
+        let checkedCount = 0;
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) checkedCount++;
+        });
+        
+        // Update select all checkbox state
+        if (checkedCount === 0) {
+            selectAllCheckbox.indeterminate = false;
+            selectAllCheckbox.checked = false;
+        } else if (checkedCount === checkboxes.length) {
+            selectAllCheckbox.indeterminate = false;
+            selectAllCheckbox.checked = true;
+        } else {
+            selectAllCheckbox.indeterminate = true;
+        }
+        
+        // Show/hide bulk actions bar
+        if (checkedCount > 0) {
+            bulkActionsBar.style.display = 'block';
+            selectedCount.textContent = checkedCount;
+        } else {
+            bulkActionsBar.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Error updating product selection:', error);
+    }
+}
+
+function toggleAllProducts(selectAllCheckbox) {
+    try {
+        const checkboxes = document.querySelectorAll('.product-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+        updateProductSelection();
+    } catch (error) {
+        console.error('Error toggling all products:', error);
+    }
+}
+
+function bulkDeleteProducts() {
+    try {
+        const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+        if (selectedCheckboxes.length === 0) {
+            showNotification('No products selected', 'warning');
+            return;
+        }
+        
+        const productNames = Array.from(selectedCheckboxes).map(checkbox => {
+            const row = checkbox.closest('tr');
+            return row.querySelector('.product-name')?.textContent || 'Unknown Product';
+        });
+        
+        if (confirm(`Are you sure you want to delete ${selectedCheckboxes.length} product(s)?\n\n${productNames.join('\n')}\n\nThis action cannot be undone.`)) {
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = window.location.href;
+            
+            // Add CSRF token
+            const csrfToken = getCookie('csrftoken');
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+            
+            // Add bulk delete parameter
+            const bulkDeleteInput = document.createElement('input');
+            bulkDeleteInput.type = 'hidden';
+            bulkDeleteInput.name = 'bulk_delete';
+            bulkDeleteInput.value = '1';
+            form.appendChild(bulkDeleteInput);
+            
+            // Add selected product IDs
+            selectedCheckboxes.forEach(checkbox => {
+                const productIdInput = document.createElement('input');
+                productIdInput.type = 'hidden';
+                productIdInput.name = 'product_ids';
+                productIdInput.value = checkbox.value;
+                form.appendChild(productIdInput);
+            });
+            
+            // Submit form
+            document.body.appendChild(form);
+            form.submit();
+        }
+    } catch (error) {
+        console.error('Error bulk deleting products:', error);
+        showNotification('Error deleting products', 'error');
+    }
+}
+
+function clearProductSelection() {
+    try {
+        const checkboxes = document.querySelectorAll('.product-checkbox');
+        const selectAllCheckbox = document.getElementById('select-all-products');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+        
+        updateProductSelection();
+    } catch (error) {
+        console.error('Error clearing product selection:', error);
+    }
+}
+

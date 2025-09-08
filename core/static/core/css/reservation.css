@@ -1,67 +1,10 @@
 /* Global Scrollbar Styling for Background Screen */
-html, body {
+html,body {
     scrollbar-width: thin;
-    scrollbar-color: #43C0AF #E2ECED;
+    scrollbar-color: #888 #f1f1f1;
+    overflow-x: hidden;
 }
 
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-}
-
-html::-webkit-scrollbar-track,
-body::-webkit-scrollbar-track {
-    background: #E2ECED;
-    border-radius: 10px;
-}
-
-html::-webkit-scrollbar-thumb,
-body::-webkit-scrollbar-thumb {
-    background: #43C0AF;
-    border-radius: 10px;
-    border: 2px solid #E2ECED;
-}
-
-html::-webkit-scrollbar-thumb:hover,
-body::-webkit-scrollbar-thumb:hover {
-    background: #013847;
-}
-
-/* Main Content Area Scrollbar */
-.main-content,
-.content-wrapper,
-.container {
-    scrollbar-width: thin;
-    scrollbar-color: #43C0AF #E2ECED;
-}
-
-.main-content::-webkit-scrollbar,
-.content-wrapper::-webkit-scrollbar,
-.container::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-
-.main-content::-webkit-scrollbar-track,
-.content-wrapper::-webkit-scrollbar-track,
-.container::-webkit-scrollbar-track {
-    background: #E2ECED;
-    border-radius: 8px;
-}
-
-.main-content::-webkit-scrollbar-thumb,
-.content-wrapper::-webkit-scrollbar-thumb,
-.container::-webkit-scrollbar-thumb {
-    background: #43C0AF;
-    border-radius: 8px;
-}
-
-.main-content::-webkit-scrollbar-thumb:hover,
-.content-wrapper::-webkit-scrollbar-thumb:hover,
-.container::-webkit-scrollbar-thumb:hover {
-    background: #013847;
-}
 
 /* Bulk Selection Styles */
 .bulk-actions-bar {
@@ -139,38 +82,6 @@ body::-webkit-scrollbar-thumb:hover {
 .reservation-checkbox:checked {
     background-color: #38B2FF;
     border-color: #38B2FF;
-}
-
-/* Page Content Scrollbar */
-.page-content,
-.content-area {
-    scrollbar-width: thin;
-    scrollbar-color: #43C0AF #E2ECED;
-    overflow-y: auto;
-    max-height: 100vh;
-}
-
-.page-content::-webkit-scrollbar,
-.content-area::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-
-.page-content::-webkit-scrollbar-track,
-.content-area::-webkit-scrollbar-track {
-    background: #E2ECED;
-    border-radius: 8px;
-}
-
-.page-content::-webkit-scrollbar-thumb,
-.content-area::-webkit-scrollbar-thumb {
-    background: #43C0AF;
-    border-radius: 8px;
-}
-
-.page-content::-webkit-scrollbar-thumb:hover,
-.content-area::-webkit-scrollbar-thumb:hover {
-    background: #013847;
 }
 
 /* Page Header */
@@ -276,43 +187,6 @@ body::-webkit-scrollbar-thumb:hover {
     resize: vertical;
 }
 
-/* Form Container Scrollbar */
-.form-container,
-.form-wrapper,
-.modal-background {
-    scrollbar-width: thin;
-    scrollbar-color: #43C0AF #E2ECED;
-}
-
-.form-container::-webkit-scrollbar,
-.form-wrapper::-webkit-scrollbar,
-.modal-background::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-.form-container::-webkit-scrollbar-track,
-.form-wrapper::-webkit-scrollbar-track,
-.modal-background::-webkit-scrollbar-track {
-    background: #E2ECED;
-    border-radius: 6px;
-}
-
-.form-container::-webkit-scrollbar-thumb,
-.form-wrapper::-webkit-scrollbar-thumb,
-.modal-background::-webkit-scrollbar-thumb {
-    background: #43C0AF;
-    border-radius: 6px;
-}
-
-.form-container::-webkit-scrollbar-thumb:hover,
-.form-wrapper::-webkit-scrollbar-thumb:hover,
-.modal-background::-webkit-scrollbar-thumb:hover {
-    background: #013847;
-}
-
-
-
 /* Table Card */
 .table-card {
     background: #fff;
@@ -328,25 +202,6 @@ body::-webkit-scrollbar-thumb:hover {
     animation: fadeIn 0.8s ease-out;
 }
 
-/* ✅ Scrollbar Style */
-.table-card::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-.table-card::-webkit-scrollbar-track {
-    background: #E2ECED;
-    border-radius: 10px;
-}
-
-.table-card::-webkit-scrollbar-thumb {
-    background: #43C0AF;
-    border-radius: 10px;
-}
-
-.table-card::-webkit-scrollbar-thumb:hover {
-    background: #fff;
-}
 
 .table-header {
     padding: 1.8rem;

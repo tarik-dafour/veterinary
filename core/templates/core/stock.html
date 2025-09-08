@@ -836,7 +836,13 @@
                             <i class="fas fa-building" aria-hidden="true"></i>
                             Supplier Name *
                         </label>
-                        <input type="text"id="edit-supplier-name"name="fourn_nom"   class="form-input"required   placeholder="Enter supplier name" aria-describedby="edit-supplier-name-help">
+                        <input type="text" 
+                               id="edit-supplier-name" 
+                               name="fourn_nom" 
+                               class="form-input" 
+                               required 
+                               placeholder="Enter supplier name" 
+                               aria-describedby="edit-supplier-name-help">
                         <div id="edit-supplier-name-help" class="form-help">Enter the supplier company name</div>
                     </div>
                     
@@ -845,7 +851,13 @@
                             <i class="fas fa-phone" aria-hidden="true"></i>
                             Phone Number *
                         </label>
-                        <input type="tel" id="edit-supplier-phonname="fourn_telephonclass="form-input" required placeholder="Enter phone numbearia-describedby="edit-supplier-phone-help">
+                        <input type="tel" 
+                               id="edit-supplier-phone" 
+                               name="fourn_telephone" 
+                               class="form-input" 
+                               required 
+                               placeholder="Enter phone number" 
+                               aria-describedby="edit-supplier-phone-help">
                         <div id="edit-supplier-phone-help" class="form-help">Enter the supplier contact phone number</div>
                     </div>
                     
@@ -895,8 +907,6 @@
     </div>
 </div>
 
-<!-- JavaScript for Stock Management -->
-<!-- Stock JavaScript -->
 <script src="{% static 'core/js/stock.js' %}"></script>
 <script>
     // Initialize stock management
@@ -911,42 +921,5 @@
             console.error('Error initializing stock management:', error);
         }
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </script>
-
-
 {% endblock %}

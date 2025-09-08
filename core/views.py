@@ -429,6 +429,43 @@ def stock(request):
         produit = get_object_or_404(Produit, id=request.GET.get('delete'))
         produit.delete()
         return redirect('stock')
+    elif request.method == 'POST' and 'delete_category' in request.POST:
+        category_id = request.POST.get('delete_category')
+        category = get_object_or_404(Categorie, id=category_id)
+        
+        # Check if category is used by any products
+        products_using_category = Produit.objects.filter(categorie=category)
+        if products_using_category.exists():
+            messages.error(request, f'Cannot delete category "{category.nom}" because it is used by {products_using_category.count()} product(s). Please reassign or delete those products first.')
+        else:
+            category.delete()
+            messages.success(request, f'Category "{category.nom}" deleted successfully!')
+        return redirect('stock')
+    elif request.method == 'POST' and 'delete_supplier' in request.POST:
+        supplier_id = request.POST.get('delete_supplier')
+        supplier = get_object_or_404(Fournisseur, id=supplier_id)
+        
+        # Check if supplier is used by any products
+        products_using_supplier = Produit.objects.filter(fournisseur=supplier)
+        if products_using_supplier.exists():
+            messages.error(request, f'Cannot delete supplier "{supplier.nom}" because it is used by {products_using_supplier.count()} product(s). Please reassign or delete those products first.')
+        else:
+            supplier.delete()
+            messages.success(request, f'Supplier "{supplier.nom}" deleted successfully!')
+        return redirect('stock')
+    elif request.method == 'POST' and 'bulk_delete' in request.POST:
+        product_ids = request.POST.getlist('product_ids')
+        if product_ids:
+            deleted_count = 0
+            for product_id in product_ids:
+                try:
+                    produit = get_object_or_404(Produit, id=product_id)
+                    produit.delete()
+                    deleted_count += 1
+                except:
+                    continue
+            messages.success(request, f'{deleted_count} product(s) deleted successfully!')
+        return redirect('stock')
     elif request.method == 'GET' and 'edit' in request.GET:
         produit_to_edit = get_object_or_404(Produit, id=request.GET.get('edit'))
         # Calculate statistics
