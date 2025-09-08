@@ -22,51 +22,75 @@
     {% endfor %}
 {% endif %}
 
-<!-- Carte d'information utilisateur -->
-<div class="settings-card">
-    <div class="user-info">
-        <div class="user-avatar">
-            {% if profile.avatar %}
-                <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar-image">
-            {% else %}
-                <div class="avatar-placeholder">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-            {% endif %}
-            <button type="button" class="avatar-upload-btn" onclick="document.getElementById('avatar-upload').click()">
-                <i class="fa-solid fa-camera"></i>
-            </button>
-        </div>
-        <div class="user-details">
-            <h3>{{ user.get_full_name|default:user.username }}</h3>
-            <p>{{ user.email }}</p>
-            {% if profile %}
-                <span class="role-badge">{{ profile.get_role_display }}</span>
-            {% endif %}
-            <div class="avatar-actions">
-                <button type="button" class="btn btn-sm btn-primary" onclick="document.getElementById('avatar-upload').click()">
-                    <i class="fa-solid fa-plus"></i> Ajouter Photo
-                </button>
-                {% if profile.avatar %}
-                    <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('avatar-upload').click()">
-                        <i class="fa-solid fa-edit"></i> Modifier
-                    </button>
-                    <button type="button" class="btn btn-sm btn-danger" onclick="removeAvatar()">
-                        <i class="fa-solid fa-trash"></i> Supprimer
-                    </button>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    <!-- Hidden file input for avatar upload -->
-    <form method="post" id="avatar-form" enctype="multipart/form-data" style="display: none;">
-        {% csrf_token %}
-        <input type="file" id="avatar-upload" name="avatar" accept="image/*" onchange="uploadAvatar(this)">
-    </form>
-</div>
+<!-- User info card moved inside settings-container below -->
 
 <div class="settings-container">
-    <!-- Paramètres du profil -->
+    <!-- Carte d'information utilisateur (now top-left) -->
+    <div class="settings-card">
+        <div class="user-info">
+            <div class="user-avatar">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar-image">
+                {% else %}
+                    <div class="avatar-placeholder">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                {% endif %}
+                <button type="button" class="avatar-upload-btn" onclick="document.getElementById('avatar-upload').click()">
+                    <i class="fa-solid fa-camera"></i>
+                </button>
+            </div>
+            <div class="user-details">
+                <h3>{{ user.get_full_name|default:user.username }}</h3>
+                <p>{{ user.email }}</p>
+                {% if profile %}
+                    <span class="role-badge">{{ profile.get_role_display }}</span>
+                {% endif %}
+                <div class="avatar-actions">
+                    <button type="button" class="btn btn-Ajouter" onclick="document.getElementById('avatar-upload').click()">
+                        <i class="fa-solid fa-plus"></i> Ajouter Photo
+                    </button>
+                    {% if profile.avatar %}
+                        <button type="button" class="btn btn-Modifier" onclick="document.getElementById('avatar-upload').click()">
+                            <i class="fa-solid fa-edit"></i> Modifier
+                        </button>
+                        <button type="button" class="btn btn-Supprimer" onclick="removeAvatar()">
+                            <i class="fa-solid fa-trash"></i> Supprimer
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- Hidden file input for avatar upload -->
+        <form method="post" id="avatar-form" enctype="multipart/form-data" style="display: none;">
+            {% csrf_token %}
+            <input type="file" id="avatar-upload" name="avatar" accept="image/*" onchange="uploadAvatar(this)">
+        </form>
+    </div>
+    <!-- Actions rapides (now top-right) -->
+    <div class="settings-card">
+        <h3 class="card-title"><i class="fa-solid fa-bolt"></i> Actions rapides</h3>
+
+        <div class="quick-actions">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="fa-solid fa-house"></i> Aller au tableau de bord
+            </a>
+            
+            <a href="{% url 'users' %}" class="btn btn-secondary">
+                <i class="fa-solid fa-users"></i> Gérer l'équipe
+            </a>
+            
+            <a href="{% url 'logs' %}" class="btn btn-secondary">
+                <i class="fa-solid fa-file-alt"></i> Voir les journaux d'activité
+            </a>
+            
+            <a href="{% url 'report' %}" class="btn btn-secondary">
+                <i class="fa-solid fa-chart-line"></i> Envoyer des rapports
+            </a>
+        </div>
+    </div>
+
+    <!-- Paramètres du profil (moved down) -->
     <div class="settings-card">
         <h3 class="card-title"><i class="fa-solid fa-user"></i> Paramètres du profil</h3>
         <form method="post" class="settings-form" enctype="multipart/form-data">
@@ -136,48 +160,88 @@
         </form>
     </div>
 
-    <!-- Actions rapides -->
-    <div class="settings-card">
-        <h3 class="card-title"><i class="fa-solid fa-bolt"></i> Actions rapides</h3>
-
-        <div class="quick-actions">
-            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
-                <i class="fa-solid fa-house"></i> Aller au tableau de bord
-            </a>
-            
-            <a href="{% url 'users' %}" class="btn btn-secondary">
-                <i class="fa-solid fa-users"></i> Gérer l'équipe
-            </a>
-            
-            <a href="{% url 'logs' %}" class="btn btn-secondary">
-                <i class="fa-solid fa-file-alt"></i> Voir les journaux d'activité
-            </a>
-            
-            <a href="{% url 'report' %}" class="btn btn-secondary">
-                <i class="fa-solid fa-chart-line"></i> Envoyer des rapports
-            </a>
-        </div>
     </div>
-    <div class="settings-card">
-        <h3 class="card-title"><i class="fa-solid fa-gear"></i> Gestion the Equipe</h3>
-        <div class="manage-team">
-            <div class="card-equipes">
-                <h3 class="card-title"><i class="fa-solid fa-users"></i> Equipes</h3>
-                <div class="card-equipes-content">
-                    
-                </div>
-    </div>
+    <!-- Sections below are outside of the main settings card container -->
 
-</div>
 
+
+{% if user.is_superuser %}
 <div class="settings-card">
-    <h3 class="card-title"><i class="fa-solid fa-gear"></i> Management les roles</h3>
-    <div class="manage-roles">
-        <div class="card-roles">
-
+    <div class="card-header">
+        <h3 class="card-title">Role Management</h3>
+    </div>
+    <div class="role-management-content">
+        <!-- Employee Management -->
+        <div class="role-section">
+            <h4 class="role-section-title">Employee Management</h4>
+            <div class="employee-list">
+                <div class="employee-filters"> 
+                    <input type="text" id="employeeSearch" placeholder="Search employees..." class="search-input">
+                    <select id="roleFilter" class="role-filter">
+                        <option value="">All Roles</option>
+                        <option value="admin">Administrator</option>
+                        <option value="veterinarian">Veterinarian</option>
+                        <option value="assistant">Assistant</option>
+                        <option value="receptionist">Receptionist</option>
+                    </select>
+                </div>
+                
+                <div class="employee-table-container">
+                    <table class="employee-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Email</th>
+                                <th>Current Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for employee in all_users %}
+                            <tr class="employee-row" data-role="{{ employee.profile.role }}">
+                                <td class="employee-info">
+                                    <div class="employee-avatar">
+                                        {% if employee.profile.profile_picture %}
+                                            <img src="{{ employee.profile.profile_picture.url }}" alt="Avatar">
+                                        {% else %}
+                                            <i class="fa-solid fa-user"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="employee-details">
+                                        <span class="employee-name">{{ employee.get_full_name|default:employee.username }}</span>
+                                        <span class="employee-username">@{{ employee.username }}</span>
+                                    </div>
+                                </td>
+                                <td class="employee-email">{{ employee.email }}</td>
+                                <td class="employee-role">
+                                    <span class="role-badge role-{{ employee.profile.role }}">
+                                        {{ employee.profile.get_role_display }}
+                                    </span>
+                                </td>
+                                <td class="employee-actions">
+                                    <button class="btn btn-sm btn-outline" onclick="editEmployeeRole('{{ employee.id }}', '{{ employee.profile.role }}', '{{ employee.get_full_name|default:employee.username }}')">
+                                        <i class="fa-solid fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="no-employees">
+                                    <div class="empty-state">
+                                        <i class="fa-solid fa-users"></i>
+                                        <p>No employees found</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+{% endif %}
 
 <!-- Zone de danger -->
 <div class="danger-zone">
@@ -296,7 +360,59 @@ document.addEventListener('DOMContentLoaded', function() {
     buttons.forEach(btn => {
         btn.setAttribute('data-original-text', btn.innerHTML);
     });
+    
+    // Initialize employee search and filtering
+    initializeEmployeeManagement();
 });
+
+// Employee Management Functions
+function initializeEmployeeManagement() {
+    const searchInput = document.getElementById('employeeSearch');
+    const roleFilter = document.getElementById('roleFilter');
+    const employeeRows = document.querySelectorAll('.employee-row');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', filterEmployees);
+    }
+    
+    if (roleFilter) {
+        roleFilter.addEventListener('change', filterEmployees);
+    }
+}
+
+function filterEmployees() {
+    const searchTerm = document.getElementById('employeeSearch').value.toLowerCase();
+    const selectedRole = document.getElementById('roleFilter').value;
+    const employeeRows = document.querySelectorAll('.employee-row');
+    
+    employeeRows.forEach(row => {
+        const employeeName = row.querySelector('.employee-name').textContent.toLowerCase();
+        const employeeEmail = row.querySelector('.employee-email').textContent.toLowerCase();
+        const employeeRole = row.getAttribute('data-role');
+        
+        const matchesSearch = employeeName.includes(searchTerm) || 
+                            employeeEmail.includes(searchTerm);
+        const matchesRole = !selectedRole || employeeRole === selectedRole;
+        
+        if (matchesSearch && matchesRole) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function editEmployeeRole(employeeId, currentRole, employeeName) {
+    // This function will be implemented to show a modal or form for editing roles
+    alert(`Edit role for ${employeeName} (ID: ${employeeId}, Current Role: ${currentRole})`);
+    // TODO: Implement role editing functionality
+}
+
+function viewEmployeeDetails(employeeId) {
+    // This function will be implemented to show employee details
+    alert(`View details for employee ID: ${employeeId}`);
+    // TODO: Implement employee details view
+}
 </script>
 
 {% endblock %}

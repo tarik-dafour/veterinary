@@ -229,7 +229,7 @@
                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?');">
                                 <i class="fa-solid fa-trash"></i>
                             </a>
-                            <button class="btn btn-facture" onclick="generateFacture({{ reservation.id }})" title="Générer Facture">
+                            <button class="btn btn-facture" onclick="generateFacture(reservation.id)" title="Générer Facture">
                                 <i class="fa-solid fa-file-invoice"></i>
                             </button>
                         </div>
@@ -251,36 +251,16 @@
     </div>
     <!-- Reservation JavaScript -->
     <script src="{% static 'core/js/reservation.js' %}"></script>
-    <script>
 <<<<<<< HEAD
+    <script>
+    HEAD
         // Set URLs for JavaScript
         window.bulkDeleteReservationsUrl = "{% url 'bulk_delete_reservations' %}";
     </script>
 </body>
 
 
-=======
-        // Fonctions pour le modal de réservation
-        function openReservationModal() {
-            document.getElementById("reservationModal").style.display = "block";
-        }
-        
-        function closeReservationModal() {
-            document.getElementById("reservationModal").style.display = "none";
-        }
-        
 
-        function closeEditReservationModal() {
-            document.getElementById("editReservationModal").style.display = "none";
-        }
-        
-        // Fermer le modal si l'utilisateur clique en dehors
-        window.onclick = function(event) {
-            const modal = document.getElementById("reservationModal");
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
     </script>
     
     <!-- Bulk Selection JavaScript -->
@@ -447,5 +427,9 @@
 <!-- Language Switcher Script -->
 <script src="{% static 'core/js/language-switcher.js' %}"></script>
 <script src="{% static 'core/js/reservation-management.js' %}"></script>
->>>>>>> bdb3b09378ac34e76e4c1107546da1c37e4c70a5
+=======
+</body>
+<script src="{% static 'core/js/reservation-management.js' %}"></script>
+<script src="{% static 'core/js/reservation.js' %}"></script>
+>>>>>>> d6b252ee08290b7800eddd30e31e6907c051cb0e
 {% endblock %}
