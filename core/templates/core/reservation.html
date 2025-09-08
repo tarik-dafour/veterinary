@@ -229,7 +229,7 @@
                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?');">
                                 <i class="fa-solid fa-trash"></i>
                             </a>
-                            <button class="btn btn-facture" onclick="generateFacture({{ reservation.id }})" title="Générer Facture">
+                            <button class="btn btn-facture" onclick="generateFacture(reservation.id)" title="Générer Facture">
                                 <i class="fa-solid fa-file-invoice"></i>
                             </button>
                         </div>
@@ -251,6 +251,7 @@
     </div>
     <!-- Reservation JavaScript -->
     <script src="{% static 'core/js/reservation.js' %}"></script>
+<<<<<<< HEAD
     <script>
     HEAD
         // Set URLs for JavaScript
@@ -426,4 +427,9 @@
 <!-- Language Switcher Script -->
 <script src="{% static 'core/js/language-switcher.js' %}"></script>
 <script src="{% static 'core/js/reservation-management.js' %}"></script>
+=======
+</body>
+<script src="{% static 'core/js/reservation-management.js' %}"></script>
+<script src="{% static 'core/js/reservation.js' %}"></script>
+>>>>>>> d6b252ee08290b7800eddd30e31e6907c051cb0e
 {% endblock %}

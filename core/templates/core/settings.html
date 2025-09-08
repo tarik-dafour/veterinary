@@ -174,13 +174,90 @@
     </div>
 </div>
 
+<<<<<<< HEAD
 <div class="settings-getio">
     <h3 class="card-title"><i class="fa-solid fa-gear"></i> Management des rôles</h3>
     <div class="manage-roles">
         <div class="card-roles">
+=======
+{% if user.is_superuser %}
+<div class="settings-card">
+    <div class="card-header">
+        <h3 class="card-title">Role Management</h3>
+    </div>
+    <div class="role-management-content">
+        <!-- Employee Management -->
+        <div class="role-section">
+            <h4 class="role-section-title">Employee Management</h4>
+            <div class="employee-list">
+                <div class="employee-filters"> 
+                    <input type="text" id="employeeSearch" placeholder="Search employees..." class="search-input">
+                    <select id="roleFilter" class="role-filter">
+                        <option value="">All Roles</option>
+                        <option value="admin">Administrator</option>
+                        <option value="veterinarian">Veterinarian</option>
+                        <option value="assistant">Assistant</option>
+                        <option value="receptionist">Receptionist</option>
+                    </select>
+                </div>
+                
+                <div class="employee-table-container">
+                    <table class="employee-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Email</th>
+                                <th>Current Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for employee in all_users %}
+                            <tr class="employee-row" data-role="{{ employee.profile.role }}">
+                                <td class="employee-info">
+                                    <div class="employee-avatar">
+                                        {% if employee.profile.profile_picture %}
+                                            <img src="{{ employee.profile.profile_picture.url }}" alt="Avatar">
+                                        {% else %}
+                                            <i class="fa-solid fa-user"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="employee-details">
+                                        <span class="employee-name">{{ employee.get_full_name|default:employee.username }}</span>
+                                        <span class="employee-username">@{{ employee.username }}</span>
+                                    </div>
+                                </td>
+                                <td class="employee-email">{{ employee.email }}</td>
+                                <td class="employee-role">
+                                    <span class="role-badge role-{{ employee.profile.role }}">
+                                        {{ employee.profile.get_role_display }}
+                                    </span>
+                                </td>
+                                <td class="employee-actions">
+                                    <button class="btn btn-sm btn-outline" onclick="editEmployeeRole('{{ employee.id }}', '{{ employee.profile.role }}', '{{ employee.get_full_name|default:employee.username }}')">
+                                        <i class="fa-solid fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="no-employees">
+                                    <div class="empty-state">
+                                        <i class="fa-solid fa-users"></i>
+                                        <p>No employees found</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+>>>>>>> d6b252ee08290b7800eddd30e31e6907c051cb0e
         </div>
     </div>
 </div>
+{% endif %}
 
 <!-- Zone de danger -->
 <div class="danger-zone">
@@ -299,7 +376,59 @@ document.addEventListener('DOMContentLoaded', function() {
     buttons.forEach(btn => {
         btn.setAttribute('data-original-text', btn.innerHTML);
     });
+    
+    // Initialize employee search and filtering
+    initializeEmployeeManagement();
 });
+
+// Employee Management Functions
+function initializeEmployeeManagement() {
+    const searchInput = document.getElementById('employeeSearch');
+    const roleFilter = document.getElementById('roleFilter');
+    const employeeRows = document.querySelectorAll('.employee-row');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', filterEmployees);
+    }
+    
+    if (roleFilter) {
+        roleFilter.addEventListener('change', filterEmployees);
+    }
+}
+
+function filterEmployees() {
+    const searchTerm = document.getElementById('employeeSearch').value.toLowerCase();
+    const selectedRole = document.getElementById('roleFilter').value;
+    const employeeRows = document.querySelectorAll('.employee-row');
+    
+    employeeRows.forEach(row => {
+        const employeeName = row.querySelector('.employee-name').textContent.toLowerCase();
+        const employeeEmail = row.querySelector('.employee-email').textContent.toLowerCase();
+        const employeeRole = row.getAttribute('data-role');
+        
+        const matchesSearch = employeeName.includes(searchTerm) || 
+                            employeeEmail.includes(searchTerm);
+        const matchesRole = !selectedRole || employeeRole === selectedRole;
+        
+        if (matchesSearch && matchesRole) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function editEmployeeRole(employeeId, currentRole, employeeName) {
+    // This function will be implemented to show a modal or form for editing roles
+    alert(`Edit role for ${employeeName} (ID: ${employeeId}, Current Role: ${currentRole})`);
+    // TODO: Implement role editing functionality
+}
+
+function viewEmployeeDetails(employeeId) {
+    // This function will be implemented to show employee details
+    alert(`View details for employee ID: ${employeeId}`);
+    // TODO: Implement employee details view
+}
 </script>
 
 {% endblock %}

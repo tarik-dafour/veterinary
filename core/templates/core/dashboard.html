@@ -219,8 +219,13 @@
                 {% for member in team_members %}
                 <div class="team-member" role="listitem">
                     <div class="member-avatar" aria-label="Member avatar">
-                        {{ member.user.get_full_name|default:member.user.username|first|upper }}
-                        <div class="status-dot status-online" aria-label="Online status"></div>
+                        {% if profile.avatar %}
+                            <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar-image">
+                        {% else %}
+                            <div class="avatar-placeholder">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="member-info">
                         <div class="member-name">{{ member.user.get_full_name|default:member.user.username }}</div>

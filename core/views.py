@@ -129,10 +129,14 @@ def settings_view(request):
     user = request.user
     profile = getattr(user, 'profile', None)
     
+    # Get all users for employee management (only for superusers)
+    all_users = User.objects.select_related('profile').all() if user.is_superuser else []
+    
     context = {
         'current_theme': current_theme,
         'user': user,
         'profile': profile,
+        'all_users': all_users,
     }
     
     return render(request, 'core/settings.html', context)
@@ -171,9 +175,9 @@ def dashboard(request):
         date_reservation__date__in=[today, tomorrow]
     ).order_by('date_reservation')[:5]
     
-    # Team members (users with profiles)
-    team_members = UserProfile.objects.select_related('user').all()[:5]
-    
+    # Team members images (users with profiles)
+    team_members = UserProfile.objects.filter(user__is_active=True).order_by('user__first_name')[:5]
+
     # Recent logs (using date_action instead of date_creation)
     recent_logs = Log.objects.order_by('-date_action')[:3]
     

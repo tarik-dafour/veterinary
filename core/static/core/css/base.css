@@ -401,10 +401,6 @@ body {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-
-
-
-
 /* Quick Stats */
 .quick-stats {
     display: flex;
@@ -590,16 +586,15 @@ body {
     *,
     *::before,
     *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
     }
-    
-    .sidebar,
-    .nav-link,
-    .logo-section,
-    .user-avatar,
-    .stat-avatar,
+
+    .sidebar, .nav-link, .logo-section, .user-avatar, .stat-avatar {
+        /* add styles here, e.g. */
+        background-color: #f2f2f2;
+        padding: 10px;
+    }
 }
 
 @media (prefers-contrast: high) {

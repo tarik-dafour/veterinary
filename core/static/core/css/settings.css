@@ -683,62 +683,206 @@ input:checked + .toggle-slider:before {
     gap: 1rem;
 }
 
-/* 📱 Responsive Design */
-@media (max-width: 1024px) {
-    .settings-container {
-        padding: 1.5rem;
-        grid-template-columns: 1fr;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .settings-nav-list {
-        justify-content: flex-start;
-    }
+/* Role Management Styles */
+.role-management-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
-@media (max-width: 768px) {
-    .settings-container {
-        padding: 1rem;
-    }
-    
-    .settings-header {
-        padding: 2rem 1.5rem;
-    }
-    
-    .settings-title {
-        font-size: 2rem;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .settings-nav-list {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .settings-nav-item {
-        text-align: center;
-    }
-    
-    .section-header {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.5rem;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .user-info {
-        flex-direction: column;
-        text-align: center;
-    }
+.role-section {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
 }
+
+.role-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.role-section-title::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(135deg, #38B2FF, #1E90FF);
+    border-radius: 2px;
+}
+
+.role-form {
+    max-width: 400px;
+}
+
+/* Employee Management Styles */
+.employee-list {
+    margin-top: 1rem;
+}
+
+.employee-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 250px;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #38B2FF;
+    box-shadow: 0 0 0 3px rgba(56, 178, 255, 0.15);
+}
+
+.role-filter {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #ffffff;
+    min-width: 150px;
+    transition: all 0.3s ease;
+}
+
+.role-filter:focus {
+    outline: none;
+    border-color: #38B2FF;
+    box-shadow: 0 0 0 3px rgba(56, 178, 255, 0.15);
+}
+
+/* Employee Table Styles */
+.employee-table-container {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.employee-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.employee-table th {
+    background: #f8fafc;
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    color: #2d3748;
+    border-bottom: none;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.employee-table td {
+    padding: 1rem 1.5rem;
+    border-bottom: none;
+    vertical-align: middle;
+}
+
+.employee-table tr:hover {
+    background: #f8fafc;
+}
+
+/* Employee Info Styles */
+.employee-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.employee-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #718096;
+    font-size: 1.2rem;
+    overflow: hidden;
+}
+
+.employee-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.employee-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.employee-name {
+    font-weight: 600;
+    color: #1a202c;
+    font-size: 1rem;
+}
+
+.employee-username {
+    font-size: 0.85rem;
+    color: #718096;
+}
+
+.employee-email {
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+/* Role Badge Styles */
+.role-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.role-admin {
+    background: rgba(245, 101, 101, 0.1);
+    color: #c53030;
+    border: 1px solid rgba(245, 101, 101, 0.3);
+}
+
+.role-veterinarian {
+    background: rgba(56, 178, 255, 0.1);
+    color: #2b6cb0;
+    border: 1px solid rgba(56, 178, 255, 0.3);
+}
+
+.role-assistant {
+    background: rgba(72, 187, 120, 0.1);
+    color: #2f855a;
+    border: 1px solid rgba(72, 187, 120, 0.3);
+}
+
+.role-receptionist {
+    background: rgba(237, 137, 54, 0.1);
+    color: #c05621;
+    border: 1px solid rgba(237, 137, 54, 0.3);
+}
+
 
 @media (max-width: 480px) {
     .settings-container {
