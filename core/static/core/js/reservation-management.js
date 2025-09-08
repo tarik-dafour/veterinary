@@ -485,3 +485,8 @@ function downloadFacture() {
     showNotification('Fonctionnalité de téléchargement PDF en cours de développement', 'info');
 }
 
+// Initialize status colors when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    applyStatusColors();
+    console.log('Status colors applied to all badges');
+});
