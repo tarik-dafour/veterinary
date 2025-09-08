@@ -225,13 +225,13 @@
                             <a class="btn btn-secondary" href="?edit={{ reservation.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            <button class="btn btn-facture" onclick="generateFacture(reservation.id)" title="Générer Facture">
+                                <i class="fa-solid fa-file-invoice"></i>
+                            </button>
                             <a class="btn btn-danger" href="?delete={{ reservation.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?');">
                                 <i class="fa-solid fa-trash"></i>
                             </a>
-                            <button class="btn btn-facture" onclick="generateFacture(reservation.id)" title="Générer Facture">
-                                <i class="fa-solid fa-file-invoice"></i>
-                            </button>
                         </div>
                     </td>
                 </tr>
@@ -251,7 +251,10 @@
     </div>
     <!-- Reservation JavaScript -->
     <script src="{% static 'core/js/reservation.js' %}"></script>
+<<<<<<< HEAD
     
+=======
+>>>>>>> 5925a8d68955b72645c3d0b8c2793641243fc79e
     <script>
     HEAD
         // Set URLs for JavaScript
@@ -430,4 +433,8 @@
 </body>
 <script src="{% static 'core/js/reservation-management.js' %}"></script>
 <script src="{% static 'core/js/reservation.js' %}"></script>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5925a8d68955b72645c3d0b8c2793641243fc79e
 {% endblock %}

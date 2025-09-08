@@ -199,12 +199,12 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #43C0AF, #013847);
+    background: #013847;
     color: white;
 }
 
 .btn-primary:hover {
-    background:  linear-gradient(135deg, #43C0AF, #013847);
+    background: #013847;
     transform: translateY(-3px);
 }
 
