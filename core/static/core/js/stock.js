@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeFilters();
         initializeAccessibility();
         initializeModals();
+        initializeButtonEvents();
     } catch (error) {
         console.error('Error initializing stock management:', error);
     }
@@ -184,12 +185,43 @@ function applyFilters() {
         const supplierValue = document.getElementById('supplier-filter')?.value || '';
         const rows = document.querySelectorAll('.table-row');
         
+        // Get all categories and suppliers for lookup
+        const categoryOptions = document.getElementById('category-filter').options;
+        const supplierOptions = document.getElementById('supplier-filter').options;
+        
+        // Create lookup maps for ID to name conversion
+        const categoryMap = {};
+        const supplierMap = {};
+        
+        for (let option of categoryOptions) {
+            if (option.value) {
+                categoryMap[option.value] = option.textContent;
+            }
+        }
+        
+        for (let option of supplierOptions) {
+            if (option.value) {
+                supplierMap[option.value] = option.textContent;
+            }
+        }
+        
         rows.forEach(row => {
-            const category = row.querySelector('.category-badge')?.textContent || '';
-            const supplier = row.querySelector('.supplier-name')?.textContent || '';
+            const categoryText = row.querySelector('.category-badge')?.textContent?.trim() || '';
+            const supplierText = row.querySelector('.supplier-name')?.textContent?.trim() || '';
             
-            const categoryMatch = !categoryValue || category === categoryValue;
-            const supplierMatch = !supplierValue || supplier === supplierValue;
+            // Check if row matches the selected filters
+            let categoryMatch = true;
+            let supplierMatch = true;
+            
+            if (categoryValue) {
+                const selectedCategoryName = categoryMap[categoryValue];
+                categoryMatch = categoryText === selectedCategoryName;
+            }
+            
+            if (supplierValue) {
+                const selectedSupplierName = supplierMap[supplierValue];
+                supplierMatch = supplierText === selectedSupplierName;
+            }
             
             if (categoryMatch && supplierMatch) {
                 row.style.display = '';
@@ -197,8 +229,79 @@ function applyFilters() {
                 row.style.display = 'none';
             }
         });
+        
+        // Update table visibility
+        updateTableVisibility();
+        
     } catch (error) {
         console.error('Error applying filters:', error);
+    }
+}
+
+// Helper function to update table visibility
+function updateTableVisibility() {
+    try {
+        const rows = document.querySelectorAll('.table-row');
+        const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+        const tableContainer = document.querySelector('.table-container');
+        const table = document.querySelector('.modern-table');
+        
+        if (visibleRows.length === 0) {
+            // Show no results message
+            let noResultsRow = document.querySelector('.no-filter-results');
+            if (!noResultsRow) {
+                noResultsRow = document.createElement('tr');
+                noResultsRow.className = 'no-filter-results empty-row';
+                noResultsRow.innerHTML = `
+                    <td colspan="10" class="empty-message">
+                        <div class="empty-state">
+                            <i class="fas fa-filter empty-icon" aria-hidden="true"></i>
+                            <h3>No Products Found</h3>
+                            <p>No products match your current filters. Try adjusting your search criteria.</p>
+                            <button class="btn-clear-filters">
+                                <i class="fas fa-times" aria-hidden="true"></i>
+                                Clear Filters
+                            </button>
+                        </div>
+                    </td>
+                `;
+                document.querySelector('.modern-table tbody').appendChild(noResultsRow);
+            }
+            noResultsRow.style.display = '';
+        } else {
+            // Hide no results message
+            const noResultsRow = document.querySelector('.no-filter-results');
+            if (noResultsRow) {
+                noResultsRow.style.display = 'none';
+            }
+        }
+    } catch (error) {
+        console.error('Error updating table visibility:', error);
+    }
+}
+
+// Clear all filters function
+function clearAllFilters() {
+    try {
+        document.getElementById('category-filter').value = '';
+        document.getElementById('supplier-filter').value = '';
+        document.getElementById('product-search').value = '';
+        
+        // Show all rows
+        const rows = document.querySelectorAll('.table-row');
+        rows.forEach(row => {
+            row.style.display = '';
+        });
+        
+        // Hide no results message
+        const noResultsRow = document.querySelector('.no-filter-results');
+        if (noResultsRow) {
+            noResultsRow.style.display = 'none';
+        }
+        
+        console.log('All filters cleared');
+    } catch (error) {
+        console.error('Error clearing filters:', error);
     }
 }
 
@@ -225,6 +328,112 @@ function initializeModals() {
         });
     } catch (error) {
         console.error('Error initializing modals:', error);
+    }
+}
+
+// Button Events Initialization
+function initializeButtonEvents() {
+    try {
+        // Product edit and delete buttons
+        document.addEventListener('click', function(e) {
+            // Product edit buttons
+            if (e.target.closest('.btn-edit')) {
+                const button = e.target.closest('.btn-edit');
+                const productId = button.getAttribute('data-product-id');
+                if (productId) {
+                    editProduct(productId);
+                }
+            }
+            
+            // Product delete buttons
+            if (e.target.closest('.btn-delete')) {
+                const button = e.target.closest('.btn-delete');
+                const productId = button.getAttribute('data-product-id');
+                if (productId) {
+                    deleteProduct(productId);
+                }
+            }
+            
+            // Category edit buttons
+            if (e.target.closest('.btn-edit-category')) {
+                const button = e.target.closest('.btn-edit-category');
+                const categoryId = button.getAttribute('data-category-id');
+                if (categoryId) {
+                    editCategory(categoryId);
+                }
+            }
+            
+            // Category delete buttons
+            if (e.target.closest('.btn-delete-category')) {
+                const button = e.target.closest('.btn-delete-category');
+                const categoryId = button.getAttribute('data-category-id');
+                if (categoryId) {
+                    deleteCategory(categoryId);
+                }
+            }
+            
+            // Supplier edit buttons
+            if (e.target.closest('.btn-edit-supplier')) {
+                const button = e.target.closest('.btn-edit-supplier');
+                const supplierId = button.getAttribute('data-supplier-id');
+                if (supplierId) {
+                    editSupplier(supplierId);
+                }
+            }
+            
+            // Supplier delete buttons
+            if (e.target.closest('.btn-delete-supplier')) {
+                const button = e.target.closest('.btn-delete-supplier');
+                const supplierId = button.getAttribute('data-supplier-id');
+                if (supplierId) {
+                    deleteSupplier(supplierId);
+                }
+            }
+            
+            // Bulk action buttons
+            if (e.target.closest('.btn-bulk-delete')) {
+                bulkDeleteProducts();
+            }
+            
+            if (e.target.closest('.btn-clear-selection')) {
+                clearProductSelection();
+            }
+            
+            // Add product buttons
+            if (e.target.closest('.btn-add-first[data-action="add-product"]') || e.target.closest('[data-action="add-product"]')) {
+                openAddProductModal();
+            }
+            
+            // Add category buttons
+            if (e.target.closest('[data-action="add-category"]')) {
+                openAddCategoryModal();
+            }
+            
+            // Add supplier buttons
+            if (e.target.closest('[data-action="add-supplier"]')) {
+                openAddSupplierModal();
+            }
+            
+            // Clear filters button
+            if (e.target.closest('.btn-clear-filters')) {
+                clearAllFilters();
+            }
+        });
+        
+        // Product checkbox change events
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('product-checkbox')) {
+                updateProductSelection();
+            }
+            
+            if (e.target.id === 'select-all-products') {
+                toggleAllProducts(e.target);
+            }
+        });
+        
+        console.log('Button events initialized successfully');
+    } catch (error) {
+        console.error('Error initializing button events:', error);
     }
 }
 

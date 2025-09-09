@@ -177,11 +177,11 @@
                             <span id="selected-count">0</span> product(s) selected
                         </span>
                         <div class="bulk-actions-buttons">
-                            <button class="btn btn-danger btn-bulk-delete" onclick="bulkDeleteProducts()">
+                            <button class="btn btn-danger btn-bulk-delete">
                                 <i class="fas fa-trash" aria-hidden="true"></i>
                                 Delete Selected
                             </button>
-                            <button class="btn btn-secondary btn-clear-selection" onclick="clearProductSelection()">
+                            <button class="btn btn-secondary btn-clear-selection">
                                 <i class="fas fa-times" aria-hidden="true"></i>
                                 Clear Selection
                             </button>
@@ -193,7 +193,7 @@
                     <thead>
                         <tr>
                             <th scope="col" class="th-checkbox">
-                                <input type="checkbox" id="select-all-products" class="select-all-checkbox" onchange="toggleAllProducts(this)">
+                                <input type="checkbox" id="select-all-products" class="select-all-checkbox">
                                 <label for="select-all-products" class="sr-only">Select all products</label>
                             </th>
                             <th scope="col" class="th-image">Image</th>
@@ -213,8 +213,7 @@
                             <td class="td-checkbox">
                                 <input type="checkbox" 
                                        class="product-checkbox" 
-                                       value="{{ product.id }}"
-                                       onchange="updateProductSelection()">
+                                       value="{{ product.id }}">
                                 <label class="sr-only">Select {{ product.nom }}</label>
                             </td>
                             <td class="td-image">
@@ -277,12 +276,12 @@
                             <td class="td-actions">
                                 <div class="action-buttons">
                                     <button class="btn-edit" 
-                                            onclick="editProduct({{ product.id }})" 
+                                            data-product-id="{{ product.id }}"
                                             aria-label="Edit product {{ product.nom }}">
                                         <i class="fas fa-edit" aria-hidden="true"></i>
                                     </button>
                                     <button class="btn-delete" 
-                                            onclick="deleteProduct({{ product.id }})" 
+                                            data-product-id="{{ product.id }}"
                                             aria-label="Delete product {{ product.nom }}">
                                         <i class="fas fa-trash" aria-hidden="true"></i>
                                     </button>
@@ -296,7 +295,7 @@
                                     <i class="fas fa-box-open empty-icon" aria-hidden="true"></i>
                                     <h3>No Products Found</h3>
                                     <p>Start by adding your first product to the inventory</p>
-                                    <button class="btn-add-first" onclick="openAddProductModal()">
+                                    <button class="btn-add-first" data-action="add-product">
                                         <i class="fas fa-plus" aria-hidden="true"></i>
                                         Add First Product
                                     </button>
@@ -357,12 +356,12 @@
                     </div>
                     <div class="category-actions">
                         <button class="btn-edit-category" 
-                                onclick="editCategory({{ category.id }})" 
+                                data-category-id="{{ category.id }}"
                                 aria-label="Edit category {{ category.nom }}">
                             <i class="fas fa-edit" aria-hidden="true"></i>
                         </button>
                         <button class="btn-delete-category" 
-                                onclick="deleteCategory({{ category.id }})" 
+                                data-category-id="{{ category.id }}"
                                 aria-label="Delete category {{ category.nom }}">
                             <i class="fas fa-trash" aria-hidden="true"></i>
                         </button>
@@ -374,7 +373,7 @@
                         <i class="fas fa-tags empty-icon" aria-hidden="true"></i>
                         <h3>No Categories</h3>
                         <p>Create categories to organize your products</p>
-                        <button class="btn-add-first" onclick="openAddCategoryModal()">
+                        <button class="btn-add-first" data-action="add-category">
                             <i class="fas fa-plus" aria-hidden="true"></i>
                             Add First Category
                         </button>
@@ -444,12 +443,12 @@
                     </div>
                     <div class="supplier-actions">
                         <button class="btn-edit-supplier" 
-                                onclick="editSupplier({{ fournisseur.id }})" 
+                                data-supplier-id="{{ fournisseur.id }}"
                                 aria-label="Edit supplier {{ fournisseur.nom }}">
                             <i class="fas fa-edit" aria-hidden="true"></i>
                         </button>
                         <button class="btn-delete-supplier" 
-                                onclick="deleteSupplier({{ fournisseur.id }})" 
+                                data-supplier-id="{{ fournisseur.id }}"
                                 aria-label="Delete supplier {{ fournisseur.nom }}">
                             <i class="fas fa-trash" aria-hidden="true"></i>
                         </button>
@@ -908,18 +907,4 @@
 </div>
 
 <script src="{% static 'core/js/stock.js' %}"></script>
-<script>
-    // Initialize stock management
-    document.addEventListener('DOMContentLoaded', function() {
-        try {
-            initializeTabs();
-            initializeSearch();
-            initializeFilters();
-            initializeAccessibility();
-            initializeModals();
-        } catch (error) {
-            console.error('Error initializing stock management:', error);
-        }
-    });
-</script>
 {% endblock %}

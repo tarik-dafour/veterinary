@@ -210,13 +210,36 @@
                     <td class="date-time">{{ reservation.date_reservation|date:'d M Y H:i' }}</td>
                     <td>{{ reservation.service }}</td>
                     <td>
-                        <span class="status-badge">
-                            {% if reservation.statut == 'Scheduled' %}Planifié
-                            {% elif reservation.statut == 'Confirmed' %}Confirmé
-                            {% elif reservation.statut == 'Completed' %}Terminé
-                            {% elif reservation.statut == 'Cancelled' %}Annulé
-                            {% else %}En attente{% endif %}
-                        </span>
+                        <div class="status-dropdown-container">
+                            <span class="status-badge clickable-status" 
+                                  data-reservation-id="{{ reservation.id }}"
+                                  data-current-status="{{ reservation.statut }}"
+                                  onclick="toggleStatusDropdown(this)">
+                                {% if reservation.statut == 'Scheduled' %}Planifié
+                                {% elif reservation.statut == 'Confirmed' %}Confirmé
+                                {% elif reservation.statut == 'Completed' %}Terminé
+                                {% elif reservation.statut == 'Cancelled' %}Annulé
+                                {% else %}En attente{% endif %}
+                                <i class="fa-solid fa-chevron-down status-arrow"></i>
+                            </span>
+                            <div class="status-dropdown-menu" id="status-dropdown-{{ reservation.id }}">
+                                <div class="status-option" data-status="Scheduled" onclick="changeReservationStatus( reservation.id , 'Scheduled', this)">
+                                    <i class="fa-solid fa-calendar"></i> Planifié
+                                </div>
+                                <div class="status-option" data-status="Confirmed" onclick="changeReservationStatus( reservation.id , 'Confirmed', this)">
+                                    <i class="fa-solid fa-check-circle"></i> Confirmé
+                                </div>
+                                <div class="status-option" data-status="Completed" onclick="changeReservationStatus( reservation.id , 'Completed', this)">
+                                    <i class="fa-solid fa-check-double"></i> Terminé
+                                </div>
+                                <div class="status-option" data-status="Cancelled" onclick="changeReservationStatus( reservation.id , 'Cancelled', this)">
+                                    <i class="fa-solid fa-times-circle"></i> Annulé
+                                </div>
+                                <div class="status-option" data-status="Pending" onclick="changeReservationStatus( reservation.id , 'Pending', this)">
+                                    <i class="fa-solid fa-clock"></i> En attente
+                                </div>
+                            </div>
+                        </div>
                     </td>
                     <td>{{ reservation.prix|default:"-" }} MAD</td>
 
@@ -250,195 +273,7 @@
             </tbody>
         </table>
     </div>
-<<<<<<< HEAD
-</body>
-=======
-    <!-- Reservation JavaScript -->
-    <script src="{% static 'core/js/reservation.js' %}"></script>
-<<<<<<< HEAD
-    
-=======
->>>>>>> 5925a8d68955b72645c3d0b8c2793641243fc79e
-    <script>
-    HEAD
-        // Set URLs for JavaScript
-        window.bulkDeleteReservationsUrl = "{% url 'bulk_delete_reservations' %}";
-    </script>
-</body>
-
-
-
-    </script>
-    
-    <!-- Bulk Selection JavaScript -->
-    <script>
-        // Bulk selection functionality
-        function toggleSelectAll() {
-            const selectAllCheckbox = document.getElementById('selectAll');
-            const reservationCheckboxes = document.querySelectorAll('.reservation-checkbox');
-            
-            reservationCheckboxes.forEach(checkbox => {
-                checkbox.checked = selectAllCheckbox.checked;
-            });
-            
-            updateBulkActions();
-        }
-        
-        function updateBulkActions() {
-            const reservationCheckboxes = document.querySelectorAll('.reservation-checkbox:checked');
-            const bulkActionsBar = document.getElementById('bulk-actions-bar');
-            const bulkSelectionCount = document.querySelector('.bulk-selection-count');
-            const selectAllCheckbox = document.getElementById('selectAll');
-            
-            if (reservationCheckboxes.length > 0) {
-                bulkActionsBar.style.display = 'block';
-                bulkSelectionCount.textContent = `${reservationCheckboxes.length} reservation(s) selected`;
-                
-                // Update select all checkbox state
-                const totalCheckboxes = document.querySelectorAll('.reservation-checkbox');
-                selectAllCheckbox.checked = reservationCheckboxes.length === totalCheckboxes.length;
-                selectAllCheckbox.indeterminate = reservationCheckboxes.length > 0 && reservationCheckboxes.length < totalCheckboxes.length;
-            } else {
-                bulkActionsBar.style.display = 'none';
-                selectAllCheckbox.checked = false;
-                selectAllCheckbox.indeterminate = false;
-            }
-        }
-        
-        function clearSelection() {
-            const reservationCheckboxes = document.querySelectorAll('.reservation-checkbox');
-            const selectAllCheckbox = document.getElementById('selectAll');
-            
-            reservationCheckboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            
-            selectAllCheckbox.checked = false;
-            selectAllCheckbox.indeterminate = false;
-            updateBulkActions();
-        }
-        
-        function deleteSelectedReservations() {
-            const reservationCheckboxes = document.querySelectorAll('.reservation-checkbox:checked');
-            
-            if (reservationCheckboxes.length === 0) {
-                alert('Please select reservations to delete.');
-                return;
-            }
-            
-            if (!confirm(`Are you sure you want to delete ${reservationCheckboxes.length} selected reservation(s)?`)) {
-                return;
-            }
-            
-            const reservationIds = Array.from(reservationCheckboxes).map(checkbox => checkbox.value);
-            
-            // Send bulk delete request
-            fetch('{% url "bulk_delete_reservations" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: JSON.stringify({
-                    reservation_ids: reservationIds
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Remove deleted rows from table
-                    reservationCheckboxes.forEach(checkbox => {
-                        checkbox.closest('tr').remove();
-                    });
-                    
-                    // Clear selection and hide bulk actions
-                    clearSelection();
-                    
-                    // Show success message
-                    alert(data.message);
-                    
-                    // Reload page to refresh data
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1500);
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while deleting reservations.');
-            });
-        }
-        
-        // Initialize bulk actions
-        document.addEventListener('DOMContentLoaded', function() {
-            updateBulkActions();
-        });
-        // Function to generate facture for a reservation
-        function generateFacture(reservationId) {
-            try {
-                console.log('Generating facture for reservation ID:', reservationId);
-                
-                // Show loading notification
-                showNotification('Génération de la facture en cours...', 'info');
-                
-                // Get reservation data from the current page
-                const reservationRow = document.querySelector(`input[value="${reservationId}"]`)?.closest('tr');
-                if (!reservationRow) {
-                    showNotification('Données de réservation non trouvées', 'error');
-                    return;
-                }
-                
-                // Extract reservation data from the table row
-                const cells = reservationRow.querySelectorAll('td');
-                const clientName = cells[1]?.textContent?.trim() || 'N/A';
-                const animalInfo = cells[2]?.textContent?.trim() || 'N/A';
-                const dateTime = cells[3]?.textContent?.trim() || 'N/A';
-                const service = cells[4]?.textContent?.trim() || 'N/A';
-                const status = cells[5]?.textContent?.trim() || 'N/A';
-                const price = cells[6]?.textContent?.trim() || '0.00 MAD';
-                
-                // Parse animal name and type
-                const animalMatch = animalInfo.match(/^(.+?)\s*\((.+?)\)$/);
-                const animalName = animalMatch ? animalMatch[1] : animalInfo;
-                const animalType = animalMatch ? animalMatch[2] : 'N/A';
-                
-                // Generate facture content
-                const factureContent = generateFactureContent({
-                    id: reservationId,
-                    clientName: clientName,
-                    animalName: animalName,
-                    animalType: animalType,
-                    dateTime: dateTime,
-                    service: service,
-                    status: status,
-                    price: price
-                });
-                
-                // Simulate facture generation
-                setTimeout(() => {
-                    // Create and display facture modal
-                    showFactureModal(factureContent);
-                    showNotification('Facture générée avec succès!', 'success');
-                }, 1500);
-                
-            } catch (error) {
-                console.error('Error generating facture:', error);
-                showNotification('Erreur lors de la génération de la facture', 'error');
-            }
-        }
-    </script>
-</body>
-
-<!-- Language Switcher Script -->
-<script src="{% static 'core/js/language-switcher.js' %}"></script>
-<script src="{% static 'core/js/reservation-management.js' %}"></script>
 </body>
 <script src="{% static 'core/js/reservation-management.js' %}"></script>
 <script src="{% static 'core/js/reservation.js' %}"></script>
-<<<<<<< HEAD
-=======
-
->>>>>>> 5925a8d68955b72645c3d0b8c2793641243fc79e
 {% endblock %}

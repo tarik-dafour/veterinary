@@ -37,4 +37,6 @@ urlpatterns = [
     path('delete-category/<int:category_id>/', views.delete_category, name='delete_category'),
     # Supplier Management URLs
     path('delete-supplier/<int:supplier_id>/', views.delete_supplier, name='delete_supplier'),
+    # Reservation Status Change URL
+    path('change-reservation-status/', views.change_reservation_status, name='change_reservation_status'),
 ]

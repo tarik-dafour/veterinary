@@ -608,6 +608,32 @@ html,body {
     box-shadow: var(--shadow-md);
 }
 
+/* Clear Filters Button */
+.btn-clear-filters {
+    background: var(--bg-lighter);
+    color: var(--text-primary);
+    padding: 0.875rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    border: 2px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.btn-clear-filters:hover {
+    background: var(--bg-white);
+    color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
 /* Tab Navigation Buttons */
 .tab-nav-btn {
     flex: 1;
@@ -1053,6 +1079,8 @@ html,body {
 }
 
 .stat-card {
+    width: 300px;
+    height: 130px;
     background: var(--bg-white);
     border-radius: 1.5rem;
     padding: 2rem;
@@ -1061,7 +1089,7 @@ html,body {
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
 .stat-card:hover {
@@ -1123,7 +1151,7 @@ html,body {
 /* ===== MODERN TABS CONTAINER ===== */
 .modern-tabs-container {
     background: var(--bg-white);
-    border-radius: 1.5rem;
+    border-radius: 0 0 1.5rem 1.5rem;
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-light);
     overflow: hidden;
@@ -1681,13 +1709,14 @@ html,body {
     }
     
     .categories-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 1.25rem;
     }
     
     .category-card {
         padding: 1.25rem;
         gap: 1rem;
+        min-height: 90px;
     }
     
     .category-icon {
@@ -1743,12 +1772,13 @@ html,body {
     
     .categories-grid {
         grid-template-columns: 1fr;
-        gap: 1.25rem;
+        gap: 1rem;
     }
     
     .category-card {
-        padding: 1.25rem;
+        padding: 1rem;
         gap: 0.875rem;
+        min-height: 80px;
     }
     
     .category-icon {
@@ -1900,10 +1930,13 @@ html,body {
 /* ===== CATEGORIES GRID ===== */
 .categories-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 4.8rem;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
     width: 100%;
-    margin-right: 5rem;
+    margin: 0;
+    padding: 0;
+    align-items: start;
+    justify-content: center;
 }
 
 .category-card {
@@ -1916,7 +1949,8 @@ html,body {
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    width: 400px;
+    width: 100%;
+    min-height: 100px;
     position: relative;
     overflow: hidden;
     cursor: pointer;
@@ -1965,6 +1999,7 @@ html,body {
 .category-info {
     flex: 1;
     min-width: 0;
+    overflow: hidden;
 }
 
 .category-name {
@@ -1974,6 +2009,19 @@ html,body {
     margin: 0 0 0.5rem 0;
     line-height: 1.3;
     letter-spacing: -0.01em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.category-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0;
 }
 
 .category-header {
@@ -1981,6 +2029,7 @@ html,body {
     align-items: center;
     gap: 1.5rem;
     flex: 1;
+    min-width: 0;
 }
 
 .category-actions {
@@ -2340,9 +2389,13 @@ html,body {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
     
-    .categories-grid,
+    .categories-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
     .suppliers-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     }
 }
 
@@ -2427,7 +2480,11 @@ html,body {
         flex: 1;
     }
     
-    .categories-grid,
+    .categories-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.25rem;
+    }
+    
     .suppliers-grid {
         grid-template-columns: 1fr;
     }

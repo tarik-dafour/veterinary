@@ -1400,3 +1400,74 @@ def bulk_delete_reservations(request):
         'message': 'Invalid request method'
     }, status=405)
 
+
+@login_required(login_url='login')
+def change_reservation_status(request):
+    """
+    Change reservation status via AJAX request
+    """
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            reservation_id = data.get('reservation_id')
+            new_status = data.get('new_status')
+            
+            if not reservation_id or not new_status:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Reservation ID and new status are required'
+                }, status=400)
+            
+            # Validate the new status
+            valid_statuses = ['Scheduled', 'Confirmed', 'Completed', 'Cancelled', 'Pending']
+            if new_status not in valid_statuses:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Invalid status provided'
+                }, status=400)
+            
+            # Get the reservation
+            try:
+                reservation = Reservation.objects.get(id=reservation_id)
+            except Reservation.DoesNotExist:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Reservation not found'
+                }, status=404)
+            
+            # Update the status
+            old_status = reservation.statut
+            reservation.statut = new_status
+            reservation.save()
+            
+            # Log the status change
+            log_modify(request, 'Reservation', reservation.id, 
+                      f"Status changed from {old_status} to {new_status} for reservation: {reservation.client.prenom} {reservation.client.nom} - {reservation.animal.nom}")
+            
+            # Get the French translation for display
+            status_translations = {
+                'Scheduled': 'Planifié',
+                'Confirmed': 'Confirmé',
+                'Completed': 'Terminé',
+                'Cancelled': 'Annulé',
+                'Pending': 'En attente'
+            }
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Status successfully changed to {status_translations.get(new_status, new_status)}',
+                'new_status': new_status,
+                'new_status_display': status_translations.get(new_status, new_status)
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Error changing status: {str(e)}'
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    }, status=405)
+

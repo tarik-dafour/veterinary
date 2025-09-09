@@ -289,15 +289,124 @@ html,body {
     color: #013847;
 }
 
-/* Status with Icons */
-.status-with-icon {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+/* Clickable Status Styles */
+.status-dropdown-container {
+    position: relative;
+    display: inline-block;
 }
 
-.status-icon {
-    font-size: 0.9rem;
+.clickable-status {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    user-select: none;
+}
+
+.clickable-status:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.status-arrow {
+    margin-left: 8px;
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+}
+
+.clickable-status:hover .status-arrow {
+    transform: rotate(180deg);
+}
+
+/* Status Dropdown Menu */
+.status-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 2px solid #43C0AF;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(1, 56, 71, 0.15);
+    z-index: 1000;
+    min-width: 180px;
+    padding: 8px 0;
+    margin-top: 5px;
+}
+
+.status-dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-bottom-color: #43C0AF;
+}
+
+.status-dropdown-menu::after {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: white;
+}
+
+.status-option {
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    color: #013847;
+}
+
+.status-option:hover {
+    background: #E2ECED;
+    color: #43C0AF;
+}
+
+.status-option i {
+    width: 16px;
+    text-align: center;
+}
+
+/* Status Message Notifications */
+.status-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 10000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    min-width: 300px;
+}
+
+.status-message.show {
+    transform: translateX(0);
+}
+
+.status-message.success {
+    background: linear-gradient(135deg, #43C0AF, #013847);
+}
+
+.status-message.error {
+    background: linear-gradient(135deg, #FF6B6B, #FF5252);
+}
+
+.status-message i {
+    font-size: 1.2em;
 }
 
 /* Animated Status Badges */

@@ -121,6 +121,131 @@ function deleteSelectedReservations() {
     });
 }
 
+// Status Change Functions
+function toggleStatusDropdown(statusBadge) {
+    const reservationId = statusBadge.getAttribute('data-reservation-id');
+    const dropdown = document.getElementById(`status-dropdown-${reservationId}`);
+    
+    // Close all other dropdowns
+    document.querySelectorAll('.status-dropdown-menu').forEach(menu => {
+        if (menu.id !== `status-dropdown-${reservationId}`) {
+            menu.style.display = 'none';
+        }
+    });
+    
+    // Toggle current dropdown
+    if (dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+    } else {
+        dropdown.style.display = 'block';
+    }
+}
+
+function changeReservationStatus(reservationId, newStatus, optionElement) {
+    // Close dropdown
+    const dropdown = document.getElementById(`status-dropdown-${reservationId}`);
+    dropdown.style.display = 'none';
+    
+    // Show loading state
+    const statusBadge = document.querySelector(`[data-reservation-id="${reservationId}"]`);
+    const originalText = statusBadge.innerHTML;
+    statusBadge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Changing...';
+    statusBadge.style.pointerEvents = 'none';
+    
+    // Send AJAX request
+    fetch('/change-reservation-status/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            reservation_id: reservationId,
+            new_status: newStatus
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update the status badge
+            updateStatusBadge(statusBadge, newStatus, data.new_status_display);
+            
+            // Show success message
+            showStatusMessage(data.message, 'success');
+        } else {
+            // Restore original text on error
+            statusBadge.innerHTML = originalText;
+            statusBadge.style.pointerEvents = 'auto';
+            
+            // Show error message
+            showStatusMessage(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        
+        // Restore original text on error
+        statusBadge.innerHTML = originalText;
+        statusBadge.style.pointerEvents = 'auto';
+        
+        // Show error message
+        showStatusMessage('An error occurred while changing status.', 'error');
+    });
+}
+
+function updateStatusBadge(statusBadge, newStatus, displayText) {
+    // Update the badge content and class
+    statusBadge.innerHTML = `${displayText} <i class="fa-solid fa-chevron-down status-arrow"></i>`;
+    statusBadge.setAttribute('data-current-status', newStatus);
+    statusBadge.style.pointerEvents = 'auto';
+    
+    // Remove all status classes and add the new one
+    statusBadge.classList.remove('status-scheduled', 'status-confirmed', 'status-completed', 'status-cancelled', 'status-pending');
+    
+    const statusClassMap = {
+        'Scheduled': 'status-scheduled',
+        'Confirmed': 'status-confirmed',
+        'Completed': 'status-completed',
+        'Cancelled': 'status-cancelled',
+        'Pending': 'status-pending'
+    };
+    
+    if (statusClassMap[newStatus]) {
+        statusBadge.classList.add(statusClassMap[newStatus]);
+    }
+}
+
+function showStatusMessage(message, type) {
+    // Create message element
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `status-message ${type}`;
+    messageDiv.innerHTML = `
+        <i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+        ${message}
+    `;
+    
+    // Add to page
+    document.body.appendChild(messageDiv);
+    
+    // Show with animation
+    setTimeout(() => messageDiv.classList.add('show'), 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        messageDiv.classList.remove('show');
+        setTimeout(() => messageDiv.remove(), 300);
+    }, 3000);
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.status-dropdown-container')) {
+        document.querySelectorAll('.status-dropdown-menu').forEach(menu => {
+            menu.style.display = 'none';
+        });
+    }
+});
+
 // Initialize bulk actions
 document.addEventListener('DOMContentLoaded', function() {
     const reservationCheckboxes = document.querySelectorAll('.reservation-checkbox');
