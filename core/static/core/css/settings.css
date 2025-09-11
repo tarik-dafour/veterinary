@@ -173,16 +173,17 @@
 .form-label {
     font-weight: 600;
     color: var(--main-text);
-    font-size: 0.95rem;
+    font-size: 1rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     display: block;
-    color: #b0b0b0;
-    font-size: 0.9rem;
+    color: #013847;
+    font-size: 1rem;
     margin-bottom: 0.5rem;
     font-weight: 500;
 }
+
 
 .form-label.required::after {
     content: '*';
@@ -196,19 +197,12 @@
     padding: 0.75rem 1rem;
     border: 2px solid var(--border-color);
     border-radius: 12px;
-    font-size: 0.95rem;
+    font-size: 1.2rem;
     background: var(--light-bg);
     color: var(--main-text);
     transition: all 0.3s ease;
-    font-family: inherit;
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #404040;
-    border-radius: 8px;
-    background: #ced4da;
-    color: #000000;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+    font-family: 'Kumbh Sans', sans-serif !important;
+    border: 2px solid #E2ECED;
 }
 
 .form-input:focus,
@@ -224,7 +218,7 @@
 }
 
 .form-input::placeholder {
-    color: #000000;
+    color: #013847;
 }
 
 .form-textarea {
@@ -365,7 +359,7 @@ input:checked + .toggle-slider:before {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #4FC3F7, #29B6F6, #0288D1);
+    background: #013847;
     color: #ffffff;
     box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
     border: none;
@@ -375,75 +369,52 @@ input:checked + .toggle-slider:before {
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, #29B6F6, #0288D1, #01579B);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(79, 195, 247, 0.6);
-    color: #ffffff;
-}
-
-.btn-primary:active {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
-}
-
-.btn-primary::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
-
-.btn-primary:hover::before {
-    left: 100%;
+    width: 270px;
 }
 
 .btn-secondary {
     background: var(--light-bg);
     color: var(--main-text);
     border: 1px solid var(--border-color);
-    background: #404040;
-    color: #ffffff;
+    background: #E2ECED;
+    color: #013847;
 }
 
 .btn-Ajouter{
-    background-color: #0288D1;
+    background-color: #025A6B;
+    color: white;
     font-size: 0.9rem;
     padding: 0.5rem 1rem;
     border-radius: 10px;
-    box-shadow: 0 6px 14px rgba(2, 136, 209, 0.35);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    top: 0px;
 }
 
-.btn-Modifier{
-    background-color: #059669;
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
-    box-shadow: 0 6px 14px rgba(5, 150, 105, 0.35);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
 
 .btn-Supprimer{
-    background-color: #f44336;
-    color: #070707;
+    background-color: #8B0000;
+    color: white;
     font-size: 0.9rem;
     padding: 0.5rem 1rem;
     border-radius: 10px;
-    box-shadow: 0 6px 14px rgba(244, 67, 54, 0.35);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    top: 0px;
+}
+.btn-Ajouter, .btn-Supprimer {
+    width: 130px; /* Set a fixed width for both buttons */
+    text-align: center;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
 }
 
 .btn-secondary:hover {
     background: var(--hover-bg);
     border-color: var(--primary-blue);
-    background: #505050;
+    background: #E2ECED;
 }
 
 .btn-danger {
@@ -473,12 +444,13 @@ input:checked + .toggle-slider:before {
 }
 
 .btn-warning {
-    background: #FF9800;
+    background: #013847;
     color: white;
+    width: 270px;
 }
 
 .btn-warning:hover {
-    background: #F57C00;
+    background: #013847;
 }
 
 
@@ -490,7 +462,16 @@ input:checked + .toggle-slider:before {
     padding: 1.5rem;
     border: 1px solid var(--border-color);
     transition: all 0.3s ease;
-    background: #cccdcd;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+.settings-card-role{
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    background: #E2ECED;
     border-radius: 12px;
     padding: 1.5rem;
 }
@@ -511,7 +492,7 @@ input:checked + .toggle-slider:before {
     font-weight: 600;
     color: var(--main-text);
     margin: 0;
-    color: #ffffff;
+    color: #013847;
     font-size: 1.3rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
@@ -633,9 +614,10 @@ input:checked + .toggle-slider:before {
 
 /* 👤 User Info */
 .user-info {
-    background: #3f3f3dba;
+    background: #E2ECED;
     border-radius: 20px;
     padding: 1rem;
+    padding-bottom: 120px;
     border: 1px solid #2B2C3D;
     position: relative;
     overflow: hidden;
@@ -654,26 +636,28 @@ input:checked + .toggle-slider:before {
 }
 
 .user-details h3 {
-    color: #ffffff;
+    color: #013847;
     margin: 0 0 0.25rem 0;
-    font-size: 1.2rem;
+    font-size: 1.7rem;
 }
 
 .user-details p {
-    color: #000000;
-    margin: 0;
-    font-size: 0.9rem;
+    color: #013847;
+    margin-top: 15px;
+    font-size: 1.2rem;
 }
 
 .role-badge {
     display: inline-block;
-    padding: 0.25rem 0.5rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 4px;
-    font-size: 0.8rem;
+    font-size: 1.5rem;
     font-weight: 500;
     text-transform: uppercase;
-    background: #179c52;
+    background: #013847;
     color: white;
+    position: relative;
+    top: 130px;  
 }
 
 /* 🚀 Quick Actions */
@@ -681,6 +665,7 @@ input:checked + .toggle-slider:before {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    
 }
 
 /* Role Management Styles */
@@ -921,21 +906,24 @@ input:checked + .toggle-slider:before {
     }
     /*this is the back ground of the boorder*/
     .settings-container {
-        background: #2e2e2e;
+        background: #E2ECED;
         border-radius: 10px;
     }
     
     .form-input,
     .form-select,
     .form-textarea {
-        background: #2D3748;
-        color: #F7FAFC;
+        background: #E2ECED;
+        color: #013847;
+        font-size: 1rem;
     }
     
     .form-input:focus,
     .form-select:focus,
     .form-textarea:focus {
-        background: #1A202C;
+        background: #E2ECED;
+        color: #013847;
+        font-size: 1rem;
     }
 }
 
@@ -971,8 +959,8 @@ input:checked + .toggle-slider:before {
 /* 👤 Avatar Styles */
 .user-avatar {
     position: relative;
-    width: 90px;
-    height: 90px;
+    width: 140px;
+    height: 140px;
     border-radius: 50%;
     overflow: hidden;
     border: 3px solid rgba(255, 255, 255, 0.3);
@@ -1001,8 +989,8 @@ input:checked + .toggle-slider:before {
 
 .avatar-upload-btn {
     position: absolute;
-    width: 28px;
-    height: 28px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background: #05966858;
     border: 2px solid white;
