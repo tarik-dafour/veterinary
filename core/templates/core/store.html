@@ -38,15 +38,15 @@
     <!-- New Layout: Header Section with ALL Product, Search Product, Shopping Cart -->
     <section class="store-controls-header" aria-label="Store controls">
         <div class="controls-container">
-            <!-- ALL Product Section -->
+            <!-- Sales Revenue Section -->
             <div class="control-section all-products-section">
                 <h2 class="control-title">
                     <i class="fas fa-boxes-stacked" aria-hidden="true"></i>
-                    ALL Product
+                    Chiffre d'affaires (ventes)
                 </h2>
                 <div class="products-count">
-                    <span class="count-number">{{ total_products|default:"0" }}</span>
-                    <span class="count-label">Products Available</span>
+                    <span class="count-number">{{ total_sales_revenue|floatformat:2 }} MAD</span>
+                    <span class="count-label">Total des ventes</span>
                 </div>
             </div>
 
@@ -626,17 +626,39 @@ function proceedToCheckout() {
             return;
         }
         
-        // Save cart data to localStorage for the facture page
-        localStorage.setItem('factureCart', JSON.stringify(cart));
-        localStorage.setItem('factureDate', new Date().toISOString());
+        const payload = { items: cart.map(item => ({ id: item.id, quantity: item.quantity })) };
         
-        // Show success message and redirect to facture page
-        showNotification('Redirecting to facture page...', 'success');
-        setTimeout(() => {
-            closeCartModal();
-            // Redirect to the facture page
-            window.location.href = '{% url "facture" %}';
-        }, 1000);
+        fetch('{% url "store_checkout" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/) || [null, ''])[1]
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.success) {
+                showNotification(data.message || 'Checkout failed', 'error');
+                return;
+            }
+            // Save cart for facture display only
+            localStorage.setItem('factureCart', JSON.stringify(cart));
+            localStorage.setItem('factureDate', new Date().toISOString());
+            // Clear cart locally
+            cart = [];
+            updateCart();
+            updateCartModal();
+            showNotification('Checkout successful!', 'success');
+            setTimeout(() => {
+                closeCartModal();
+                window.location.href = '{% url "facture" %}';
+            }, 800);
+        })
+        .catch(err => {
+            console.error('Checkout error:', err);
+            showNotification('Checkout error', 'error');
+        });
     } catch (error) {
         console.error('Error generating invoice:', error);
         showNotification('Error generating invoice!', 'error');

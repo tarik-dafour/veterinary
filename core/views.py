@@ -8,6 +8,8 @@ from .models import Client, Animal, Reservation, Produit, Categorie, Fournisseur
 from .decorators import admin_required, veterinarian_required, assistant_required, receptionist_required
 from .utils import log_login, log_logout, log_create, log_update, log_delete, log_export, log_password_change, log_profile_update, log_theme_change, log_report_sent
 from django.db import models
+from django.views.decorators.http import require_POST
+from django.db import transaction
 import csv
 from django.http import HttpResponse
 import json
@@ -596,6 +598,8 @@ def store(request):
     # Calculate some statistics for the dashboard
     total_products = produits.count()
     low_stock_count = produits.filter(quantite__lt=10).count()
+    # Compute total sales revenue instead of total units sold
+    total_sales_revenue = sum(float(p.prix) * int(getattr(p, 'units_sold', 0)) for p in produits)
     
     # Get unique categories count
     categories_count = produits.values('categorie').distinct().count()
@@ -606,9 +610,52 @@ def store(request):
         'total_products': total_products,
         'low_stock_count': low_stock_count,
         'categories_count': categories_count,
+        'total_sales_revenue': total_sales_revenue,
     }
     
     return render(request, 'core/store.html', context)
+
+@login_required(login_url='login')
+@require_POST
+def store_checkout(request):
+    """
+    Deduct purchased quantities from stock and increment units_sold.
+    Expects JSON body: { items: [{ id: <product_id>, quantity: <int> }, ...] }
+    """
+    try:
+        data = json.loads(request.body or '{}')
+        items = data.get('items', [])
+        if not isinstance(items, list) or not items:
+            return JsonResponse({'success': False, 'message': 'No items provided'}, status=400)
+
+        # Validate and apply updates atomically
+        with transaction.atomic():
+            updates = []
+            for item in items:
+                product_id = str(item.get('id'))
+                quantity = int(item.get('quantity', 0))
+                if not product_id or quantity <= 0:
+                    return JsonResponse({'success': False, 'message': 'Invalid item in cart'}, status=400)
+
+                try:
+                    produit = Produit.objects.select_for_update().get(id=product_id)
+                except Produit.DoesNotExist:
+                    return JsonResponse({'success': False, 'message': f'Product {product_id} not found'}, status=404)
+
+                if produit.quantite < quantity:
+                    return JsonResponse({'success': False, 'message': f'Insufficient stock for {produit.nom}'}, status=400)
+
+                produit.quantite -= quantity
+                produit.units_sold += quantity
+                updates.append(produit)
+
+            for produit in updates:
+                produit.save()
+
+        return JsonResponse({'success': True})
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
 @veterinarian_required
 def logs(request):

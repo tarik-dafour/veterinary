@@ -190,7 +190,7 @@ html,body {
 
 .cart-count {
     background: linear-gradient(135deg, #F56565 0%, #E53E3E 100%);
-    color: #fff;
+    color: #d20606;
     padding: 0.3rem 0.7rem;
     border-radius: 999px;
     font-size: 0.85rem;
@@ -1166,26 +1166,6 @@ html,body {
 }
 
 /* Store Controls Header - Enhanced Modern Layout */
-.store-controls-header {
-    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
-    border-radius: 24px;
-    margin-bottom: 2.5rem;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-    border: 1px solid #E2E8F0;
-    overflow: hidden;
-    position: relative;
-}
-
-.store-controls-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #38B2FF 0%, #1E90FF 50%, #1A73E8 100%);
-}
-
 .controls-container {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
@@ -1207,23 +1187,11 @@ html,body {
 }
 
 .control-section:hover {
-    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
     transform: translateY(-2px);
 }
 
 .control-section:active {
     transform: translateY(0);
-}
-
-.control-section:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 15%;
-    bottom: 15%;
-    width: 2px;
-    background: linear-gradient(180deg, transparent 0%, #E2E8F0 20%, #E2E8F0 80%, transparent 100%);
-    opacity: 0.6;
 }
 
 .control-title {
@@ -1246,31 +1214,15 @@ html,body {
 
 .control-section:hover .control-title i {
     transform: scale(1.1);
-    color: #1E90FF;
+}
+
+.store-controls-header{
+    background-color: #E2E8F0;
+    border-radius:1.5rem;
 }
 
 /* ALL Product Section */
-.all-products-section {
-    background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 50%, #BAE6FD 100%);
-    border-right: 1px solid #E2E8F0;
-    position: relative;
-    overflow: hidden;
-}
 
-.all-products-section::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(56, 178, 255, 0.1) 0%, transparent 70%);
-    transition: all 0.4s ease;
-}
-
-.all-products-section:hover::before {
-    transform: scale(1.2);
-}
 
 .all-products-section .control-title {
     color: #0C4A6E;
@@ -1304,7 +1256,7 @@ html,body {
 
 .count-label {
     font-size: 0.9rem;
-    color: #0369A1;
+    color: #0C4A6E;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -1313,27 +1265,11 @@ html,body {
 
 .all-products-section:hover .count-number {
     transform: scale(1.05);
-    color: #1E40AF;
 }
 
 /* Search Product Section */
 .search-section {
-    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
-    border-left: 1px solid #E2E8F0;
-    border-right: 1px solid #E2E8F0;
     position: relative;
-}
-
-.search-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(56, 178, 255, 0.02) 0%, rgba(30, 144, 255, 0.02) 100%);
-    opacity: 0;
-    transition: all 0.4s ease;
 }
 
 .search-section:hover::before {
@@ -1413,25 +1349,8 @@ html,body {
 
 /* Shopping Cart Section */
 .cart-section {
-    background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%);
-    border-left: 1px solid #E2E8F0;
     position: relative;
     overflow: hidden;
-}
-
-.cart-section::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
-    transition: all 0.4s ease;
-}
-
-.cart-section:hover::before {
-    transform: scale(1.2);
 }
 
 .cart-section .control-title {
@@ -1446,6 +1365,7 @@ html,body {
     z-index: 1;
 }
 
+
 .cart-button-container {
     display: flex;
     align-items: center;
@@ -1453,7 +1373,6 @@ html,body {
 }
 
 .cart-button {
-    background: linear-gradient(135deg, #10B981, #059669);
     color: #fff;
     padding: 0.75rem 1.5rem;
     border-radius: 12px;
@@ -1468,13 +1387,10 @@ html,body {
     min-width: 140px;
     justify-content: center;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .cart-button:hover {
-    background: linear-gradient(135deg, #059669, #047857);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
 }
 
 .cart-button:active {
