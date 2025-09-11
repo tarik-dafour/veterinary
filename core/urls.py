@@ -15,8 +15,8 @@ urlpatterns = [
     path('logs/', views.logs, name='logs'),
     path('clients/', views.clients, name='clients'),
     path('animals/', views.animals, name='animals'),
-    path('facture/', views.facture, name='facture'),
     path('report/', views.report, name='report'),
+    path('reservation-report/', views.reservation_report, name='reservation_report'),
     path('settings/', views.settings_view, name='settings'),
     # Export URLs
     path('export/clients/csv/', views.export_clients_csv, name='export_clients_csv'),
