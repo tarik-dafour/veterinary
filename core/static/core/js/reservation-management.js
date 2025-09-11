@@ -235,186 +235,148 @@ function showNotification(message, type = 'info') {
     }
 }
 
-// Function to generate facture for a reservation
-function generateFacture(reservationId) {
+
+
+
+
+
+
+// Initialize status colors when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    applyStatusColors();
+    console.log('Status colors applied to all badges');
+});
+
+// Generate reservation facture
+function generateReservationFacture(reservationId, clientName, animalName, service, price, date) {
     try {
-        console.log('Generating facture for reservation ID:', reservationId);
-        
-        // Show loading notification
-        showNotification('Génération de la facture en cours...', 'info');
-        
-        // Get reservation data from the current page
-        const reservationRow = document.querySelector(`input[value="${reservationId}"]`)?.closest('tr');
-        if (!reservationRow) {
-            showNotification('Données de réservation non trouvées', 'error');
+        // Validate inputs
+        if (!reservationId || !clientName) {
+            showNotification('Données de réservation manquantes!', 'error');
             return;
         }
         
-        // Extract reservation data from the table row
-        const cells = reservationRow.querySelectorAll('td');
-        const clientName = cells[1]?.textContent?.trim() || 'N/A';
-        const animalInfo = cells[2]?.textContent?.trim() || 'N/A';
-        const dateTime = cells[3]?.textContent?.trim() || 'N/A';
-        const service = cells[4]?.textContent?.trim() || 'N/A';
-        const status = cells[5]?.textContent?.trim() || 'N/A';
-        const price = cells[6]?.textContent?.trim() || '0.00 MAD';
+        // Parse price
+        const servicePrice = parseFloat(price) || 0;
+        const tax = servicePrice * 0.20; // 20% TVA
+        const total = servicePrice + tax;
         
-        // Parse animal name and type
-        const animalMatch = animalInfo.match(/^(.+?)\s*\((.+?)\)$/);
-        const animalName = animalMatch ? animalMatch[1] : animalInfo;
-        const animalType = animalMatch ? animalMatch[2] : 'N/A';
+        // Generate receipt number
+        const receiptNumber = 'FAC-RES-' + reservationId.toString().padStart(4, '0');
         
-        // Generate facture content
-        const factureContent = generateFactureContent({
-            id: reservationId,
-            clientName: clientName,
-            animalName: animalName,
-            animalType: animalType,
-            dateTime: dateTime,
-            service: service,
-            status: status,
-            price: price
-        });
+        // Get current date and time
+        const now = new Date();
+        const receiptDate = now.toLocaleDateString('fr-FR');
+        const receiptTime = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
         
-        // Simulate facture generation
-        setTimeout(() => {
-            // Create and display facture modal
-            showFactureModal(factureContent);
-            showNotification('Facture générée avec succès!', 'success');
-        }, 1500);
+        // Create facture content
+        const factureHTML = `
+            <div class="facture-container">
+                <div class="facture-header">
+                    <h2><i class="fas fa-file-invoice"></i> Facture Vétérinaire</h2>
+                    <div class="facture-info">
+                        <p><strong>Facture N°:</strong> ${receiptNumber}</p>
+                        <p><strong>Date d'émission:</strong> ${receiptDate} à ${receiptTime}</p>
+                        <p><strong>Date de service:</strong> ${date}</p>
+                    </div>
+                </div>
+                
+                <div class="facture-client-info">
+                    <h3>Informations Client</h3>
+                    <p><strong>Client:</strong> ${clientName}</p>
+                    <p><strong>Animal:</strong> ${animalName}</p>
+                </div>
+                
+                <div class="facture-body">
+                    <table class="facture-table">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Date</th>
+                                <th>Prix HT</th>
+                                <th>TVA (20%)</th>
+                                <th>Total TTC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${service}</td>
+                                <td>${date}</td>
+                                <td>${servicePrice.toFixed(2)} MAD</td>
+                                <td>${tax.toFixed(2)} MAD</td>
+                                <td><strong>${total.toFixed(2)} MAD</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="facture-totals">
+                        <div class="total-row">
+                            <span>Sous-total HT:</span>
+                            <span>${servicePrice.toFixed(2)} MAD</span>
+                        </div>
+                        <div class="total-row">
+                            <span>TVA (20%):</span>
+                            <span>${tax.toFixed(2)} MAD</span>
+                        </div>
+                        <div class="total-row grand-total">
+                            <span><strong>Total TTC:</strong></span>
+                            <span><strong>${total.toFixed(2)} MAD</strong></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="facture-footer">
+                    <p>Merci pour votre confiance!</p>
+                    <p>VetStock - Système de Gestion Vétérinaire</p>
+                    <p>Cette facture est générée automatiquement</p>
+                </div>
+            </div>
+        `;
+        
+        // Show facture modal
+        showFactureModal(factureHTML);
         
     } catch (error) {
-        console.error('Error generating facture:', error);
-        showNotification('Erreur lors de la génération de la facture', 'error');
+        console.error('Error generating reservation facture:', error);
+        showNotification('Erreur lors de la génération de la facture!', 'error');
     }
 }
 
-// Function to generate facture content
-function generateFactureContent(reservationData) {
-    const currentDate = new Date().toLocaleDateString('fr-FR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-    
-    const currentTime = new Date().toLocaleTimeString('fr-FR', {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-    
-    return {
-        factureNumber: `FAC-${reservationData.id}-${Date.now().toString().slice(-6)}`,
-        date: currentDate,
-        time: currentTime,
-        reservation: reservationData
-    };
-}
-
-// Function to show facture modal
-function showFactureModal(factureData) {
+// Show facture modal
+function showFactureModal(factureHTML) {
     try {
         // Remove existing facture modal if any
-        const existingModal = document.getElementById('factureModal');
+        const existingModal = document.getElementById('facture-modal');
         if (existingModal) {
             existingModal.remove();
         }
         
         // Create facture modal
         const modal = document.createElement('div');
-        modal.id = 'factureModal';
+        modal.id = 'facture-modal';
         modal.className = 'facture-modal';
         modal.innerHTML = `
             <div class="facture-modal-overlay" onclick="closeFactureModal()"></div>
             <div class="facture-modal-content">
-                <div class="facture-header">
-                    <h2><i class="fas fa-file-invoice"></i> Facture Vétérinaire</h2>
+                <div class="facture-modal-header">
+                    <h3><i class="fas fa-file-invoice"></i> Facture Générée</h3>
                     <button class="btn-close-facture" onclick="closeFactureModal()">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                
-                <div class="facture-body">
-                    <!-- Facture Info -->
-                    <div class="facture-info">
-                        <div class="facture-number">
-                            <strong>Facture N°:</strong> ${factureData.factureNumber}
-                        </div>
-                        <div class="facture-date">
-                            <strong>Date:</strong> ${factureData.date} à ${factureData.time}
-                        </div>
-                    </div>
-                    
-                    <!-- Client Information -->
-                    <div class="facture-section">
-                        <h3><i class="fas fa-user"></i> Informations Client</h3>
-                        <div class="client-info">
-                            <div class="info-row">
-                                <span class="label">Nom complet:</span>
-                                <span class="value">${factureData.reservation.clientName}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Animal Information -->
-                    <div class="facture-section">
-                        <h3><i class="fas fa-paw"></i> Informations Animal</h3>
-                        <div class="animal-info">
-                            <div class="info-row">
-                                <span class="label">Nom:</span>
-                                <span class="value">${factureData.reservation.animalName}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Type:</span>
-                                <span class="value">${factureData.reservation.animalType}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Service Information -->
-                    <div class="facture-section">
-                        <h3><i class="fas fa-stethoscope"></i> Détails du Service</h3>
-                        <div class="service-info">
-                            <div class="info-row">
-                                <span class="label">Service:</span>
-                                <span class="value">${factureData.reservation.service}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Date du rendez-vous:</span>
-                                <span class="value">${factureData.reservation.dateTime}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Statut:</span>
-                                <span class="value status-${factureData.reservation.status.toLowerCase()}">${factureData.reservation.status}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Pricing -->
-                    <div class="facture-section pricing-section">
-                        <h3><i class="fas fa-coins"></i> Détails de Facturation</h3>
-                        <div class="pricing-table">
-                            <div class="pricing-row">
-                                <span class="service-name">${factureData.reservation.service}</span>
-                                <span class="service-price">${factureData.reservation.price}</span>
-                            </div>
-                            <div class="pricing-row total-row">
-                                <span class="total-label">Total:</span>
-                                <span class="total-price">${factureData.reservation.price}</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="facture-modal-body">
+                    ${factureHTML}
                 </div>
-                
-                <div class="facture-footer">
+                <div class="facture-modal-footer">
                     <div class="facture-actions">
-                        <button class="btn btn-secondary" onclick="closeFactureModal()">
-                            <i class="fas fa-times"></i> Fermer
-                        </button>
-                        <button class="btn btn-primary" onclick="printFacture()">
+                        <button class="btn btn-secondary" onclick="printFacture()">
                             <i class="fas fa-print"></i> Imprimer
                         </button>
-                        <button class="btn btn-success" onclick="downloadFacture()">
-                            <i class="fas fa-download"></i> Télécharger PDF
+                        <button class="btn btn-primary" onclick="downloadFacture()">
+                            <i class="fas fa-download"></i> Télécharger
+                        </button>
+                        <button class="btn btn-success" onclick="closeFactureModal()">
+                            <i class="fas fa-check"></i> Fermer
                         </button>
                     </div>
                 </div>
@@ -430,13 +392,13 @@ function showFactureModal(factureData) {
         
     } catch (error) {
         console.error('Error showing facture modal:', error);
-        showNotification('Erreur lors de l\'affichage de la facture', 'error');
+        showNotification('Erreur lors de l\'affichage de la facture!', 'error');
     }
 }
 
-// Function to close facture modal
+// Close facture modal
 function closeFactureModal() {
-    const modal = document.getElementById('factureModal');
+    const modal = document.getElementById('facture-modal');
     if (modal) {
         modal.classList.remove('show');
         setTimeout(() => {
@@ -445,10 +407,10 @@ function closeFactureModal() {
     }
 }
 
-// Function to print facture
+// Print facture
 function printFacture() {
     try {
-        const factureContent = document.querySelector('.facture-modal-content');
+        const factureContent = document.querySelector('.facture-container');
         if (factureContent) {
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
@@ -457,11 +419,19 @@ function printFacture() {
                         <title>Facture Vétérinaire</title>
                         <style>
                             body { font-family: Arial, sans-serif; margin: 20px; }
-                            .facture-header { text-align: center; margin-bottom: 30px; }
-                            .facture-section { margin-bottom: 20px; }
-                            .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
-                            .pricing-table { border: 1px solid #ccc; padding: 15px; }
-                            .total-row { border-top: 2px solid #000; font-weight: bold; }
+                            .facture-container { max-width: 800px; margin: 0 auto; }
+                            .facture-header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #013847; padding-bottom: 20px; }
+                            .facture-header h2 { color: #013847; margin: 0 0 15px 0; }
+                            .facture-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+                            .facture-client-info { margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; }
+                            .facture-client-info h3 { color: #013847; margin: 0 0 10px 0; }
+                            .facture-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                            .facture-table th { background: #013847; color: white; padding: 12px; text-align: left; }
+                            .facture-table td { padding: 12px; border-bottom: 1px solid #ddd; }
+                            .facture-totals { border-top: 3px solid #013847; padding-top: 15px; margin-top: 20px; }
+                            .total-row { display: flex; justify-content: space-between; margin: 8px 0; }
+                            .grand-total { font-size: 1.2em; border-top: 1px solid #013847; padding-top: 10px; }
+                            .facture-footer { text-align: center; margin-top: 30px; color: #666; font-size: 0.9em; }
                         </style>
                     </head>
                     <body>
@@ -474,19 +444,51 @@ function printFacture() {
         }
     } catch (error) {
         console.error('Error printing facture:', error);
-        showNotification('Erreur lors de l\'impression', 'error');
+        showNotification('Erreur lors de l\'impression!', 'error');
     }
 }
 
-// Function to download facture as PDF (placeholder)
+// Download facture as PDF (simplified version)
 function downloadFacture() {
-    // Placeholder function - Implement PDF generation logic here
-    console.log('Downloading facture as PDF...');
-    showNotification('Fonctionnalité de téléchargement PDF en cours de développement', 'info');
+    try {
+        // For now, we'll just show a message
+        showNotification('Fonctionnalité de téléchargement en cours de développement!', 'info');
+    } catch (error) {
+        console.error('Error downloading facture:', error);
+        showNotification('Erreur lors du téléchargement!', 'error');
+    }
 }
 
-// Initialize status colors when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    applyStatusColors();
-    console.log('Status colors applied to all badges');
-});
+// Show notification function (if not already defined)
+function showNotification(message, type = 'success') {
+    try {
+        // Create notification element if it doesn't exist
+        let notification = document.getElementById('notification');
+        if (!notification) {
+            notification = document.createElement('div');
+            notification.id = 'notification';
+            notification.className = 'notification';
+            document.body.appendChild(notification);
+        }
+        
+        // Set notification content and type
+        notification.innerHTML = `
+            <div class="notification-content ${type}">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-info-circle'}"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        // Show notification
+        notification.classList.add('show');
+        
+        // Auto hide after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+        
+    } catch (error) {
+        console.error('Error showing notification:', error);
+        alert(message); // Fallback to alert
+    }
+}
