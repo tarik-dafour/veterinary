@@ -87,6 +87,9 @@ class Reservation(models.Model):
     statut = models.CharField(max_length=50)
     prix = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     note = models.TextField(blank=True, null=True)
+    # Soft delete to preserve history in reports
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"Reservation {self.id} - {self.client}"
@@ -165,3 +168,20 @@ class RapportEnvoye(models.Model):
 
     def __str__(self):
         return self.sujet
+
+class Vente(models.Model):
+    produit = models.ForeignKey(Produit, on_delete=models.PROTECT, related_name="ventes")
+    client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True, related_name="ventes")
+    date_vente = models.DateTimeField(auto_now_add=True)
+    quantite = models.PositiveIntegerField()
+    prix_unitaire = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.DecimalField(max_digits=12, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+        if self.prix_unitaire is None:
+            self.prix_unitaire = self.produit.prix or 0
+        self.total = (self.prix_unitaire or 0) * (self.quantite or 0)
+        super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ["-date_vente"]

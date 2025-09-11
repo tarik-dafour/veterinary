@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Utilisateur, Client, Animal, Reservation, Categorie, Fournisseur, Produit, Log, RapportEnvoye
+from .models import Utilisateur, Client, Animal, Reservation, Categorie, Fournisseur, Produit, Log, RapportEnvoye, Vente
 
 admin.site.register(Utilisateur)
 admin.site.register(Client)
@@ -10,3 +10,4 @@ admin.site.register(Fournisseur)
 admin.site.register(Produit)
 admin.site.register(Log)
 admin.site.register(RapportEnvoye)
+admin.site.register(Vente)

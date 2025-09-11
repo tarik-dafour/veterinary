@@ -19,18 +19,6 @@
             </h1>
             <p class="store-subtitle">Premium products for your veterinary practice</p>
         </div>
-        <div class="store-header-actions">
-            <div class="store-summary" role="status" aria-live="polite">
-                <div class="summary-item">
-                    <i class="fas fa-boxes-stacked" aria-hidden="true"></i>
-                    <span class="summary-label">Total Products</span>
-                </div>
-                <div class="summary-item">
-                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
-                    <span class="summary-label">Low Stock</span>
-                </div>
-            </div>
-        </div>
     </div>
 </header>
 
@@ -383,6 +371,7 @@ function closeCartModal() {
     } catch (error) {
         console.error('Error closing cart modal:', error);
     }
+    return render(request, 'core/store.html', context);
 }
 
 // Add to cart function
@@ -626,7 +615,6 @@ function proceedToCheckout() {
             return;
         }
         
-<<<<<<< HEAD
         const payload = { items: cart.map(item => ({ id: item.id, quantity: item.quantity })) };
         
         fetch('{% url "store_checkout" %}', {
@@ -653,18 +641,17 @@ function proceedToCheckout() {
             showNotification('Checkout successful!', 'success');
             setTimeout(() => {
                 closeCartModal();
-                window.location.href = '{% url "facture" %}';
             }, 800);
         })
         .catch(err => {
             console.error('Checkout error:', err);
             showNotification('Checkout error', 'error');
         });
-=======
+
         // Generate and display receipt
         generateReceipt();
         
->>>>>>> 0c34b45300eadf77afa0d2a196042252e454763a
+
     } catch (error) {
         console.error('Error generating invoice:', error);
         showNotification('Error generating invoice!', 'error');

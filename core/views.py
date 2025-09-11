@@ -222,7 +222,7 @@ def dashboard(request):
 def reservation(request):
     from django.shortcuts import get_object_or_404
     search_query = request.GET.get('search', '')
-    qs = Reservation.objects.select_related('client', 'animal').all()
+    qs = Reservation.objects.select_related('client', 'animal').filter(is_deleted=False)
     if search_query:
         qs = qs.filter(
             models.Q(client__nom__icontains=search_query) |
@@ -266,7 +266,11 @@ def reservation(request):
         return redirect('reservation')
     elif request.method == 'GET' and 'delete' in request.GET:
         reservation = get_object_or_404(Reservation, id=request.GET.get('delete'))
-        reservation.delete()
+        # Soft-delete: mark as deleted instead of removing
+        from django.utils import timezone as dj_tz
+        reservation.is_deleted = True
+        reservation.deleted_at = dj_tz.now()
+        reservation.save(update_fields=['is_deleted', 'deleted_at'])
         return redirect('reservation')
     elif request.method == 'GET' and 'edit' in request.GET:
         all_reservations = qs
@@ -602,7 +606,7 @@ def store(request):
     low_stock_count = produits.filter(quantite__lt=10).count()
     # Compute total sales revenue instead of total units sold
     total_sales_revenue = sum(float(p.prix) * int(getattr(p, 'units_sold', 0)) for p in produits)
-    
+
     # Get unique categories count
     categories_count = produits.values('categorie').distinct().count()
     
@@ -630,6 +634,16 @@ def store_checkout(request):
         if not isinstance(items, list) or not items:
             return JsonResponse({'success': False, 'message': 'No items provided'}, status=400)
 
+        # Add this block
+        from core.models import Vente, Client
+        client = None
+        client_id = data.get('client_id')
+        if client_id:
+            try:
+                client = Client.objects.get(id=client_id)
+            except Client.DoesNotExist:
+                client = None
+
         # Validate and apply updates atomically
         with transaction.atomic():
             updates = []
@@ -649,6 +663,15 @@ def store_checkout(request):
 
                 produit.quantite -= quantity
                 produit.units_sold += quantity
+
+                # Add this block (record the sale)
+                Vente.objects.create(
+                    produit=produit,
+                    client=client,
+                    quantite=quantity,
+                    prix_unitaire=produit.prix,
+                )
+
                 updates.append(produit)
 
             for produit in updates:
@@ -1531,22 +1554,43 @@ def reservation_report(request):
         service_filter = request.GET.get('service')
         
         # Base queryset
-        reservations = Reservation.objects.all()
+        reservations = Reservation.objects.all()  # include deleted in report history
         
-        # Apply filters
+        # Apply filters (default to last 30 days if no dates provided)
+        from datetime import timedelta
+        from django.utils import timezone as dj_tz
+        period_label = None
+        from_date = None
+        to_date = None
+
         if date_from:
             try:
                 from_date = datetime.strptime(date_from, '%Y-%m-%d').date()
-                reservations = reservations.filter(date_reservation__date__gte=from_date)
             except ValueError:
-                pass
-                
+                from_date = None
         if date_to:
             try:
                 to_date = datetime.strptime(date_to, '%Y-%m-%d').date()
-                reservations = reservations.filter(date_reservation__date__lte=to_date)
             except ValueError:
-                pass
+                to_date = None
+
+        if not from_date and not to_date:
+            to_date = dj_tz.now().date()
+            from_date = to_date - timedelta(days=30)
+            date_from = from_date.strftime('%Y-%m-%d')
+            date_to = to_date.strftime('%Y-%m-%d')
+
+        if from_date:
+            reservations = reservations.filter(date_reservation__date__gte=from_date)
+        if to_date:
+            reservations = reservations.filter(date_reservation__date__lte=to_date)
+
+        if from_date and to_date:
+            period_label = f"{from_date.strftime('%d %b %Y')} → {to_date.strftime('%d %b %Y')}"
+        elif from_date:
+            period_label = f"Depuis le {from_date.strftime('%d %b %Y')}"
+        elif to_date:
+            period_label = f"Jusqu'au {to_date.strftime('%d %b %Y')}"
                 
         if status_filter:
             reservations = reservations.filter(statut=status_filter)
@@ -1567,66 +1611,27 @@ def reservation_report(request):
         )
         total_revenue = sum(r.prix for r in completed_reservations_with_price if r.prix)
         
-        # Get recent reservations for the table
-        recent_reservations = reservations.order_by('-date_reservation')[:50]
+        # Show only completed reservations in the table, including those soft-deleted
+        recent_reservations = reservations.filter(statut='Completed').order_by('-date_reservation')[:50]
         
-        # Get product sales data (simulated since no Sales model exists)
-        from core.models import Produit
-        from datetime import timedelta
-        import random
+        # Use real sales from Vente
+        from core.models import Vente
+        sales = Vente.objects.select_related('produit__categorie', 'client')
+        if from_date:
+            sales = sales.filter(date_vente__date__gte=from_date)
+        if to_date:
+            sales = sales.filter(date_vente__date__lte=to_date)
+        product_sales = list(sales.order_by('-date_vente')[:200])
         
-        # Get products for sample sales data
-        products = Produit.objects.all()[:10]  # Get first 10 products
-        product_sales = []
-        
-        # Generate sample sales data
-        if products:
-            for i in range(min(20, len(products) * 2)):  # Generate up to 20 sample sales
-                product = random.choice(products)
-                sale_date = timezone.now() - timedelta(days=random.randint(1, 30))
-                quantity = random.randint(1, 5)
-                unit_price = float(product.prix) if product.prix else 0
-                total = quantity * unit_price
-                
-                # Create a mock sale object
-                class MockSale:
-                    def __init__(self, date_vente, produit, quantite, prix_unitaire, total, client):
-                        self.date_vente = date_vente
-                        self.produit = produit
-                        self.quantite = quantite
-                        self.prix_unitaire = prix_unitaire
-                        self.total = total
-                        self.client = client
-                
-                # Random client from reservations or None
-                client = None
-                if recent_reservations:
-                    random_reservation = random.choice(recent_reservations)
-                    client = f"{random_reservation.client.prenom} {random_reservation.client.nom}"
-                
-                mock_sale = MockSale(
-                    date_vente=sale_date,
-                    produit=product,
-                    quantite=quantity,
-                    prix_unitaire=unit_price,
-                    total=total,
-                    client=client
-                )
-                product_sales.append(mock_sale)
-        
-        # Sort sales by date (most recent first)
-        product_sales.sort(key=lambda x: x.date_vente, reverse=True)
-        
-        # Calculate sales statistics
+        # Sales statistics
         total_products_sold = sum(sale.quantite for sale in product_sales)
-        sales_revenue = sum(sale.total for sale in product_sales)
+        sales_revenue = sum(float(sale.total) for sale in product_sales)
         
-        # Find top product
+        # Top product
         product_counts = {}
         for sale in product_sales:
             product_name = sale.produit.nom
             product_counts[product_name] = product_counts.get(product_name, 0) + sale.quantite
-        
         top_product = max(product_counts.items(), key=lambda x: x[1])[0] if product_counts else "N/A"
         
         # Calculate average basket
@@ -1667,6 +1672,8 @@ def reservation_report(request):
             'date_to': date_to,
             'status_filter': status_filter,
             'service_filter': service_filter,
+            'period_label': period_label or '—',
+            'total_sales_revenue' : sales_revenue,
         }
         
         return render(request, 'core/reservation_report.html', context)
@@ -1683,7 +1690,8 @@ def reservation_report(request):
             'confirmed_reservations': 0,
             'total_revenue': 0,
             'recent_reservations': [],
-            'error_message': 'Erreur lors du chargement du rapport'
+            'error_message': 'Erreur lors du chargement du rapport',
+            'total_sales_revenue' : 0,
         }
         
-        return render(request, 'core/reservation_report.html', context)
+        return render(request, 'core/reservation_report.html', context) 

@@ -49,28 +49,6 @@ html,body {
     align-items: center;
 }
 
-.store-summary {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-    color: #013847;
-}
-
-.summary-item {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: #013847;
-}
-
-.summary-label {
-    color: #013847;
-}
-
-
-
 /* Search Section */
 .search-section {
     margin-bottom: 2rem;

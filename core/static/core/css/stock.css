@@ -1033,34 +1033,6 @@ html,body {
     display: flex;
     align-items: center;
 }
-
-.stock-summary {
-    display: flex;
-    gap: 2rem;
-}
-
-.summary-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 1rem;
-    backdrop-filter: blur(10px);
-}
-
-.summary-item i {
-    font-size: 1.5rem;
-    opacity: 0.9;
-}
-
-.summary-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    opacity: 0.9;
-}
-
 /* ===== CONTAINER ===== */
 .container {
     max-width: none;

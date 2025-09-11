@@ -14,64 +14,64 @@
         <h1><i class="fa-solid fa-chart-line"></i> Rapport des Réservations</h1>
         <p class="header-subtitle">Analyse détaillée des rendez-vous vétérinaires</p>
       </div>
-      <div class="header-actions">
-        <button class="btn-export" onclick="exportReport()">
-          <i class="fa-solid fa-download"></i> Exporter PDF
-        </button>
-        <button class="btn-print" onclick="window.print()">
-          <i class="fa-solid fa-print"></i> Imprimer
-        </button>
-      </div>
     </div>
-        <!-- Statistics Cards -->
-    <div class="stats-grid">
-      <div class="stat-card total-reservations">
-        <div class="stat-icon">
-          <i class="fa-solid fa-calendar-days"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number" id="total-reservations">{{ total_reservations|default:"0" }}</div>
-          <div class="stat-label">Total Réservations</div>
-          <div class="stat-change positive">+12% ce mois</div>
+       <!-- Summary Section -->
+       <div class="summary-section">
+        <div class="summary-row">
+          <div class="summary-card">
+            <h3><i class="fa-solid fa-chart-pie"></i> Résumé des Réservations</h3>
+            <div class="summary-content">
+              <div class="summary-item">
+                <span class="summary-label">Période analysée:</span>
+                <span class="summary-value" id="analyzed-period">{{ period_label }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Taux de réalisation:</span>
+                <span class="summary-value" id="completion-rate">{{ completion_rate|default:"0" }}%</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Service le plus demandé:</span>
+                <span class="summary-value" id="top-service">{{ top_service|default:"N/A" }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Revenus moyens par visite:</span>
+                <span class="summary-value" id="avg-revenue">{{ avg_revenue|default:"0" }} MAD</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Revenus Total:</span>
+                <span class="summary-value" id="avg-revenue">{{ total_revenue|default:"0" }} MAD</span>
+              </div>
+            </div>
+          </div>
+  
+          <div class="summary-card">
+            <h3><i class="fa-solid fa-shopping-bag"></i> Résumé des Ventes</h3>
+            <div class="summary-content">
+              <div class="summary-item">
+                <span class="summary-label">Total produits vendus:</span>
+                <span class="summary-value" id="total-products-sold">{{ total_products_sold|default:"0" }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Revenus des ventes:</span>
+                <span class="summary-value" id="sales-revenue">{{ sales_revenue|default:"0" }} MAD</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Produit le plus vendu:</span>
+                <span class="summary-value" id="top-product">{{ top_product|default:"N/A" }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Panier moyen:</span>
+                <span class="summary-value" id="avg-basket">{{ avg_basket|default:"0" }} MAD</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Revenus Total:</span>
+                <span class="summary-value" id="total-revenue">{{ total_sales_revenue|default:"0" }} MAD</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div class="stat-card completed-reservations">
-        <div class="stat-icon">
-          <i class="fa-solid fa-check-circle"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number" id="completed-reservations">{{ completed_reservations|default:"0" }}</div>
-          <div class="stat-label">Terminées</div>
-          <div class="stat-change positive">+8% ce mois</div>
-        </div>
-      </div>
-
-      <div class="stat-card cancelled-reservations">
-        <div class="stat-icon">
-          <i class="fa-solid fa-times-circle"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number" id="cancelled-reservations">{{ cancelled_reservations|default:"0" }}</div>
-          <div class="stat-label">Annulées</div>
-          <div class="stat-change negative">-3% ce mois</div>
-        </div>
-      </div>
-
-      <div class="stat-card revenue">
-        <div class="stat-icon">
-          <i class="fa-solid fa-money-bill-wave"></i>
-        </div>
-        <div class="stat-content">
-          <div class="stat-number" id="total-revenue">{{ total_revenue|default:"0" }} MAD</div>
-          <div class="stat-label">Revenus</div>
-          <div class="stat-change positive">+15% ce mois</div>
-        </div>
-      </div>
-    </div>
-    <div class="table-header">
-      <h3><i class="fa-solid fa-table"></i> Rapport Détaillé</h3>
-    </div>
+      
     <!-- Filter Section -->
     <div class="filter-section">
       <div class="filter-card">
@@ -80,30 +80,27 @@
           <div class="filter-row">
             <div class="filter-group">
               <label for="date-from">Date de début:</label>
-              <input type="date" id="date-from" class="filter-input">
+              <input type="date" id="date-from" name="date_from" class="filter-input" value="{{ date_from }}">
             </div>
             <div class="filter-group">
               <label for="date-to">Date de fin:</label>
-              <input type="date" id="date-to" class="filter-input">
+              <input type="date" id="date-to" name="date_to" class="filter-input" value="{{ date_to }}">
             </div>
             <div class="filter-group">
-              <label for="status-filter">Statut:</label>
-              <select id="status-filter" class="filter-select">
-                <option value="">Tous les statuts</option>
-                <option value="Scheduled">Planifié</option>
-                <option value="Confirmed">Confirmé</option>
-                <option value="Completed">Terminé</option>
-                <option value="Cancelled">Annulé</option>
-                <option value="Pending">En attente</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <button class="btn-apply-filter" onclick="applyFilters()">
+              <button class="btn-apply-filter" onclick="submitFilters()">
                 <i class="fa-solid fa-search"></i> Appliquer
               </button>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="table-header">
+      <h3><i class="fa-solid fa-table"></i> Rapport Détaillé</h3>
+      <div class="header-actions">
+        <button class="btn-export" onclick="exportReport()">
+          <i class="fa-solid fa-download"></i> Exporter PDF
+        </button>
       </div>
     </div>
 
@@ -192,54 +189,7 @@
       </div>
     </div>
 
-    <!-- Summary Section -->
-    <div class="summary-section">
-      <div class="summary-row">
-        <div class="summary-card">
-          <h3><i class="fa-solid fa-chart-pie"></i> Résumé des Réservations</h3>
-          <div class="summary-content">
-            <div class="summary-item">
-              <span class="summary-label">Période analysée:</span>
-              <span class="summary-value" id="analyzed-period">Derniers 30 jours</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Taux de réalisation:</span>
-              <span class="summary-value" id="completion-rate">{{ completion_rate|default:"0" }}%</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Service le plus demandé:</span>
-              <span class="summary-value" id="top-service">{{ top_service|default:"N/A" }}</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Revenus moyens par visite:</span>
-              <span class="summary-value" id="avg-revenue">{{ avg_revenue|default:"0" }} MAD</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="summary-card">
-          <h3><i class="fa-solid fa-shopping-bag"></i> Résumé des Ventes</h3>
-          <div class="summary-content">
-            <div class="summary-item">
-              <span class="summary-label">Total produits vendus:</span>
-              <span class="summary-value" id="total-products-sold">{{ total_products_sold|default:"0" }}</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Revenus des ventes:</span>
-              <span class="summary-value" id="sales-revenue">{{ sales_revenue|default:"0" }} MAD</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Produit le plus vendu:</span>
-              <span class="summary-value" id="top-product">{{ top_product|default:"N/A" }}</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Panier moyen:</span>
-              <span class="summary-value" id="avg-basket">{{ avg_basket|default:"0" }} MAD</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+ 
 
     <!-- Footer -->
     <div class="report-footer">
@@ -257,7 +207,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         setReportDate();
         initializeCharts();
-        setDefaultDates();
     });
 
     function setReportDate() {
@@ -266,17 +215,11 @@
         document.getElementById('report-date').textContent = dateString;
     }
 
-    function setDefaultDates() {
-        const today = new Date();
-        const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
-        
-        document.getElementById('date-to').value = today.toISOString().split('T')[0];
-        document.getElementById('date-from').value = thirtyDaysAgo.toISOString().split('T')[0];
-    }
-
-
-    function applyFilters() {
-        alert('Filtres appliqués!');
+    function submitFilters() {
+        const params = new URLSearchParams(window.location.search);
+        params.set('date_from', document.getElementById('date-from').value || '');
+        params.set('date_to', document.getElementById('date-to').value || '');
+        window.location.search = params.toString();
     }
 
     function exportReport() {
