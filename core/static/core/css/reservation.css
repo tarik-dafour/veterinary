@@ -1275,3 +1275,351 @@ html,body {
         padding: 15px;
     }
 }
+
+/* Facture Modal Styles */
+.facture-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.facture-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.facture-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.facture-modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    z-index: 1;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.facture-modal.show .facture-modal-content {
+    transform: scale(1);
+}
+
+.facture-modal-header {
+    background: linear-gradient(135deg, #013847 0%, #43C0AF 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.facture-modal-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.facture-modal-body {
+    padding: 2rem;
+}
+
+.facture-container {
+    max-width: 100%;
+}
+
+.facture-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #013847;
+}
+
+.facture-header h2 {
+    color: #013847;
+    margin: 0 0 1rem 0;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.facture-header h2 i {
+    color: #43C0AF;
+}
+
+.facture-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.facture-info p {
+    margin: 0;
+    color: #4A5568;
+    font-size: 0.95rem;
+    padding: 0.5rem;
+    background: #F7FAFC;
+    border-radius: 8px;
+}
+
+.facture-client-info {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #F7FAFC 0%, #EDF2F7 100%);
+    border-radius: 12px;
+    border-left: 4px solid #43C0AF;
+}
+
+.facture-client-info h3 {
+    color: #013847;
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+}
+
+.facture-client-info p {
+    margin: 0.5rem 0;
+    color: #2D3748;
+    font-size: 1rem;
+}
+
+.facture-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.facture-table th {
+    background: linear-gradient(135deg, #013847 0%, #43C0AF 100%);
+    color: white;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.facture-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #E2E8F0;
+    color: #2D3748;
+    font-size: 0.95rem;
+}
+
+.facture-table tr:hover {
+    background: #F7FAFC;
+}
+
+.facture-table tr:last-child td {
+    border-bottom: none;
+}
+
+.facture-totals {
+    border-top: 3px solid #013847;
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+    background: #F7FAFC;
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.75rem 0;
+    font-size: 1rem;
+    color: #4A5568;
+}
+
+.total-row.grand-total {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #013847;
+    border-top: 2px solid #013847;
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.facture-footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid #E2E8F0;
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.facture-footer p {
+    margin: 0.5rem 0;
+}
+
+.facture-modal-footer {
+    background: #F7FAFC;
+    padding: 1.5rem;
+    border-radius: 0 0 16px 16px;
+    border-top: 1px solid #E2E8F0;
+}
+
+.facture-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Notification Styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-content {
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-left: 4px solid #10B981;
+    min-width: 300px;
+}
+
+.notification-content.error {
+    border-left-color: #F56565;
+}
+
+.notification-content.info {
+    border-left-color: #3182CE;
+}
+
+.notification-content i {
+    font-size: 1.2rem;
+    color: #10B981;
+}
+
+.notification-content.error i {
+    color: #F56565;
+}
+
+.notification-content.info i {
+    color: #3182CE;
+}
+
+.notification-content span {
+    color: #2D3748;
+    font-weight: 500;
+    flex: 1;
+}
+
+/* Responsive Facture Modal */
+@media (max-width: 768px) {
+    .facture-modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .facture-modal-header {
+        padding: 1rem;
+    }
+    
+    .facture-modal-body {
+        padding: 1.5rem;
+    }
+    
+    .facture-header h2 {
+        font-size: 1.5rem;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .facture-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .facture-table th,
+    .facture-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .facture-actions {
+        flex-direction: column;
+    }
+    
+    .facture-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .notification {
+        right: 10px;
+        left: 10px;
+        transform: translateY(-100px);
+    }
+    
+    .notification.show {
+        transform: translateY(0);
+    }
+    
+    .notification-content {
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .facture-modal-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .facture-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .facture-table th,
+    .facture-table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    .total-row {
+        font-size: 0.9rem;
+    }
+    
+    .total-row.grand-total {
+        font-size: 1.1rem;
+    }
+}

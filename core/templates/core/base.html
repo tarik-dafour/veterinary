@@ -126,21 +126,19 @@
                     </span>
                 </a>
             </li>
-            {% endif %}
-            
-            {% if user.profile.role == 'admin' or user.is_superuser %}
             <li class="nav-item" role="none">
-                <a href="{% url 'facture' %}" 
-                   class="nav-link {% if request.resolver_match.url_name == 'facture' %}active{% endif %}" 
-                   title="Invoices"
+                <a href="{% url 'reservation_report' %}" 
+                   class="nav-link {% if request.resolver_match.url_name == 'reservation_report' %}active{% endif %}" 
+                   title="Reservation Reports"
                    role="menuitem"
-                   aria-label="Manage Invoices">
+                   aria-label="View Reservation Reports">
                     <span class="nav-icon" aria-hidden="true">
-                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                        <i class="fa-solid fa-calendar-check"></i>
                     </span>
                 </a>
             </li>
             {% endif %}
+            
             
             <li class="nav-item" role="none">
                 <a href="{% url 'settings' %}" 

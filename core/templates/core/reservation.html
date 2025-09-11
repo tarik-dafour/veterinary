@@ -249,7 +249,7 @@
                             <a class="btn btn-secondary" href="?edit={{ reservation.id }}{% if search_query %}&search={{ search_query }}{% endif %}">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
-                            <button class="btn btn-facture" onclick="generateFacture(reservation.id)" title="Générer Facture">
+                            <button class="btn btn-facture" onclick="generateReservationFacture('{{ reservation.id }}', '{{ reservation.client.prenom }} {{ reservation.client.nom }}', '{{ reservation.animal.nom }}', '{{ reservation.service }}', '{{ reservation.prix|default:"0" }}', '{{ reservation.date_reservation|date:"d M Y H:i" }}')" title="Générer Facture">
                                 <i class="fa-solid fa-file-invoice"></i>
                             </button>
                             <a class="btn btn-danger" href="?delete={{ reservation.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
