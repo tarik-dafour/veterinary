@@ -44,7 +44,7 @@
                 <h3>{{ user.get_full_name|default:user.username }}</h3>
                 <p>{{ user.email }}</p>
                 {% if profile %}
-                    <span class="role-badge">{{ profile.get_role_display }}</span>
+                    <span class="role-badge-user">{{ profile.get_role_display }}</span>
                 {% endif %}
                 <div class="avatar-actions">
                     <button type="button" class="btn btn-Ajouter" onclick="document.getElementById('avatar-upload').click()">

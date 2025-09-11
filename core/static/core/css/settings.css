@@ -403,7 +403,8 @@ input:checked + .toggle-slider:before {
     top: 0px;
 }
 .btn-Ajouter, .btn-Supprimer {
-    width: 130px; /* Set a fixed width for both buttons */
+    width: 130px; 
+    height: 30px;
     text-align: center;
     text-align: center;
     display: flex;
@@ -647,17 +648,16 @@ input:checked + .toggle-slider:before {
     font-size: 1.2rem;
 }
 
-.role-badge {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    font-size: 1.5rem;
-    font-weight: 500;
-    text-transform: uppercase;
+.role-badge-user {
     background: #013847;
-    color: white;
+    color: #fff;
+    text-transform: uppercase;
+    padding: 0.5rem 0.95rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
     position: relative;
-    top: 130px;  
+    top: 130px;
 }
 
 /* 🚀 Quick Actions */
