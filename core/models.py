@@ -116,6 +116,7 @@ class Produit(models.Model):
     fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+    units_sold = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.nom
