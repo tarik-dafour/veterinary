@@ -35,48 +35,25 @@
             
             <div class="form-group">
                 <label for="edit-prenom" class="form-label" lang="en">First Name</label>
-                <input type="text" 
-                       id="edit-prenom"
-                       name="prenom" 
-                       class="form-input" 
-                       value="{{ edit_client.prenom }}" 
-                       required
-                       aria-describedby="edit-prenom-help">
+                <input type="text" id="edit-prenom" name="prenom" class="form-input" value="{{ edit_client.prenom }}" required aria-describedby="edit-prenom-help">
                 <div id="edit-prenom-help" class="help-text">Enter the client's first name</div>
             </div>
             
             <div class="form-group">
                 <label for="edit-nom" class="form-label" lang="en">Last Name</label>
-                <input type="text" 
-                       id="edit-nom"
-                       name="nom" 
-                       class="form-input" 
-                       value="{{ edit_client.nom }}" 
-                       required
-                       aria-describedby="edit-nom-help">
+                <input type="text" id="edit-nom" name="nom" class="form-input" value="{{ edit_client.nom }}" required aria-describedby="edit-nom-help">
                 <div id="edit-nom-help" class="help-text">Enter the client's last name</div>
             </div>
             
             <div class="form-group">
                 <label for="edit-telephone" class="form-label" lang="en">Phone</label>
-                <input type="tel" 
-                       id="edit-telephone"
-                       name="telephone" 
-                       class="form-input" 
-                       value="{{ edit_client.telephone }}" 
-                       required
-                       aria-describedby="edit-telephone-help">
+                <input type="tel" id="edit-telephone" name="telephone" class="form-input" value="{{ edit_client.telephone }}" required aria-describedby="edit-telephone-help">
                 <div id="edit-telephone-help" class="help-text">Enter the client's phone number</div>
             </div>
             
             <div class="form-group">
                 <label for="edit-email" class="form-label" lang="en">Email</label>
-                <input type="email" 
-                       id="edit-email"
-                       name="email" 
-                       class="form-input" 
-                       value="{{ edit_client.email }}"
-                       aria-describedby="edit-email-help">
+                <input type="email" id="edit-email" name="email" class="form-input" value="{{ edit_client.email }}" aria-describedby="edit-email-help">
                 <div id="edit-email-help" class="help-text">Enter the client's email address (optional)</div>
             </div>
             
@@ -97,114 +74,78 @@
 </div>
 {% endif %}
 
-<!-- Main Content -->
-<main class="table-card" role="main" aria-label="Client management content">
-
-    <div class="table-header">
-        <h3 class="form-title">
-            <i class="fa-solid fa-list-check" aria-hidden="true"></i> 
-            <span lang="en">Client List</span>
-        </h3>
-        
-        <!-- Search and Actions Form -->
-        <form method="get" class="search-form" role="search" aria-label="Search clients">
-            <div class="search-input-group">
-                <input type="text" 
-                       name="search" 
-                       class="search-input" 
-                       placeholder="Search for a client..." 
-                       value="{{ search_query }}"
-                       aria-label="Search clients"
-                       lang="fr">
-                <button class="btn btn-primary" type="submit" aria-label="Search">
-                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                </button>
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-            {% if search_query %}
-                <a class="btn btn-primary" href="{% url 'clients' %}" aria-label="Clear search">
-                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+<div class="content-grid">
+    <!-- Liste des animaux -->
+    <div class="table-card">
+        <div class="table-header">
+            <h3 class="form-title"><i class="fa-solid fa-paw"></i> Client List</h3>
+            <form method="get" class="search-form">
+                <input type="text" name="search" class="search-input" placeholder="Search for clients..." 
+                       value="{{ search_query }}">
+                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                {% if search_query %}
+                    <a class="btn btn-secondary" href="{% url 'clients' %}"><i class="fa-solid fa-times"></i></a>
+                {% endif %}
+                <a class="btn btn-primary" href="{% url 'export_clients_csv' %}?search={{ search_query }}">
+                    <i class="fa-solid fa-download"></i>
                 </a>
-            {% endif %}
-                
-                <a class="btn btn-primary" 
-                   href="{% url 'export_clients_csv' %}?search={{ search_query }}"
-                   aria-label="Export clients to CSV">
-                    <i class="fa-solid fa-download" aria-hidden="true"></i>
-                </a>
-                <button type="button" class="btn btn-primary" onclick="openClientModal()" aria-label="Add new client">
-                    <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                <button type="button" class="btn btn-primary" onclick="openClientModal()">
+                    <i class="fa-solid fa-plus"></i>
                 </button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Add Client Modal -->
-    <div id="clientModal" class="modal" role="dialog" aria-labelledby="add-client-title" aria-modal="true">
-        <div class="modal-content">
-            <button class="close" onclick="closeClientModal()" aria-label="Close add client modal">
-                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-            </button>
-            <h3 id="add-client-title">
-                <i class="fa-solid fa-user-plus" aria-hidden="true"></i> 
-                <span lang="en">Add a Client</span>
-            </h3>
-            <form id="addClientForm" method="post" action="{% url 'clients' %}" aria-label="Add client form">
-                {% csrf_token %}
-                
-                <div class="form-group">
-                    <label for="add-prenom" class="form-label" lang="en">First Name</label>
-                    <input type="text" id="add-prenom" name="prenom" class="form-input" required aria-describedby="add-prenom-help">
-                    <div id="add-prenom-help" class="help-text">Enter the client's first name</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="add-nom" class="form-label" lang="en">Last Name</label>
-                    <input type="text" id="add-nom" name="nom" class="form-input" required aria-describedby="add-nom-help">
-                    <div id="add-nom-help" class="help-text">Enter the client's last name</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="add-telephone" class="form-label" lang="en">Phone</label>
-                    <input type="tel" id="add-telephone" name="telephone" class="form-input" required aria-describedby="add-telephone-help">
-                    <div id="add-telephone-help" class="help-text">Enter the client's phone number</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="add-email" class="form-label" lang="en">Email</label>
-                    <input type="email" id="add-email" name="email" class="form-input" aria-describedby="add-email-help">
-                    <div id="add-email-help" class="help-text">Enter the client's email address (optional)</div>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" lang="fr">
-                        <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                        Add
-                    </button>
-                </div>
             </form>
         </div>
-    </div>
+        <!-- Add Client Modal -->
+        <div id="clientModal" class="modal" role="dialog" aria-labelledby="add-client-title" aria-modal="true">
+            <div class="modal-content">
+                <span class="close" onclick="closeClientModal()"><i class="fa-solid fa-xmark"></i></span>
+              <h3><i class="fa-solid fa-plus"></i> Add an Client</h3>
+                <form id="addClientForm" method="post" action="{% url 'clients' %}" aria-label="Add client form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="add-prenom" class="form-label" lang="en">First Name</label>
+                        <input type="text" id="add-prenom" name="prenom" class="form-input" required aria-describedby="add-prenom-help">
+                        <div id="add-prenom-help" class="help-text">Enter the client's first name</div>
+                    </div>
 
+                    <div class="form-group">
+                        <label for="add-nom" class="form-label" lang="en">Last Name</label>
+                        <input type="text" id="add-nom" name="nom" class="form-input" required aria-describedby="add-nom-help">
+                        <div id="add-nom-help" class="help-text">Enter the client's last name</div>
+                    </div>
 
-    <!-- Clients Table -->
-    <div class="table-container">
+                    <div class="form-group">
+                        <label for="add-telephone" class="form-label" lang="en">Phone</label>
+                        <input type="tel" id="add-telephone" name="telephone" class="form-input" required aria-describedby="add-telephone-help">
+                        <div id="add-telephone-help" class="help-text">Enter the client's phone number</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="add-email" class="form-label" lang="en">Email</label>
+                        <input type="email" id="add-email" name="email" class="form-input" aria-describedby="add-email-help">
+                        <div id="add-email-help" class="help-text">Enter the client's email address (optional)</div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" lang="fr">
+                            <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                            Add
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
         <!-- Bulk Actions Bar -->
         <div class="bulk-actions-bar" id="bulkActionsBar" style="display: none;">
-            <div class="bulk-actions-info">
+            <div class="bulk-actions-content">
                 <span id="selectedCount">0</span> client(s) selected
-            </div>
-            <div class="bulk-actions-buttons">
-                <button type="button" class="btn btn-danger" onclick="bulkDeleteClients()" aria-label="Delete selected clients">
-                    <i class="fa-solid fa-trash" aria-hidden="true"></i>
-                    <span lang="en">Delete Selection</span>
-                </button>
-                <button type="button" class="btn btn-secondary" onclick="clearSelection()" aria-label="Clear selection">
-                    <i class="fa-solid fa-times" aria-hidden="true"></i>
-                    <span lang="en">Cancel</span>
-                </button>
+                <div class="bulk-actions-buttons">
+                    <button type="button" class="btn btn-danger" onclick="bulkDeleteClients()" aria-label="Delete selected clients">
+                        <i class="fa-solid fa-trash" aria-hidden="true"></i> Delete Selection
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="clearSelection()" aria-label="Clear selection">
+                        <i class="fa-solid fa-times" aria-hidden="true"></i> Cancel
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -248,10 +189,10 @@
                     </td>
                     <td class="td-actions">
                         <div class="action-buttons">
-                            <button class="btn btn-secondary" onclick="editClient( client.id)" aria-label="Edit client {{ client.prenom }} {{ client.nom }}">
+                            <button class="btn btn-secondary" onclick="editClient( client.id )" aria-label="Edit client {{ client.prenom }} {{ client.nom }}">
                                 <i class="fa-solid fa-edit" aria-hidden="true"></i>
                             </button>
-                            <button class="btn btn-danger" onclick="deleteClient( client.id)" aria-label="Delete client {{ client.prenom }} {{ client.nom }}" style="background: linear-gradient(135deg, #dc3545, #ff6b6b);color: white;">
+                            <button class="btn btn-danger" onclick="deleteClient( client.id )" aria-label="Delete client {{ client.prenom }} {{ client.nom }}" style="background: linear-gradient(135deg, #dc3545, #ff6b6b);color: white;">
                                 <i class="fa-solid fa-trash" aria-hidden="true"></i>
                             </button>
                         </div>
@@ -275,7 +216,7 @@
             </tbody>
         </table>
     </div>
-
+</div>
     <!-- Pagination -->
     {% if clients.has_other_pages %}
     <nav class="pagination" role="navigation" aria-label="Client list pagination">
@@ -311,5 +252,4 @@
         </ul>
     </nav>
     {% endif %}
-</main>
 {% endblock %}

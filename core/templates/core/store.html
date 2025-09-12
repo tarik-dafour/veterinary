@@ -857,6 +857,9 @@ function completeSale() {
         // Show success message
         showNotification('Vente finalisée avec succès!', 'success');
         
+        // Redirect to store page
+        window.location.href = '{% url "store" %}';
+        
     } catch (error) {
         console.error('Error completing sale:', error);
         showNotification('Erreur lors de la finalisation!', 'error');
