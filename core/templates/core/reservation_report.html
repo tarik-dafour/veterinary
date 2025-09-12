@@ -26,10 +26,6 @@
                 <span class="summary-value" id="analyzed-period">{{ period_label }}</span>
               </div>
               <div class="summary-item">
-                <span class="summary-label">Taux de réalisation:</span>
-                <span class="summary-value" id="completion-rate">{{ completion_rate|default:"0" }}%</span>
-              </div>
-              <div class="summary-item">
                 <span class="summary-label">Service le plus demandé:</span>
                 <span class="summary-value" id="top-service">{{ top_service|default:"N/A" }}</span>
               </div>
@@ -50,10 +46,6 @@
               <div class="summary-item">
                 <span class="summary-label">Total produits vendus:</span>
                 <span class="summary-value" id="total-products-sold">{{ total_products_sold|default:"0" }}</span>
-              </div>
-              <div class="summary-item">
-                <span class="summary-label">Revenus des ventes:</span>
-                <span class="summary-value" id="sales-revenue">{{ sales_revenue|default:"0" }} MAD</span>
               </div>
               <div class="summary-item">
                 <span class="summary-label">Produit le plus vendu:</span>
@@ -98,9 +90,6 @@
     <div class="table-header">
       <h3><i class="fa-solid fa-table"></i> Rapport Détaillé</h3>
       <div class="header-actions">
-        <button class="btn-export" onclick="exportReport()">
-          <i class="fa-solid fa-download"></i> Exporter PDF
-        </button>
       </div>
     </div>
 
