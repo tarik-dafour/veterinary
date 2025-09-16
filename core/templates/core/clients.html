@@ -189,10 +189,10 @@
                     </td>
                     <td class="td-actions">
                         <div class="action-buttons">
-                            <button class="btn btn-secondary" onclick="editClient( client.id )" aria-label="Edit client {{ client.prenom }} {{ client.nom }}">
+                            <button class="btn btn-secondary" onclick="editClient( {{ client.id }})" aria-label="Edit client {{ client.prenom }} {{ client.nom }}">
                                 <i class="fa-solid fa-edit" aria-hidden="true"></i>
                             </button>
-                            <button class="btn btn-danger" onclick="deleteClient( client.id )" aria-label="Delete client {{ client.prenom }} {{ client.nom }}" style="background: linear-gradient(135deg, #dc3545, #ff6b6b);color: white;">
+                            <button class="btn btn-danger" onclick="deleteClient({{ client.id }})" aria-label="Delete client {{ client.prenom }} {{ client.nom }}" style="background: linear-gradient(135deg, #dc3545, #ff6b6b);color: white;">
                                 <i class="fa-solid fa-trash" aria-hidden="true"></i>
                             </button>
                         </div>

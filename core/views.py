@@ -717,6 +717,17 @@ def clients(request):
             models.Q(email__icontains=search_query)
         )
     
+    # Pagination
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+    page = request.GET.get('page', 1)
+    paginator = Paginator(qs.order_by('id'), 5)
+    try:
+        paged_clients = paginator.page(page)
+    except PageNotAnInteger:
+        paged_clients = paginator.page(1)
+    except EmptyPage:
+        paged_clients = paginator.page(paginator.num_pages)
+    
     if request.method == 'POST':
         edit_id = request.POST.get('edit_id')
         if edit_id:
@@ -749,11 +760,11 @@ def clients(request):
         log_delete(request, 'Client', client.id, f"Client: {client_name}")
         return redirect('clients')
     elif request.method == 'GET' and 'edit' in request.GET:
-        all_clients = qs
+        all_clients = paged_clients
         client_to_edit = get_object_or_404(Client, id=request.GET.get('edit'))
         return render(request, 'core/clients.html', {'clients': all_clients, 'edit_client': client_to_edit, 'search_query': search_query})
     
-    all_clients = qs
+    all_clients = paged_clients
     return render(request, 'core/clients.html', {'clients': all_clients, 'search_query': search_query})
 
 
