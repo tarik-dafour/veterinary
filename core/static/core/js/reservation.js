@@ -72,11 +72,11 @@ function deleteSelectedReservations() {
     const reservationCheckboxes = document.querySelectorAll('.reservation-checkbox:checked');
     
     if (reservationCheckboxes.length === 0) {
-        alert('Please select reservations to delete.');
+        alert('Veuillez sélectionner des rendez-vous à supprimer.');
         return;
     }
     
-    if (!confirm(`Are you sure you want to delete ${reservationCheckboxes.length} selected reservation(s)?`)) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer ${reservationCheckboxes.length} rendez-vous sélectionné(s) ?`)) {
         return;
     }
     
@@ -117,7 +117,7 @@ function deleteSelectedReservations() {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while deleting reservations.');
+        alert('Une erreur est survenue lors de la suppression des rendez-vous.');
     });
 }
 
@@ -136,16 +136,35 @@ function toggleStatusDropdown(statusBadge) {
     // Toggle current dropdown
     if (dropdown.style.display === 'block') {
         dropdown.style.display = 'none';
+        statusBadge.classList.remove('open');
     } else {
         dropdown.style.display = 'block';
+        statusBadge.classList.add('open');
+
+        // Highlight the currently selected status option
+        const currentStatus = statusBadge.getAttribute('data-current-status');
+        const options = dropdown.querySelectorAll('.status-option');
+        options.forEach(option => {
+            const optionStatus = option.getAttribute('data-status');
+            if (optionStatus === currentStatus) {
+                option.classList.add('active');
+            } else {
+                option.classList.remove('active');
+            }
+        });
     }
 }
 
 function changeReservationStatus(reservationId, newStatus, optionElement) {
-    // Close dropdown
     const dropdown = document.getElementById(`status-dropdown-${reservationId}`);
-    dropdown.style.display = 'none';
-    
+
+    // Immediately mark the clicked option as active and show saving state
+    const options = dropdown.querySelectorAll('.status-option');
+    options.forEach(opt => opt.classList.remove('active', 'saving'));
+    if (optionElement) {
+        optionElement.classList.add('active', 'saving');
+    }
+
     // Show loading state
     const statusBadge = document.querySelector(`[data-reservation-id="${reservationId}"]`);
     const originalText = statusBadge.innerHTML;
@@ -172,6 +191,10 @@ function changeReservationStatus(reservationId, newStatus, optionElement) {
             
             // Show success message
             showStatusMessage(data.message, 'success');
+
+            // Close dropdown after successful update
+            dropdown.style.display = 'none';
+            statusBadge.classList.remove('open');
         } else {
             // Restore original text on error
             statusBadge.innerHTML = originalText;
@@ -179,6 +202,8 @@ function changeReservationStatus(reservationId, newStatus, optionElement) {
             
             // Show error message
             showStatusMessage(data.message, 'error');
+            // Remove temporary saving state
+            if (optionElement) optionElement.classList.remove('saving');
         }
     })
     .catch(error => {
@@ -189,7 +214,9 @@ function changeReservationStatus(reservationId, newStatus, optionElement) {
         statusBadge.style.pointerEvents = 'auto';
         
         // Show error message
-        showStatusMessage('An error occurred while changing status.', 'error');
+        showStatusMessage('Une erreur est survenue lors du changement de statut.', 'error');
+        // Remove temporary saving state
+        if (optionElement) optionElement.classList.remove('saving');
     });
 }
 

@@ -24,7 +24,7 @@ function addToCart(productId, productName, productPrice) {
     }
     
     updateCart();
-    showNotification('Product added to cart!', 'success');
+    showNotification('Produit ajouté au panier !', 'success');
 }
 
 // Remove from cart function
@@ -132,11 +132,11 @@ function clearCart() {
 // Proceed to checkout
 function proceedToCheckout() {
     if (cart.length === 0) {
-        showNotification('Your cart is empty!', 'error');
+        showNotification('Votre panier est vide !', 'error');
         return;
     }
     
-    showNotification('Redirecting to checkout...', 'success');
+    showNotification('Redirection vers le paiement...', 'success');
     setTimeout(() => {
         closeCartModal();
     }, 1500);

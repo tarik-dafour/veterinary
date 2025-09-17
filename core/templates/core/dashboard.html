@@ -1,7 +1,7 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-{% block title %}Dashboard - Veterinary Management{% endblock %}
+{% block title %}Tableau de bord - Gestion Vétérinaire{% endblock %}
 
 {% block content %}
 <!-- Dashboard Styles -->
@@ -19,14 +19,14 @@
 <!-- Dashboard Main Content -->
 <main class="dashboard" role="main" aria-label="Dashboard Overview">
     <!-- Row 1: KPI Cards Section -->
-    <section class="dashboard-row kpi-row" aria-label="Key Performance Indicators">
+    <section class="dashboard-row kpi-row" aria-label="Indicateurs clés de performance">
         <article class="kpi-card total-revenue" role="article" aria-labelledby="total-revenue-title">
             <div class="kpi-header">
                 <div class="kpi-content">
-                    <h3 id="total-revenue-title" class="kpi-title">Total Reservation Revenue</h3>
-                    <div class="kpi-value" aria-label="Total revenue from appointments">{{ total_revenue_reservations_termined|default:"0.00" }} MAD</div>
+                    <h3 id="total-revenue-title" class="kpi-title">Revenus des rendez-vous</h3>
+                    <div class="kpi-value" aria-label="Revenus totaux des rendez-vous">{{ total_revenue_reservations_termined|default:"0.00" }} MAD</div>
                     <div class="kpi-trend trend-up">
-                        <span class="trend-label">From appointments</span>
+                        <span class="trend-label">Provenant des rendez-vous</span>
                     </div>
                 </div>
                 <div class="kpi-icon" aria-hidden="true">
@@ -38,10 +38,10 @@
         <article class="kpi-card total-clients" role="article" aria-labelledby="total-clients-title">
             <div class="kpi-header">
                 <div class="kpi-content">
-                    <h3 id="total-clients-title" class="kpi-title">Total Clients</h3>
-                    <div class="kpi-value" aria-label="Total registered clients">{{ total_clients|default:"0" }}</div>
+                    <h3 id="total-clients-title" class="kpi-title">Total des clients</h3>
+                    <div class="kpi-value" aria-label="Nombre total de clients">{{ total_clients|default:"0" }}</div>
                     <div class="kpi-trend trend-up">
-                        <span class="trend-label">Registered clients</span>
+                        <span class="trend-label">Clients enregistrés</span>
                     </div>
                 </div>
                 <div class="kpi-icon" aria-hidden="true">
@@ -53,10 +53,10 @@
         <article class="kpi-card total-animals" role="article" aria-labelledby="total-animals-title">
             <div class="kpi-header">
                 <div class="kpi-content">
-                    <h3 id="total-animals-title" class="kpi-title">Total Animals</h3>
-                    <div class="kpi-value" aria-label="Total registered animals">{{ total_animals|default:"0" }}</div>
+                    <h3 id="total-animals-title" class="kpi-title">Total des animaux</h3>
+                    <div class="kpi-value" aria-label="Nombre total d'animaux">{{ total_animals|default:"0" }}</div>
                     <div class="kpi-trend trend-up">
-                        <span class="trend-label">Registered animals</span>
+                        <span class="trend-label">Animaux enregistrés</span>
                     </div>
                 </div>
                 <div class="kpi-icon" aria-hidden="true">
@@ -68,10 +68,10 @@
         <article class="kpi-card total-reservations" role="article" aria-labelledby="total-reservations-title">
             <div class="kpi-header">
                 <div class="kpi-content">
-                    <h3 id="total-reservations-title" class="kpi-title">Total Reservations</h3>
-                    <div class="kpi-value" aria-label="Total appointments">{{ total_reservations|default:"0" }}</div>
+                    <h3 id="total-reservations-title" class="kpi-title">Total des rendez-vous</h3>
+                    <div class="kpi-value" aria-label="Nombre total de rendez-vous">{{ total_reservations|default:"0" }}</div>
                     <div class="kpi-trend trend-up">
-                        <span class="trend-label">All appointments</span>
+                        <span class="trend-label">Tous les rendez-vous</span>
                     </div>
                 </div>
                 <div class="kpi-icon" aria-hidden="true">
@@ -82,15 +82,15 @@
     </section>
 
     <!-- Row 2: Appointments | Calendar -->
-    <section class="dashboard-row appointments-calendar-row" aria-label="Appointments and Calendar">
+    <section class="dashboard-row appointments-calendar-row" aria-label="Rendez-vous et calendrier">
         <article class="appointments-panel" role="article" aria-labelledby="appointments-header">
             <header class="panel-header">
                 <h3 id="appointments-header">
                     <i class="fa-solid fa-calendar-check" aria-hidden="true"></i> 
-                    Appointments
+                    Rendez-vous
                 </h3>
             </header>
-            <div class="appointments-list" role="list" aria-label="Upcoming appointments">
+            <div class="appointments-list" role="list" aria-label="Rendez-vous à venir">
                 {% for appointment in upcoming_appointments %}
                 <div class="appointment-item" role="listitem">
                     <div class="appointment-icon" aria-hidden="true">
@@ -102,8 +102,8 @@
                             {{ appointment.client.nom }} {{ appointment.client.prenom }} - {{ appointment.animal.nom }}
                         </div>
                     </div>
-                    <div class="appointment-time" aria-label="Appointment time">
-                        {{ appointment.date_reservation|time:"g:i A" }}
+                    <div class="appointment-time" aria-label="Heure du rendez-vous">
+                        {{ appointment.date_reservation|time:"H:i" }}
                     </div>
                 </div>
                 {% empty %}
@@ -112,14 +112,14 @@
                         <i class="fa-solid fa-calendar"></i>
                     </div>
                     <div class="appointment-info">
-                        <div class="appointment-service">No upcoming appointments</div>
-                        <div class="appointment-client">No appointments scheduled for today</div>
+                        <div class="appointment-service">Aucun rendez-vous à venir</div>
+                        <div class="appointment-client">Aucun rendez-vous prévu pour aujourd'hui</div>
                     </div>
                 </div>
                 {% endfor %}
-                <div class="appointments-summary" aria-label="Appointments summary">
+                <div class="appointments-summary" aria-label="Résumé des rendez-vous">
                     <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
-                    <span>Appointments Today: {{ upcoming_appointments|length }}</span>
+                    <span>Rendez-vous aujourd'hui : {{ upcoming_appointments|length }}</span>
                 </div>
             </div>
         </article>
@@ -128,7 +128,7 @@
             <header class="panel-header">
                 <h3 id="calendar-header">
                     <i class="fa-solid fa-calendar-alt" aria-hidden="true"></i> 
-                    Calendar
+                    Calendrier
                 </h3>
             </header>
             <div id="calendar" aria-label="Appointments calendar"></div>
@@ -136,15 +136,15 @@
     </section>
 
     <!-- Row 3: Low Stock Alerts | Quick Actions -->
-    <section class="dashboard-row stock-actions-row" aria-label="Stock alerts and quick actions">
+    <section class="dashboard-row stock-actions-row" aria-label="Alertes de stock et actions rapides">
         <article class="low-stock-panel" role="article" aria-labelledby="stock-header">
             <header class="panel-header">
                 <h3 id="stock-header">
                     <i class="fa-solid fa-exclamation-triangle" aria-hidden="true"></i> 
-                    Low Stock Alerts
+                    Alertes de stock faible
                 </h3>
             </header>
-            <div class="stock-alerts-list" role="list" aria-label="Low stock items">
+            <div class="stock-alerts-list" role="list" aria-label="Articles en stock faible">
                 {% for product in stock_alerts %}
                 <div class="stock-alert-item" role="listitem">
                     <div class="stock-icon" aria-hidden="true">
@@ -157,8 +157,8 @@
                         </div>
                     </div>
                     <div class="stock-quantity">
-                        <span class="quantity-badge" aria-label="Remaining quantity">
-                            {{ product.quantite }} left
+                        <span class="quantity-badge" aria-label="Quantité restante">
+                            {{ product.quantite }} restants
                         </span>
                     </div>
                 </div>
@@ -168,8 +168,8 @@
                         <i class="fa-solid fa-check-circle"></i>
                     </div>
                     <div class="stock-info">
-                        <div class="stock-name">All stock levels are good</div>
-                        <div class="stock-details">No low stock alerts</div>
+                        <div class="stock-name">Tous les niveaux de stock sont bons</div>
+                        <div class="stock-details">Aucune alerte de stock faible</div>
                     </div>
                 </div>
                 {% endfor %}
@@ -180,26 +180,26 @@
             <header class="panel-header">
                 <h3 id="actions-header">
                     <i class="fa-solid fa-plus" aria-hidden="true"></i> 
-                    Quick Actions
+                    Actions rapides
                 </h3>
             </header>
             <div class="quick-actions-content">
-                <nav class="quick-actions" role="navigation" aria-label="Quick actions menu">
-                    <a href="{% url 'clients' %}" class="action-item" aria-label="Add new client">
+                <nav class="quick-actions" role="navigation" aria-label="Menu des actions rapides">
+                    <a href="{% url 'clients' %}" class="action-item" aria-label="Ajouter un nouveau client">
                         <i class="fa-solid fa-plus-circle" aria-hidden="true"></i>
-                        <span>Add New Client</span>
+                        <span>Ajouter un client</span>
                     </a>
-                    <a href="{% url 'reservation' %}" class="action-item" aria-label="Schedule appointment">
+                    <a href="{% url 'reservation' %}" class="action-item" aria-label="Planifier un rendez-vous">
                         <i class="fa-solid fa-calendar-plus" aria-hidden="true"></i>
-                        <span>Schedule Appointment</span>
+                        <span>Planifier un rendez-vous</span>
                     </a>
-                    <a href="{% url 'stock' %}" class="action-item" aria-label="Add product to stock">
+                    <a href="{% url 'stock' %}" class="action-item" aria-label="Ajouter un produit au stock">
                         <i class="fa-solid fa-box-open" aria-hidden="true"></i>
-                        <span>Add Product</span>
+                        <span>Ajouter un produit</span>
                     </a>
-                    <a href="{% url 'users' %}" class="action-item" aria-label="Add team member">
+                    <a href="{% url 'users' %}" class="action-item" aria-label="Ajouter un membre de l'équipe">
                         <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
-                        <span>Add Team Member</span>
+                        <span>Ajouter un membre</span>
                     </a>
                 </nav>
             </div>
@@ -212,7 +212,7 @@
             <header class="panel-header">
                 <h3 id="team-header">
                     <i class="fa-solid fa-users" aria-hidden="true"></i> 
-                    Team Members
+                    Membres de l'équipe
                 </h3>
             </header>
             <div class="team-members-grid" role="list" aria-label="Team members list">
@@ -238,8 +238,8 @@
                         <i class="fa-solid fa-users"></i>
                     </div>
                     <div class="member-info">
-                        <div class="member-name">No team members</div>
-                        <div class="member-role">Add team members to get started</div>
+                        <div class="member-name">Aucun membre</div>
+                        <div class="member-role">Ajoutez des membres pour commencer</div>
                     </div>
                 </div>
                 {% endfor %}

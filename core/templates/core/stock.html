@@ -1,7 +1,7 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-{% block title %}Stock Management - Veterinary System{% endblock %}
+{% block title %}Gestion du Stock - Système Vétérinaire{% endblock %}
 
 {% block content %}
 <!-- Stock Management Styles -->
@@ -14,9 +14,9 @@
         <div class="stock-header-text">
             <h1 class="stock-title">
                 <i class="fas fa-boxes-stacked" aria-hidden="true"></i>
-                Stock Management
+                Gestion du stock
             </h1>
-            <p class="stock-subtitle">Manage your veterinary inventory with precision and ease</p>
+            <p class="stock-subtitle">Gérez votre inventaire vétérinaire avec précision et facilité</p>
         </div>
     </div>
 </header>
@@ -30,7 +30,7 @@
             </div>
             <div class="stat-content">
                 <div id="total-products-stat" class="stat-number" aria-label="Total products count">{{ total_products|default:"0" }}</div>
-                <div class="stat-label">Total Products</div>
+                <div class="stat-label">Produits totaux</div>
             </div>
         </article>
         
@@ -40,7 +40,7 @@
             </div>
             <div class="stat-content">
                 <div id="low-stock-stat" class="stat-number" aria-label="Low stock items count">{{ low_stock_count|default:"0" }}</div>
-                <div class="stat-label">Low Stock Items</div>
+                <div class="stat-label">Articles en stock faible</div>
             </div>
         </article>
         
@@ -50,7 +50,7 @@
             </div>
             <div class="stat-content">
                 <div id="categories-stat" class="stat-number" aria-label="Categories count">{{ categories_count|default:"0" }}</div>
-                <div class="stat-label">Categories</div>
+                <div class="stat-label">Catégories</div>
             </div>
         </article>
         
@@ -60,7 +60,7 @@
             </div>
             <div class="stat-content">
                 <div id="suppliers-stat" class="stat-number" aria-label="Suppliers count">{{ fournisseurs_count|default:"0" }}</div>
-                <div class="stat-label">Suppliers</div>
+                <div class="stat-label">Fournisseurs</div>
             </div>
         </article>
         
@@ -70,7 +70,7 @@
             </div>
             <div class="stat-content">
                 <div id="expiring-soon-stat" class="stat-number" aria-label="Products expiring soon count">{{ expiring_soon_count|default:"0" }}</div>
-                <div class="stat-label">Expiring Soon</div>
+                <div class="stat-label">Expiration proche</div>
             </div>
         </article>
     </section>
@@ -82,7 +82,7 @@
                 <div class="tab-icon" aria-hidden="true">
                     <i class="fas fa-boxes-stacked"></i>
                 </div>
-                <span>Products</span>
+                <span>Produits</span>
             </button>
             <button class="tab-nav-btn" 
                     data-tab="categories" 
@@ -93,7 +93,7 @@
                 <div class="tab-icon" aria-hidden="true">
                     <i class="fas fa-tags"></i>
                 </div>
-                <span>Categories</span>
+                <span>Catégories</span>
             </button>
             <button class="tab-nav-btn" 
                     data-tab="suppliers" 
@@ -104,7 +104,7 @@
                 <div class="tab-icon" aria-hidden="true">
                     <i class="fas fa-building"></i>
                 </div>
-                <span>Suppliers</span>
+                <span>Fournisseurs</span>
             </button>
         </div>
 
@@ -117,16 +117,16 @@
                 <div class="header-content">
                     <h2 class="panel-title">
                         <i class="fas fa-boxes-stacked" aria-hidden="true"></i>
-                        Product Management
+                        Gestion des produits
                     </h2>
-                    <p class="panel-description">Add, edit, and manage your product inventory</p>
+                    <p class="panel-description">Ajoutez, modifiez et gérez votre inventaire</p>
                 </div>
                 <div class="header-actions">
                     <button class="btn-add-product" 
                             onclick="openAddProductModal()" 
-                            aria-label="Add new product">
+                            aria-label="Ajouter un nouveau produit">
                         <i class="fas fa-plus" aria-hidden="true"></i>
-                        Add Product
+                        Ajouter un produit
                     </button>
                 </div>
             </div>
@@ -136,18 +136,18 @@
                 <div class="search-container">
                     <div class="search-input-group">
                         <i class="fas fa-search search-icon" aria-hidden="true"></i>
-                        <input type="text" id="product-search" class="search-input" placeholder="Search products..." aria-label="Search products">
+                        <input type="text" id="product-search" class="search-input" placeholder="Rechercher des produits..." aria-label="Rechercher des produits">
                     </div>
                 </div>
                 <div class="filter-container">
-                    <select id="category-filter" class="filter-select" aria-label="Filter by category">
-                        <option value="">All Categories</option>
+                    <select id="category-filter" class="filter-select" aria-label="Filtrer par catégorie">
+                        <option value="">Toutes les catégories</option>
                         {% for category in categories %}
                         <option value="{{ category.id }}">{{ category.nom }}</option>
                         {% endfor %}
                     </select>
-                    <select id="supplier-filter" class="filter-select" aria-label="Filter by supplier">
-                        <option value="">All Suppliers</option>
+                    <select id="supplier-filter" class="filter-select" aria-label="Filtrer par fournisseur">
+                        <option value="">Tous les fournisseurs</option>
                         {% for fournisseur in fournisseurs %}
                         <option value="{{ fournisseur.id }}">{{ fournisseur.nom }}</option>
                         {% endfor %}
@@ -182,16 +182,16 @@
                         <tr>
                             <th scope="col" class="th-checkbox">
                                 <input type="checkbox" id="select-all-products" class="select-all-checkbox">
-                                <label for="select-all-products" class="sr-only">Select all products</label>
+                            <label for="select-all-products" class="sr-only">Sélectionner tous les produits</label>
                             </th>
                             <th scope="col" class="th-image">Image</th>
-                            <th scope="col" class="th-name">Product Name</th>
-                            <th scope="col" class="th-category">Category</th>
-                            <th scope="col" class="th-supplier">Supplier</th>
-                            <th scope="col" class="th-price">Price</th>
-                            <th scope="col" class="th-quantity">Quantity</th>
+                            <th scope="col" class="th-name">Nom du produit</th>
+                            <th scope="col" class="th-category">Catégorie</th>
+                            <th scope="col" class="th-supplier">Fournisseur</th>
+                            <th scope="col" class="th-price">Prix</th>
+                            <th scope="col" class="th-quantity">Quantité</th>
                             <th scope="col" class="th-expiration">Expiration</th>
-                            <th scope="col" class="th-status">Status</th>
+                            <th scope="col" class="th-status">Statut</th>
                             <th scope="col" class="th-actions">Actions</th>
                         </tr>
                     </thead>
@@ -231,7 +231,7 @@
                                 <span class="supplier-name">{{ product.fournisseur.nom }}</span>
                             </td>
                             <td class="td-price">
-                                <span class="price-amount">{{ product.prix }} DH</span>
+                            <span class="price-amount">{{ product.prix }} MAD</span>
                             </td>
                             <td class="td-quantity">
                                 <span class="quantity-display {% if product.quantite <= 10 %}low-stock{% endif %}">
@@ -240,24 +240,24 @@
                             </td>
                             <td class="td-expiration">
                                 <span class="expiration-date">
-                                    {{ product.date_expiration|date:"M d, Y" }}
+                                    {{ product.date_expiration|date:"d/m/Y" }}
                                 </span>
                             </td>
                             <td class="td-status">
                                 {% if product.quantite <= 10 %}
-                                <span class="status-badge status-warning" aria-label="Low stock">
+                                <span class="status-badge status-warning" aria-label="Stock faible">
                                     <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
-                                    Low Stock
+                                    Stock faible
                                 </span>
                                 {% elif product.quantite == 0 %}
-                                <span class="status-badge status-danger" aria-label="Out of stock">
+                                <span class="status-badge status-danger" aria-label="Rupture de stock">
                                     <i class="fas fa-times-circle" aria-hidden="true"></i>
-                                    Out of Stock
+                                    Rupture de stock
                                 </span>
                                 {% else %}
-                                <span class="status-badge status-success" aria-label="In stock">
+                                <span class="status-badge status-success" aria-label="En stock">
                                     <i class="fas fa-check-circle" aria-hidden="true"></i>
-                                    In Stock
+                                    En stock
                                 </span>
                                 {% endif %}
                             </td>
@@ -281,11 +281,11 @@
                             <td colspan="10" class="empty-message">
                                 <div class="empty-state">
                                     <i class="fas fa-box-open empty-icon" aria-hidden="true"></i>
-                                    <h3>No Products Found</h3>
-                                    <p>Start by adding your first product to the inventory</p>
+                                    <h3>Aucun produit trouvé</h3>
+                                    <p>Commencez par ajouter votre premier produit</p>
                                     <button class="btn-add-first" data-action="add-product">
                                         <i class="fas fa-plus" aria-hidden="true"></i>
-                                        Add First Product
+                                        Ajouter un premier produit
                                     </button>
                                 </div>
                             </td>
@@ -306,25 +306,25 @@
                 <div class="header-content">
                     <h2 class="panel-title">
                         <i class="fas fa-tags" aria-hidden="true"></i>
-                        Category Management
+                        Gestion des catégories
                     </h2>
-                    <p class="panel-description">Organize your products with categories</p>
+                    <p class="panel-description">Organisez vos produits avec des catégories</p>
                 </div>
                 <div class="header-actions">
                     <div class="search-container">
                         <div class="search-input-wrapper">
                             <i class="fas fa-search search-icon" aria-hidden="true"></i>
-                            <input type="text" id="category-search" class="search-input" placeholder=" Search categories by name or description..." aria-label="Search categories">
-                            <button class="search-clear"  id="category-search-clear"  onclick="clearCategorySearch()"  aria-label="Clear search" style="display: none;">
+                            <input type="text" id="category-search" class="search-input" placeholder=" Rechercher des catégories par nom ou description..." aria-label="Rechercher des catégories">
+                            <button class="search-clear"  id="category-search-clear"  onclick="clearCategorySearch()"  aria-label="Effacer la recherche" style="display: none;">
                                 <i class="fas fa-times" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
                     <button class="btn-add-category" 
                             onclick="openAddCategoryModal()" 
-                            aria-label="Add new category">
+                            aria-label="Ajouter une nouvelle catégorie">
                         <i class="fas fa-plus" aria-hidden="true"></i>
-                        Add Category
+                        Ajouter une catégorie
                     </button>
                 </div>
             </div>
@@ -339,18 +339,18 @@
                         </div>
                         <div class="category-info">
                             <h3 class="category-name">{{ category.nom }}</h3>
-                            <p class="category-description">{{ category.description|default:"No description" }}</p>
+                            <p class="category-description">{{ category.description|default:"Aucune description" }}</p>
                         </div>
                     </div>
                     <div class="category-actions">
                         <button class="btn-edit-category" 
                                 data-category-id="{{ category.id }}"
-                                aria-label="Edit category {{ category.nom }}">
+                                aria-label="Modifier la catégorie {{ category.nom }}">
                             <i class="fas fa-edit" aria-hidden="true"></i>
                         </button>
                         <button class="btn-delete-category" 
                                 data-category-id="{{ category.id }}"
-                                aria-label="Delete category {{ category.nom }}">
+                                aria-label="Supprimer la catégorie {{ category.nom }}">
                             <i class="fas fa-trash" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -359,11 +359,11 @@
                 <div class="empty-categories">
                     <div class="empty-state">
                         <i class="fas fa-tags empty-icon" aria-hidden="true"></i>
-                        <h3>No Categories</h3>
-                        <p>Create categories to organize your products</p>
+                        <h3>Pas de catégories</h3>
+                        <p>Créez des catégories pour organiser vos produits</p>
                         <button class="btn-add-first" data-action="add-category">
                             <i class="fas fa-plus" aria-hidden="true"></i>
-                            Add First Category
+                            Ajouter une première catégorie
                         </button>
                     </div>
                 </div>
@@ -381,9 +381,9 @@
                 <div class="header-content">
                     <h2 class="panel-title">
                         <i class="fas fa-building" aria-hidden="true"></i>
-                        Supplier Management
+                        Gestion des fournisseurs
                     </h2>
-                    <p class="panel-description">Manage your product suppliers and contacts</p>
+                    <p class="panel-description">Gérez vos fournisseurs et contacts</p>
                 </div>
                 <div class="header-actions">
                     <div class="search-container">
@@ -392,8 +392,8 @@
                             <input type="text" 
                                    id="supplier-search" 
                                    class="search-input" 
-                                   placeholder="Search suppliers by name, phone, email, or address..."
-                                   aria-label="Search suppliers">
+                                   placeholder="Rechercher des fournisseurs par nom, téléphone, email ou adresse..."
+                                   aria-label="Rechercher des fournisseurs">
                             <button class="search-clear" 
                                     id="supplier-search-clear" 
                                     onclick="clearSupplierSearch()" 
@@ -405,9 +405,9 @@
                     </div>
                     <button class="btn-add-supplier" 
                             onclick="openAddSupplierModal()" 
-                            aria-label="Add new supplier">
+                            aria-label="Ajouter un nouveau fournisseur">
                         <i class="fas fa-plus" aria-hidden="true"></i>
-                        Add Supplier
+                        Ajouter un fournisseur
                     </button>
                 </div>
             </div>
@@ -423,21 +423,21 @@
                         <div class="supplier-info">
                             <h3 class="supplier-name">{{ fournisseur.nom }}</h3>
                             <div class="supplier-details">
-                                <p class="supplier-phone">{{ fournisseur.telephone|default:"No phone" }}</p>
-                                <p class="supplier-email">{{ fournisseur.email|default:"No email" }}</p>
-                                <p class="supplier-address">{{ fournisseur.adresse|default:"No address" }}</p>
+                                <p class="supplier-phone">{{ fournisseur.telephone|default:"Aucun téléphone" }}</p>
+                                <p class="supplier-email">{{ fournisseur.email|default:"Aucun email" }}</p>
+                                <p class="supplier-address">{{ fournisseur.adresse|default:"Aucune adresse" }}</p>
                             </div>
                         </div>
                     </div>
                     <div class="supplier-actions">
                         <button class="btn-edit-supplier" 
                                 data-supplier-id="{{ fournisseur.id }}"
-                                aria-label="Edit supplier {{ fournisseur.nom }}">
+                                aria-label="Modifier le fournisseur {{ fournisseur.nom }}">
                             <i class="fas fa-edit" aria-hidden="true"></i>
                         </button>
                         <button class="btn-delete-supplier" 
                                 data-supplier-id="{{ fournisseur.id }}"
-                                aria-label="Delete supplier {{ fournisseur.nom }}">
+                                aria-label="Supprimer le fournisseur {{ fournisseur.nom }}">
                             <i class="fas fa-trash" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -446,11 +446,11 @@
                 <div class="empty-suppliers">
                     <div class="empty-state">
                         <i class="fas fa-building empty-icon" aria-hidden="true"></i>
-                        <h3>No Suppliers</h3>
-                        <p>Add suppliers to manage your product sources</p>
+                        <h3>Aucun fournisseur</h3>
+                        <p>Ajoutez des fournisseurs pour gérer vos sources de produits</p>
                         <button class="btn-add-first" onclick="openAddSupplierModal()">
                             <i class="fas fa-plus" aria-hidden="true"></i>
-                            Add First Supplier
+                            Ajouter un premier fournisseur
                         </button>
                     </div>
                 </div>
@@ -467,7 +467,7 @@
         <div class="modal-header">
             <h2 id="modal-title" class="modal-title">
                 <i class="fas fa-plus" aria-hidden="true"></i>
-                Add New Product
+                Ajouter un nouveau produit
             </h2>
             <button class="modal-close" onclick="closeAddProductModal()" aria-label="Close modal">
                 <i class="fas fa-times" aria-hidden="true"></i>
@@ -481,25 +481,25 @@
                     <div class="form-group">
                         <label for="product-name" class="form-label">
                             <i class="fas fa-box" aria-hidden="true"></i>
-                            Product Name *
+                            Nom du produit *
                         </label>
                         <input type="text" 
                                id="product-name" 
                                name="nom" 
                                class="form-input" 
                                required 
-                               placeholder="Enter product name"
+                               placeholder="Saisissez le nom du produit"
                                aria-describedby="product-name-help">
-                        <div id="product-name-help" class="form-help">Enter a descriptive name for the product</div>
+                        <div id="product-name-help" class="form-help">Saisissez un nom descriptif pour le produit</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="product-category" class="form-label">
                             <i class="fas fa-tag" aria-hidden="true"></i>
-                            Category *
+                            Catégorie *
                         </label>
                         <select id="product-category" name="categorie" class="form-select" required>
-                            <option value="">Select a category</option>
+                            <option value="">Sélectionnez une catégorie</option>
                             {% for category in categories %}
                             <option value="{{ category.id }}">{{ category.nom }}</option>
                             {% endfor %}
@@ -509,10 +509,10 @@
                     <div class="form-group">
                         <label for="product-supplier" class="form-label">
                             <i class="fas fa-building" aria-hidden="true"></i>
-                            Supplier *
+                            Fournisseur *
                         </label>
                         <select id="product-supplier" name="fournisseur" class="form-select" required>
-                            <option value="">Select a supplier</option>
+                            <option value="">Sélectionnez un fournisseur</option>
                             {% for fournisseur in fournisseurs %}
                             <option value="{{ fournisseur.id }}">{{ fournisseur.nom }}</option>
                             {% endfor %}
@@ -522,7 +522,7 @@
                     <div class="form-group">
                         <label for="product-price" class="form-label">
                             <i class="fas fa-money-bill" aria-hidden="true"></i>
-                            Price (DH) *
+                            Prix (MAD) *
                         </label>
                         <input type="number" 
                                id="product-price" 
@@ -533,13 +533,13 @@
                                step="0.01" 
                                placeholder="0.00"
                                aria-describedby="product-price-help">
-                        <div id="product-price-help" class="form-help">Enter the price in Moroccan Dirhams</div>
+                        <div id="product-price-help" class="form-help">Saisissez le prix en dirhams marocains</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="product-quantity" class="form-label">
                             <i class="fas fa-boxes-stacked" aria-hidden="true"></i>
-                            Initial Quantity *
+                            Quantité initiale *
                         </label>
                         <input type="number" 
                                id="product-quantity" 
@@ -549,13 +549,13 @@
                                min="0" 
                                placeholder="0"
                                aria-describedby="product-quantity-help">
-                        <div id="product-quantity-help" class="form-help">Enter the initial stock quantity</div>
+                        <div id="product-quantity-help" class="form-help">Saisissez la quantité initiale</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="product-expiration" class="form-label">
                             <i class="fas fa-calendar" aria-hidden="true"></i>
-                            Expiration Date *
+                            Date d'expiration *
                         </label>
                         <input type="date" 
                                id="product-expiration" 
@@ -563,7 +563,7 @@
                                class="form-input" 
                                required
                                aria-describedby="product-expiration-help">
-                        <div id="product-expiration-help" class="form-help">Select the expiration date</div>
+                        <div id="product-expiration-help" class="form-help">Sélectionnez la date d'expiration</div>
                     </div>
                     
                     <div class="form-group">
@@ -575,15 +575,15 @@
                                   name="description" 
                                   class="form-textarea" 
                                   rows="3" 
-                                  placeholder="Enter product description (optional)"
+                                  placeholder="Saisissez la description du produit (optionnel)"
                                   aria-describedby="product-description-help"></textarea>
-                        <div id="product-description-help" class="form-help">Optional description of the product</div>
+                        <div id="product-description-help" class="form-help">Description optionnelle du produit</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="product-image" class="form-label">
                             <i class="fas fa-image" aria-hidden="true"></i>
-                            Product Image
+                            Image du produit
                         </label>
                         <input type="file" 
                                id="product-image" 
@@ -591,18 +591,18 @@
                                class="form-file" 
                                accept="image/*"
                                aria-describedby="product-image-help">
-                        <div id="product-image-help" class="form-help">Upload an image (JPG, PNG, GIF - max 5MB)</div>
+                        <div id="product-image-help" class="form-help">Téléchargez une image (JPG, PNG, GIF - max 5Mo)</div>
                     </div>
                 </div>
                 
                 <div class="form-actions">
                     <button type="button" class="btn btn-cancel" onclick="closeAddProductModal()">
                         <i class="fas fa-times" aria-hidden="true"></i>
-                        Cancel
+                        Annuler
                     </button>
                     <button type="submit" class="btn btn-primary" id="submit-product-btn">
                         <i class="fas fa-save" aria-hidden="true"></i>
-                        Add Product
+                        Ajouter
                     </button>
                 </div>
             </form>
@@ -616,7 +616,7 @@
         <div class="modal-header">
             <h2 id="category-modal-title" class="modal-title">
                 <i class="fas fa-tag" aria-hidden="true"></i>
-                Add New Category
+                Ajouter une nouvelle catégorie
             </h2>
             <button class="modal-close" onclick="closeAddCategoryModal()" aria-label="Close modal">
                 <i class="fas fa-times" aria-hidden="true"></i>
@@ -629,26 +629,26 @@
                 <div class="form-group">
                     <label for="category-name" class="form-label">
                         <i class="fas fa-tag" aria-hidden="true"></i>
-                        Category Name *
+                        Nom de la catégorie *
                     </label>
                     <input type="text" 
                            id="category-name" 
                            name="cat_nom" 
                            class="form-input" 
                            required 
-                           placeholder="Enter category name"
+                           placeholder="Saisissez le nom de la catégorie"
                            aria-describedby="category-name-help">
-                    <div id="category-name-help" class="form-help">Enter a descriptive name for the category</div>
+                    <div id="category-name-help" class="form-help">Saisissez un nom descriptif pour la catégorie</div>
                 </div>
                 
                 <div class="form-actions">
                     <button type="button" class="btn btn-cancel" onclick="closeAddCategoryModal()">
                         <i class="fas fa-times" aria-hidden="true"></i>
-                        Cancel
+                        Annuler
                     </button>
                     <button type="submit" class="btn btn-primary" id="submit-category-btn">
                         <i class="fas fa-save" aria-hidden="true"></i>
-                        Add Category
+                        Ajouter
                     </button>
                 </div>
             </form>
@@ -663,7 +663,7 @@
         <div class="modal-header">
             <h2 id="edit-category-modal-title" class="modal-title">
                 <i class="fas fa-edit" aria-hidden="true"></i>
-                Edit Category
+                Modifier la catégorie
             </h2>
             <button class="modal-close" onclick="closeEditCategoryModal()" aria-label="Close modal">
                 <i class="fas fa-times" aria-hidden="true"></i>
@@ -677,14 +677,14 @@
                 <div class="form-group">
                     <label for="edit-category-name" class="form-label">
                         <i class="fas fa-tag" aria-hidden="true"></i>
-                        Category Name *
+                        Nom de la catégorie *
                     </label>
                     <input type="text" 
                            id="edit-category-name" 
                            name="cat_nom" 
                            class="form-input" 
                            required 
-                           placeholder="Enter category name"
+                           placeholder="Saisissez le nom de la catégorie"
                            aria-describedby="edit-category-name-help">
                     <div id="edit-category-name-help" class="form-help">Enter a descriptive name for the category</div>
                 </div>
@@ -692,11 +692,11 @@
                 <div class="form-actions">
                     <button type="button" class="btn btn-cancel" onclick="closeEditCategoryModal()">
                         <i class="fas fa-times" aria-hidden="true"></i>
-                        Cancel
+                        Annuler
                     </button>
                     <button type="submit" class="btn btn-primary" id="submit-edit-category-btn">
                         <i class="fas fa-save" aria-hidden="true"></i>
-                        Update Category
+                        Mettre à jour
                     </button>
                 </div>
             </form>
@@ -711,7 +711,7 @@
         <div class="modal-header">
             <h2 id="supplier-modal-title" class="modal-title">
                 <i class="fas fa-building" aria-hidden="true"></i>
-                Add New Supplier
+                Ajouter un nouveau fournisseur
             </h2>
             <button class="modal-close" onclick="closeAddSupplierModal()" aria-label="Close modal">
                 <i class="fas fa-times" aria-hidden="true"></i>
@@ -725,72 +725,72 @@
                     <div class="form-group">
                         <label for="supplier-name" class="form-label">
                             <i class="fas fa-building" aria-hidden="true"></i>
-                            Supplier Name *
+                            Nom du fournisseur *
                         </label>
                         <input type="text" 
                                id="supplier-name" 
                                name="fourn_nom" 
                                class="form-input" 
                                required 
-                               placeholder="Enter supplier name"
+                               placeholder="Saisissez le nom du fournisseur"
                                aria-describedby="supplier-name-help">
-                        <div id="supplier-name-help" class="form-help">Enter the supplier company name</div>
+                        <div id="supplier-name-help" class="form-help">Saisissez le nom de l'entreprise</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="supplier-phone" class="form-label">
                             <i class="fas fa-phone" aria-hidden="true"></i>
-                            Phone Number *
+                            Numéro de téléphone *
                         </label>
                         <input type="tel" 
                                id="supplier-phone" 
                                name="fourn_telephone" 
                                class="form-input" 
                                required 
-                               placeholder="Enter phone number"
+                               placeholder="Saisissez le numéro de téléphone"
                                aria-describedby="supplier-phone-help">
-                        <div id="supplier-phone-help" class="form-help">Enter the supplier contact phone number</div>
+                        <div id="supplier-phone-help" class="form-help">Saisissez le numéro de téléphone du fournisseur</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="supplier-email" class="form-label">
                             <i class="fas fa-envelope" aria-hidden="true"></i>
-                            Email Address *
+                            Adresse e-mail *
                         </label>
                         <input type="email" 
                                id="supplier-email" 
                                name="fourn_email" 
                                class="form-input" 
                                required 
-                               placeholder="Enter email address"
+                               placeholder="Saisissez l'adresse e-mail"
                                aria-describedby="supplier-email-help">
-                        <div id="supplier-email-help" class="form-help">Enter the supplier email address</div>
+                        <div id="supplier-email-help" class="form-help">Saisissez l'adresse e-mail du fournisseur</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="supplier-address" class="form-label">
                             <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                            Address *
+                            Adresse *
                         </label>
                         <textarea id="supplier-address" 
                                   name="fourn_adresse" 
                                   class="form-textarea" 
                                   rows="3" 
                                   required
-                                  placeholder="Enter supplier address"
+                                  placeholder="Saisissez l'adresse du fournisseur"
                                   aria-describedby="supplier-address-help"></textarea>
-                        <div id="supplier-address-help" class="form-help">Enter the supplier physical address</div>
+                        <div id="supplier-address-help" class="form-help">Saisissez l'adresse physique du fournisseur</div>
                     </div>
                 </div>
                 
                 <div class="form-actions">
                     <button type="button" class="btn btn-cancel" onclick="closeAddSupplierModal()">
                         <i class="fas fa-times" aria-hidden="true"></i>
-                        Cancel
+                        Annuler
                     </button>
                     <button type="submit" class="btn btn-primary" id="submit-supplier-btn">
                         <i class="fas fa-save" aria-hidden="true"></i>
-                        Add Supplier
+                        Ajouter
                     </button>
                 </div>
             </form>
@@ -805,7 +805,7 @@
         <div class="modal-header">
             <h2 id="edit-supplier-modal-title" class="modal-title">
                 <i class="fas fa-edit" aria-hidden="true"></i>
-                Edit Supplier
+                Modifier le fournisseur
             </h2>
             <button class="modal-close" onclick="closeEditSupplierModal()" aria-label="Close modal">
                 <i class="fas fa-times" aria-hidden="true"></i>
@@ -820,14 +820,14 @@
                     <div class="form-group">
                         <label for="edit-supplier-name" class="form-label">
                             <i class="fas fa-building" aria-hidden="true"></i>
-                            Supplier Name *
+                            Nom du fournisseur *
                         </label>
                         <input type="text" 
                                id="edit-supplier-name" 
                                name="fourn_nom" 
                                class="form-input" 
                                required 
-                               placeholder="Enter supplier name" 
+                               placeholder="Saisissez le nom du fournisseur" 
                                aria-describedby="edit-supplier-name-help">
                         <div id="edit-supplier-name-help" class="form-help">Enter the supplier company name</div>
                     </div>
@@ -835,14 +835,14 @@
                     <div class="form-group">
                         <label for="edit-supplier-phone" class="form-label">
                             <i class="fas fa-phone" aria-hidden="true"></i>
-                            Phone Number *
+                            Numéro de téléphone *
                         </label>
                         <input type="tel" 
                                id="edit-supplier-phone" 
                                name="fourn_telephone" 
                                class="form-input" 
                                required 
-                               placeholder="Enter phone number" 
+                               placeholder="Saisissez le numéro de téléphone" 
                                aria-describedby="edit-supplier-phone-help">
                         <div id="edit-supplier-phone-help" class="form-help">Enter the supplier contact phone number</div>
                     </div>
@@ -850,14 +850,14 @@
                     <div class="form-group">
                         <label for="edit-supplier-email" class="form-label">
                             <i class="fas fa-envelope" aria-hidden="true"></i>
-                            Email Address *
+                            Adresse e-mail *
                         </label>
                         <input type="email" 
                                id="edit-supplier-email" 
                                name="fourn_email" 
                                class="form-input" 
                                required 
-                               placeholder="Enter email address"
+                               placeholder="Saisissez l'adresse e-mail"
                                aria-describedby="edit-supplier-email-help">
                         <div id="edit-supplier-email-help" class="form-help">Enter the supplier email address</div>
                     </div>
@@ -865,14 +865,14 @@
                     <div class="form-group">
                         <label for="edit-supplier-address" class="form-label">
                             <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                            Address *
+                            Adresse *
                         </label>
                         <textarea id="edit-supplier-address" 
                                   name="fourn_adresse" 
                                   class="form-textarea" 
                                   rows="3" 
                                   required
-                                  placeholder="Enter supplier address"
+                                  placeholder="Saisissez l'adresse du fournisseur"
                                   aria-describedby="edit-supplier-address-help"></textarea>
                         <div id="edit-supplier-address-help" class="form-help">Enter the supplier physical address</div>
                     </div>
@@ -881,11 +881,11 @@
                 <div class="form-actions">
                     <button type="button" class="btn btn-cancel" onclick="closeEditSupplierModal()">
                         <i class="fas fa-times" aria-hidden="true"></i>
-                        Cancel
+                        Annuler
                     </button>
                     <button type="submit" class="btn btn-primary" id="submit-edit-supplier-btn">
                         <i class="fas fa-save" aria-hidden="true"></i>
-                        Update Supplier
+                        Mettre à jour
                     </button>
                 </div>
             </form>

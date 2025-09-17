@@ -335,6 +335,47 @@ html,body {
     outline: none;
 }
 
+/* Style the native file button to match design */
+.form-file::file-selector-button {
+    background: #FFFFFF;
+    color: #6B46C1;
+    border: 2px solid #6B46C1;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    margin-right: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.form-file::file-selector-button:hover {
+    background: #6B46C1;
+    color: #FFFFFF;
+}
+
+/* WebKit fallback */
+.form-file::-webkit-file-upload-button {
+    background: #FFFFFF;
+    color: #6B46C1;
+    border: 2px solid #6B46C1;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    margin-right: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.form-file::-webkit-file-upload-button:hover {
+    background: #6B46C1;
+    color: #FFFFFF;
+}
+
+/* Ensure chosen file text is readable */
+.form-file {
+    color: var(--text-primary);
+}
+
 .form-help {
     margin-top: 0.25rem;
     font-size: 0.75rem;

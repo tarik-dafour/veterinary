@@ -1545,8 +1545,7 @@ def change_reservation_status(request):
             reservation.save()
             
             # Log the status change
-            log_modify(request, 'Reservation', reservation.id, 
-                      f"Status changed from {old_status} to {new_status} for reservation: {reservation.client.prenom} {reservation.client.nom} - {reservation.animal.nom}")
+            log_update(request, 'Reservation', reservation.id, f"Status changed from {old_status} to {new_status} for reservation: {reservation.client.prenom} {reservation.client.nom} - {reservation.animal.nom}")
             
             # Get the French translation for display
             status_translations = {

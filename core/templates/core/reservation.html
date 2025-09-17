@@ -1,5 +1,5 @@
 {% extends 'core/base.html' %}
-{% block title %}Appointments - VetStock{% endblock %}
+{% block title %}Rendez-vous - VetStock{% endblock %}
 {% block content %}
 {% load static %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -171,13 +171,13 @@
         <!-- Bulk Actions Bar -->
         <div id="bulk-actions-bar" class="bulk-actions-bar" style="display: none;">
             <div class="bulk-actions-content">
-                <span class="bulk-selection-count">0 reservations selected</span>
+                <span class="bulk-selection-count">0 rendez-vous sélectionnés</span>
                 <div class="bulk-actions-buttons">
                     <button type="button" class="btn btn-danger" onclick="deleteSelectedReservations()">
-                        <i class="fa-solid fa-trash"></i> Delete Selection
+                        <i class="fa-solid fa-trash"></i> Supprimer la sélection
                     </button>
                     <button type="button" class="btn btn-secondary" onclick="clearSelection()">
-                        <i class="fa-solid fa-xmark"></i> Cancel
+                        <i class="fa-solid fa-xmark"></i> Annuler
                     </button>
                 </div>
             </div>
@@ -223,19 +223,19 @@
                                 <i class="fa-solid fa-chevron-down status-arrow"></i>
                             </span>
                             <div class="status-dropdown-menu" id="status-dropdown-{{ reservation.id }}">
-                                <div class="status-option" data-status="Scheduled" onclick="changeReservationStatus( reservation.id , 'Scheduled', this)">
+                                <div class="status-option {% if reservation.statut == 'Scheduled' %}active{% endif %}" data-status="Scheduled" onclick="changeReservationStatus({{ reservation.id }}, 'Scheduled', this)">
                                     <i class="fa-solid fa-calendar"></i> Planifié
                                 </div>
-                                <div class="status-option" data-status="Confirmed" onclick="changeReservationStatus( reservation.id , 'Confirmed', this)">
+                                <div class="status-option {% if reservation.statut == 'Confirmed' %}active{% endif %}" data-status="Confirmed" onclick="changeReservationStatus({{ reservation.id }}, 'Confirmed', this)">
                                     <i class="fa-solid fa-check-circle"></i> Confirmé
                                 </div>
-                                <div class="status-option" data-status="Completed" onclick="changeReservationStatus( reservation.id , 'Completed', this)">
+                                <div class="status-option {% if reservation.statut == 'Completed' %}active{% endif %}" data-status="Completed" onclick="changeReservationStatus({{ reservation.id }}, 'Completed', this)">
                                     <i class="fa-solid fa-check-double"></i> Terminé
                                 </div>
-                                <div class="status-option" data-status="Cancelled" onclick="changeReservationStatus( reservation.id , 'Cancelled', this)">
+                                <div class="status-option {% if reservation.statut == 'Cancelled' %}active{% endif %}" data-status="Cancelled" onclick="changeReservationStatus({{ reservation.id }}, 'Cancelled', this)">
                                     <i class="fa-solid fa-times-circle"></i> Annulé
                                 </div>
-                                <div class="status-option" data-status="Pending" onclick="changeReservationStatus( reservation.id , 'Pending', this)">
+                                <div class="status-option {% if reservation.statut == 'Pending' %}active{% endif %}" data-status="Pending" onclick="changeReservationStatus({{ reservation.id }}, 'Pending', this)">
                                     <i class="fa-solid fa-clock"></i> En attente
                                 </div>
                             </div>

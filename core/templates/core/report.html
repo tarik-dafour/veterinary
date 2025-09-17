@@ -1,5 +1,5 @@
 {% extends 'core/base.html' %}
-{% block title %}Reports - VetStock{% endblock %}
+{% block title %}Rapports - VetStock{% endblock %}
 {% block content %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'core/css/rapport.css' %}">
@@ -109,7 +109,7 @@
                 <td><strong>{{ report.user.get_full_name|default:report.user.username }}</strong></td>
                 <td class="subject-text">{{ report.sujet }}</td>
                 <td class="message-preview" title="{{ report.message }}">{{ report.message }}</td>
-                <td class="date-time">{{ report.date_envoi|date:'M d, Y g:i A' }}</td>
+                <td class="date-time">{{ report.date_envoi|date:'d/m/Y H:i' }}</td>
                 <td>{{ report.destinataire }}</td>
                 <td>
                     <div class="btn-group">

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Login to Veterinary Management System - Professional animal care management">
     <meta name="author" content="Veterinary Management System">
     <meta name="robots" content="noindex, nofollow">
-    <title>Login - Veterinary Management System</title>
+    <title>Connexion - Système de Gestion Vétérinaire</title>
     
     <!-- Preload critical resources -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" as="style">
@@ -23,15 +23,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <main class="login-container" role="main" aria-label="Login to Veterinary Management System">
+    <main class="login-container" role="main" aria-label="Connexion au Système de Gestion Vétérinaire">
         <!-- Left Side - Decorative -->
-        <section class="left-side" role="banner" aria-label="System introduction">
+        <section class="left-side" role="banner" aria-label="Présentation du système">
             <div class="veterinarian-illustration">
                 <div class="vet-scene" aria-hidden="true">
                     <i class="fa-solid fa-paw" aria-label="Veterinary care symbol"></i>
                 </div>
             </div>
-            <h1 class="title" lang="en">Veterinary Stock Management</h1>
+            <h1 class="title">Gestion de Stock Vétérinaire</h1>
             <div class="icon-veterinary" aria-label="System features">
                 <div class="icon-circle" aria-label="User management">
                     <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
@@ -46,11 +46,11 @@
         </section>
 
         <!-- Right Side - Login Form -->
-        <section class="right-side" role="main" aria-label="Login form">
+        <section class="right-side" role="main" aria-label="Formulaire de connexion">
             <div class="login-card">
                 <header class="login-header">
-                                         <h2 lang="en">Login</h2>
-                    <p class="login-subtitle">Access your veterinary management dashboard</p>
+                    <h2>Connexion</h2>
+                    <p class="login-subtitle">Accédez à votre tableau de bord de gestion</p>
                 </header>
                 
                 <!-- Error Messages -->
@@ -68,11 +68,11 @@
                 {% endif %}
 
                 <!-- Login Form -->
-                <form method="post" class="login-form" aria-label="Login form">
+                <form method="post" class="login-form" aria-label="Formulaire de connexion">
                     {% csrf_token %}
                     
                     <div class="form-group">
-                                                 <label for="username" lang="en">Username</label>
+                        <label for="username">Nom d'utilisateur</label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-user input-icon" aria-hidden="true"></i>
                             <input 
@@ -82,14 +82,13 @@
                                 required 
                                 autocomplete="username"
                                 aria-describedby="username-help"
-                                placeholder="Enter your username"
-                                lang="en">
+                                placeholder="Entrez votre nom d'utilisateur">
                         </div>
-                        <div id="username-help" class="help-text">Enter your registered username</div>
+                        <div id="username-help" class="help-text">Entrez votre nom d'utilisateur enregistré</div>
                     </div>
                     
                     <div class="form-group">
-                                                 <label for="password" lang="en">Password</label>
+                        <label for="password">Mot de passe</label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
                             <input 
@@ -99,22 +98,21 @@
                                 required 
                                 autocomplete="current-password"
                                 aria-describedby="password-help"
-                                placeholder="Enter your password"
-                                lang="en">
+                                placeholder="Entrez votre mot de passe">
                             <button 
                                 type="button" 
                                 class="password-toggle" 
-                                aria-label="Toggle password visibility"
+                                aria-label="Afficher/masquer le mot de passe"
                                 onclick="togglePasswordVisibility()">
                                 <i class="fa-solid fa-eye" id="password-eye" aria-hidden="true"></i>
                             </button>
                         </div>
-                        <div id="password-help" class="help-text">Enter your secure password</div>
+                        <div id="password-help" class="help-text">Entrez votre mot de passe</div>
                     </div>
                     
-                                         <button class="login-btn" type="submit" lang="en">
-                                                 <i class="fa-solid fa-sign-in-alt" aria-hidden="true"></i>
-                         Sign In
+                    <button class="login-btn" type="submit">
+                        <i class="fa-solid fa-sign-in-alt" aria-hidden="true"></i>
+                        Se connecter
                     </button>
                 </form>
                 
@@ -122,7 +120,7 @@
                 <footer class="login-footer">
                     <p class="system-info">
                         <i class="fa-solid fa-shield-alt" aria-hidden="true"></i>
-                        Secure login system
+                        Connexion sécurisée
                     </p>
                 </footer>
             </div>

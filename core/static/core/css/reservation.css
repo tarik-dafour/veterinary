@@ -317,6 +317,11 @@ html,body {
     transform: rotate(180deg);
 }
 
+/* Rotate caret when open */
+.clickable-status.open .status-arrow {
+    transform: rotate(180deg);
+}
+
 /* Status Dropdown Menu */
 .status-dropdown-menu {
     display: none;
@@ -373,6 +378,24 @@ html,body {
 .status-option i {
     width: 16px;
     text-align: center;
+}
+
+/* Active option style (current selected status) */
+.status-option.active {
+    background: #E6FFFA;
+    color: #0F766E;
+    position: relative;
+}
+.status-option.active::after {
+    content: '\2713';
+    position: absolute;
+    right: 12px;
+    font-weight: 700;
+}
+
+/* Saving feedback on the selected option */
+.status-option.saving {
+    opacity: 0.7;
 }
 
 /* Status Message Notifications */

@@ -1,7 +1,7 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-{% block title %}Store Management - Veterinary System{% endblock %}
+{% block title %}Gestion de la Boutique - Système Vétérinaire{% endblock %}
 
 {% block content %}
 <!-- Font Awesome for icons -->
@@ -15,9 +15,9 @@
         <div class="store-header-text">
             <h1 class="store-title">
                 <i class="fas fa-store" aria-hidden="true"></i>
-                Veterinary Store
+                Boutique Vétérinaire
             </h1>
-            <p class="store-subtitle">Premium products for your veterinary practice</p>
+            <p class="store-subtitle">Produits de qualité pour votre pratique vétérinaire</p>
         </div>
     </div>
 </header>
@@ -44,7 +44,7 @@
                     <form method="GET" action="{% url 'store' %}" class="search-form" role="search">
                         <div class="search-input-group">
                             <i class="fas fa-search search-icon" aria-hidden="true"></i>
-                            <input type="text"  name="search"  class="search-input"  placeholder="Search products..."  value="{{ request.GET.search }}" aria-label="Search products">
+                            <input type="text"  name="search"  class="search-input"  placeholder="Rechercher des produits..."  value="{{ request.GET.search }}" aria-label="Rechercher des produits">
                             <button type="submit" class="search-button" aria-label="Search">
                                 <i class="fas fa-search" aria-hidden="true"></i>
                             </button>
@@ -57,13 +57,13 @@
             <div class="control-section cart-section">
                 <h2 class="control-title">
                     <i class="fas fa-shopping-cart" aria-hidden="true"></i>
-                    Shopping Cart
+                    Panier
                 </h2>
                 <div class="cart-button-container">
                     <button class="cart-button" onclick="openCartModal()" aria-label="Open shopping cart">
                         <i class="fas fa-shopping-cart" aria-hidden="true"></i>
-                        <span class="cart-count" id="cart-count" aria-label="Items in cart">0</span>
-                        <span class="cart-total" id="cart-total" aria-label="Cart total">0.00 MAD</span>
+                        <span class="cart-count" id="cart-count" aria-label="Articles dans le panier">0</span>
+                        <span class="cart-total" id="cart-total" aria-label="Total du panier">0.00 MAD</span>
                     </button>
                 </div>
             </div>
@@ -77,7 +77,7 @@
             <div class="product-image-container">
                 {% if produit.quantite == 0 %}
                     <div class="product-badge out-of-stock-badge">
-                        <i class="fas fa-times-circle" aria-hidden="true"></i> Out of Stock
+                        <i class="fas fa-times-circle" aria-hidden="true"></i> Rupture de stock
                     </div>
                 {% endif %}
                 {% if produit.image %}
@@ -95,20 +95,20 @@
                     <div class="product-category">{{ produit.categorie.nom }}</div>
                 </div>
                 
-                <p class="product-description">{{ produit.description|default:"No description available" }}</p>
+                <p class="product-description">{{ produit.description|default:"Aucune description disponible" }}</p>
                 
                 <div class="product-details">
                     <div class="product-price">{{ produit.prix }} MAD</div>
                     <div class="product-stock">
-                        <span class="stock-label">Stock:</span>
+                        <span class="stock-label">Stock :</span>
                         {% if produit.quantite > 0 %}
                             <span class="stock-amount {% if produit.quantite <= 10 %}low-stock{% elif produit.quantite <= 30 %}medium-stock{% else %}high-stock{% endif %}"
-                                  aria-label="Stock level: {{ produit.quantite }} units">
-                                {{ produit.quantite }} units
+                                  aria-label="Niveau de stock : {{ produit.quantite }} unités">
+                                {{ produit.quantite }} unités
                             </span>
                         {% else %}
-                            <span class="stock-amount out-of-stock" aria-label="Product is out of stock">
-                                <i class="fas fa-times-circle" aria-hidden="true"></i> Out of Stock
+                            <span class="stock-amount out-of-stock" aria-label="Produit en rupture de stock">
+                                <i class="fas fa-times-circle" aria-hidden="true"></i> Rupture de stock
                             </span>
                         {% endif %}
                     </div>
@@ -118,18 +118,18 @@
                     {% if produit.quantite > 0 %}
                         <button class="btn-add-to-cart" 
                                 onclick="try { console.log('Button clicked for product:', '{{ produit.nom }}'); addToCart('{{ produit.id }}', '{{ produit.nom }}', '{{ produit.prix }}'); } catch(e) { console.error('Error in onclick:', e); alert('Error: ' + e.message); }"
-                                aria-label="Add {{ produit.nom }} to cart"
+                                aria-label="Ajouter {{ produit.nom }} au panier"
                                 data-product-id="{{ produit.id }}"
                                 data-product-name="{{ produit.nom }}"
                                 data-product-price="{{ produit.prix }}">
-                            <i class="fas fa-shopping-cart" aria-hidden="true"></i> Add to Cart
+                            <i class="fas fa-shopping-cart" aria-hidden="true"></i> Ajouter au panier
                         </button>
                     {% else %}
                         <button class="btn-add-to-cart btn-out-of-stock" 
                                 disabled
-                                aria-label="{{ produit.nom }} is out of stock"
-                                title="This product is currently out of stock">
-                            <i class="fas fa-times-circle" aria-hidden="true"></i> Out of Stock
+                                aria-label="{{ produit.nom }} est en rupture de stock"
+                                title="Ce produit est actuellement en rupture de stock">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i> Rupture de stock
                         </button>
                     {% endif %}
                 </div>
@@ -140,11 +140,11 @@
             <div class="empty-state-icon">
                 <i class="fas fa-box-open" aria-hidden="true"></i>
             </div>
-            <h3>No Products Found</h3>
-            <p>{% if request.GET.search %}No products match your search criteria.{% else %}No products are currently available in your inventory.{% endif %}</p>
+            <h3>Aucun produit trouvé</h3>
+            <p>{% if request.GET.search %}Aucun produit ne correspond à vos critères de recherche.{% else %}Aucun produit n'est actuellement disponible dans votre inventaire.{% endif %}</p>
             {% if request.GET.search %}
-                <a href="{% url 'store' %}" class="btn-clear-search" aria-label="Clear search and show all products">
-                    <i class="fas fa-times" aria-hidden="true"></i> Clear Search
+                <a href="{% url 'store' %}" class="btn-clear-search" aria-label="Effacer la recherche et afficher tous les produits">
+                    <i class="fas fa-times" aria-hidden="true"></i> Effacer la recherche
                 </a>
             {% endif %}
         </div>
@@ -158,7 +158,7 @@
     <div class="cart-modal-content">
         <!-- Modal Header -->
         <div class="cart-modal-header">
-            <h3 id="cart-modal-title" style="color: #000000;"><i class="fas fa-shopping-cart" aria-hidden="true"></i> Shopping Cart</h3>
+            <h3 id="cart-modal-title" style="color: #000000;"><i class="fas fa-shopping-cart" aria-hidden="true"></i> Panier</h3>
             <button class="btn-close-modal" onclick="closeCartModal()" aria-label="Close cart modal">
                 <i class="fas fa-times" aria-hidden="true"></i>
             </button>
@@ -166,7 +166,7 @@
         
         <!-- Modal Body -->
         <div class="cart-modal-body">
-            <div class="cart-items-container" id="cart-items-container" role="region" aria-label="Cart items">
+            <div class="cart-items-container" id="cart-items-container" role="region" aria-label="Articles du panier">
                 <!-- Cart items will be populated here -->
             </div>
             
@@ -175,25 +175,25 @@
                 <div class="empty-cart-icon">
                     <i class="fas fa-shopping-bag" aria-hidden="true"></i>
                 </div>
-                <h4>Your cart is empty</h4>
-                <p>Add some products to get started!</p>
+                <h4>Votre panier est vide</h4>
+                <p>Ajoutez des produits pour commencer !</p>
             </div>
         </div>
         
         <!-- Modal Footer -->
         <div class="cart-modal-footer">
             <div class="cart-summary">
-                <div class="cart-summary-label">Total:</div>
-                <div class="cart-summary-total" id="modal-cart-total" aria-label="Cart total amount">0.00 MAD</div>
+                <div class="cart-summary-label">Total :</div>
+                <div class="cart-summary-total" id="modal-cart-total" aria-label="Montant total du panier">0.00 MAD</div>
             </div>
             
             <div class="cart-actions">
 
-                <button class="btn-clear-all" onclick="clearCart()" aria-label="Clear all items from cart">
-                    <i class="fas fa-trash" aria-hidden="true"></i> Clear All
+                <button class="btn-clear-all" onclick="clearCart()" aria-label="Vider le panier">
+                    <i class="fas fa-trash" aria-hidden="true"></i> Tout effacer
                 </button>
                 <button class="btn-factura" onclick="proceedToCheckout()" aria-label="Generate invoice">
-                    <i class="fas fa-file-invoice" aria-hidden="true"></i> Factura
+                    <i class="fas fa-file-invoice" aria-hidden="true"></i> Facture
                 </button>
             </div>
         </div>
@@ -204,7 +204,7 @@
 <div class="cart-notification" id="cart-notification" role="status" aria-live="polite" aria-hidden="true">
     <div class="notification-content">
         <i class="fas fa-check-circle" aria-hidden="true"></i>
-        <span id="notification-message">Product added to cart!</span>
+        <span id="notification-message">Produit ajouté au panier !</span>
     </div>
     <button class="notification-close" onclick="closeNotification()" aria-label="Close notification">
         <i class="fas fa-times" aria-hidden="true"></i>

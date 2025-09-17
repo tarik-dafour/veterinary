@@ -1,5 +1,5 @@
 {% extends 'core/base.html' %}
-{% block title %}Activity Logs - VetStock{% endblock %}
+{% block title %}Journaux d'activité - VetStock{% endblock %}
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -9,16 +9,16 @@
 <link rel="stylesheet" href="{% static 'core/css/logs.css' %}">
 
 <div class="page-header">
-    <h1 class="page-title"><i class="fa-solid fa-clock"></i> Activity Logs</h1>
-    <p class="page-subtitle">Track and monitor all system activities and user actions automatically</p>
+    <h1 class="page-title"><i class="fa-solid fa-clock"></i> Journaux d'activité</h1>
+    <p class="page-subtitle">Suivez et surveillez toutes les activités du système et les actions des utilisateurs</p>
 </div>
 
 <!-- Logs List -->
 <div class="table-card">
     <div class="table-header">
-        <h3 class="form-title"><i class="fa-solid fa-clock"></i> Logs</h3>
+        <h3 class="form-title"><i class="fa-solid fa-clock"></i> Journaux</h3>
         <form method="get" class="search-form">
-            <input type="text" name="search" class="search-input" placeholder="Search logs..." 
+            <input type="text" name="search" class="search-input" placeholder="Rechercher dans les journaux..." 
                    value="{{ search_query }}">
             <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
             {% if search_query %}
@@ -33,13 +33,13 @@
     <table class="table">
         <thead>
             <tr>
-                <th><i class="fa-solid fa-user"></i> User</th>
+                <th><i class="fa-solid fa-user"></i> Utilisateur</th>
                 <th><i class="fa-solid fa-cog"></i> Action</th>
                 <th><i class="fa-solid fa-file-lines"></i> Description</th>
-                <th><i class="fa-solid fa-calendar"></i> Date & Time</th>
+                <th><i class="fa-solid fa-calendar"></i> Date & Heure</th>
                 <th><i class="fa-solid fa-table"></i> Table</th>
-                <th><i class="fa-solid fa-hashtag"></i> Element ID</th>
-                <th><i class="fa-solid fa-globe"></i> IP Address</th>
+                <th><i class="fa-solid fa-hashtag"></i> ID Élément</th>
+                <th><i class="fa-solid fa-globe"></i> Adresse IP</th>
             </tr>
         </thead>
         <tbody>
@@ -50,7 +50,7 @@
                         {% if log.user %}
                             {{ log.user.get_full_name|default:log.user.username }}
                         {% else %}
-                            Anonymous
+                            Anonyme
                         {% endif %}
                     </span>
                 </td>
@@ -62,7 +62,7 @@
                 <td class="description" title="{{ log.description }}">
                     {{ log.description }}
                 </td>
-                <td class="date-time">{{ log.date_action|date:'M d, Y g:i A' }}</td>
+                <td class="date-time">{{ log.date_action|date:'d/m/Y H:i' }}</td>
                 <td class="table-name">{{ log.table_cible|default:'-' }}</td>
                 <td>{{ log.id_element|default:'-' }}</td>
                 <td class="ip-address">{{ log.ip_address|default:'-' }}</td>
@@ -72,8 +72,8 @@
                 <td colspan="7">
                     <div class="empty-state">
                         <div class="empty-state-icon"><i class="fa-solid fa-clock"></i></div>
-                        <h4>No logs found</h4>
-                        <p>{% if search_query %}No logs match your search criteria.{% else %}No activity logs recorded yet.{% endif %}</p>
+                        <h4>Aucun journal trouvé</h4>
+                        <p>{% if search_query %}Aucun journal ne correspond à vos critères de recherche.{% else %}Aucun journal d'activité enregistré pour le moment.{% endif %}</p>
                     </div>
                 </td>
             </tr>

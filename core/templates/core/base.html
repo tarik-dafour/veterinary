@@ -1,12 +1,12 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Veterinary Management System - Professional animal care management">
     <meta name="author" content="Veterinary Management System">
-    <title>{% block title %}Veterinary Management{% endblock %}</title>
+    <title>{% block title %}Gestion Vétérinaire{% endblock %}</title>
     
     <!-- Preload critical resources -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" as="style">
@@ -22,7 +22,7 @@
 </head>
 <body class="{% if user.profile.theme == 'light' %}light-theme{% endif %}">
     <!-- Sidebar Navigation -->
-    <nav class="sidebar" role="navigation" aria-label="Main navigation">
+    <nav class="sidebar" role="navigation" aria-label="Navigation principale">
         <div class="logo-section">
             <span class="logo-icon" aria-label="Veterinary Management System">
                 <i class="fa-solid fa-user-doctor" aria-hidden="true"></i>
@@ -31,7 +31,7 @@
         
         <ul class="nav-menu" role="menubar">
             <li class="nav-item" role="none">
-                <a href="{% url 'dashboard' %}"  class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"  title="Dashboard" role="menuitem" aria-label="Go to Dashboard">
+                <a href="{% url 'dashboard' %}"  class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"  title="Tableau de bord" role="menuitem" aria-label="Aller au tableau de bord">
                     <span class="nav-icon" aria-hidden="true">
                         <i class="fa-solid fa-house-chimney"></i>
                     </span>
@@ -43,7 +43,7 @@
                    class="nav-link {% if request.resolver_match.url_name == 'clients' %}active{% endif %}" 
                    title="Clients"
                    role="menuitem"
-                   aria-label="Manage Clients">
+                   aria-label="Gérer les clients">
                     <span class="nav-icon" aria-hidden="true">
                         <i class="fa-solid fa-user"></i>
                     </span>
@@ -53,9 +53,9 @@
             <li class="nav-item" role="none">
                 <a href="{% url 'animals' %}" 
                    class="nav-link {% if request.resolver_match.url_name == 'animals' %}active{% endif %}" 
-                   title="Animals"
+                   title="Animaux"
                    role="menuitem"
-                   aria-label="Manage Animals">
+                   aria-label="Gérer les animaux">
                     <span class="nav-icon" aria-hidden="true">
                         <i class="fa-solid fa-paw"></i>
                     </span>
@@ -65,9 +65,9 @@
             <li class="nav-item" role="none">
                 <a href="{% url 'reservation' %}" 
                    class="nav-link {% if request.resolver_match.url_name == 'reservation' %}active{% endif %}" 
-                   title="Reservations"
+                   title="Rendez-vous"
                    role="menuitem"
-                   aria-label="Manage Reservations">
+                   aria-label="Gérer les rendez-vous">
                     <span class="nav-icon" aria-hidden="true">
                         <i class="fa-regular fa-calendar-check"></i>
                     </span>
@@ -80,7 +80,7 @@
                    class="nav-link {% if request.resolver_match.url_name == 'stock' %}active{% endif %}" 
                    title="Stock"
                    role="menuitem"
-                   aria-label="Manage Stock">
+                   aria-label="Gérer le stock">
                     <span class="nav-icon" aria-hidden="true">
                         <i class="fa-solid fa-boxes-stacked"></i>
                     </span>
@@ -90,9 +90,9 @@
             <li class="nav-item" role="none">
                 <a href="{% url 'store' %}" 
                    class="nav-link {% if request.resolver_match.url_name == 'store' %}active{% endif %}" 
-                   title="Store"
+                   title="Boutique"
                    role="menuitem"
-                   aria-label="Access Store">
+                   aria-label="Accéder à la boutique">
                     <span class="nav-icon" aria-hidden="true">
                         <i class="fa-solid fa-store"></i>
                     </span>
@@ -104,9 +104,9 @@
             <li class="nav-item" role="none">
                 <a href="{% url 'users' %}" 
                    class="nav-link {% if request.resolver_match.url_name == 'users' %}active{% endif %}" 
-                   title="Users"
+                   title="Utilisateurs"
                    role="menuitem"
-                   aria-label="Manage Users">
+                   aria-label="Gérer les utilisateurs">
                     <span class="nav-icon" aria-hidden="true">
                         <i class="fa-solid fa-user-plus"></i>
                     </span>
@@ -118,9 +118,9 @@
             <li class="nav-item" role="none">
                 <a href="{% url 'report' %}" 
                    class="nav-link {% if request.resolver_match.url_name == 'report' %}active{% endif %}" 
-                   title="Reports"
+                   title="Rapports"
                    role="menuitem"
-                   aria-label="View Reports">
+                   aria-label="Afficher les rapports">
                     <span class="nav-icon" aria-hidden="true">
                         <i class="fa-solid fa-chart-line"></i>
                     </span>
@@ -129,9 +129,9 @@
             <li class="nav-item" role="none">
                 <a href="{% url 'reservation_report' %}" 
                    class="nav-link {% if request.resolver_match.url_name == 'reservation_report' %}active{% endif %}" 
-                   title="Reservation Reports"
+                   title="Rapport des rendez-vous"
                    role="menuitem"
-                   aria-label="View Reservation Reports">
+                   aria-label="Voir les rapports des rendez-vous">
                     <span class="nav-icon" aria-hidden="true">
                         <i class="fa-solid fa-calendar-check"></i>
                     </span>
@@ -143,9 +143,9 @@
             <li class="nav-item" role="none">
                 <a href="{% url 'settings' %}" 
                    class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}" 
-                   title="Settings"
+                   title="Paramètres"
                    role="menuitem"
-                   aria-label="Access Settings">
+                   aria-label="Accéder aux paramètres">
                     <span class="nav-icon" aria-hidden="true">
                         <i class="fa-solid fa-gear"></i>
                     </span>
@@ -157,9 +157,9 @@
             <li class="nav-item nav-item_last" role="none">
                 <a href="{% url 'logout' %}" 
                    class="nav-link" 
-                   title="Logout"
+                   title="Déconnexion"
                    role="menuitem"
-                   aria-label="Logout from system">
+                   aria-label="Se déconnecter du système">
                     <span class="nav-icon" aria-hidden="true">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </span>
@@ -193,9 +193,9 @@
                 <div class="quick-stat-item">
                     <a href="{% url 'logout' %}" 
                        class="logout-link"
-                       onclick="return confirm('Are you sure you want to logout?');"
-                       aria-label="Logout from system">
-                        <div class="stat-avatar" title="Logout">
+                       onclick="return confirm('Êtes-vous sûr de vouloir vous déconnecter ?');"
+                       aria-label="Se déconnecter du système">
+                        <div class="stat-avatar" title="Déconnexion">
                             <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
                         </div>
                     </a>
