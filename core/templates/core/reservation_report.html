@@ -78,6 +78,11 @@
               <label for="date-to">Date de fin:</label>
               <input type="date" id="date-to" name="date_to" class="filter-input" value="{{ date_to }}">
             </div>
+            <select id="report-filter" class="filter-input">
+              <option value="">Selectionnez le rapport</option>
+              <option value="report-table">Rapport rendez-vous</option>
+              <option value="product-sales-report">Rapport Produits Vendus</option>
+            </select>
             <div class="filter-group">
               <button class="btn-apply-filter" onclick="submitFilters()">
                 <i class="fa-solid fa-search"></i> Appliquer
@@ -87,14 +92,13 @@
         </div>
       </div>
     </div>
-    <div class="table-header">
-      <h3><i class="fa-solid fa-table"></i> Rapport Détaillé</h3>
-      <div class="header-actions">
-      </div>
-    </div>
+
 
     <!-- Report Table -->
-    <div class="report-table-section">
+    <div class="report-table-section" id="report-table">
+      <div class="table-header">
+      <h3><i class="fa-solid fa-table"></i> Rapport Détaillé</h3>
+      </div>
       <div class="table-container">
         <table class="report-table">
           <thead>
@@ -138,7 +142,7 @@
     </div>
 
     <!-- Product Sales Report -->
-    <div class="report-table-section">
+    <div class="report-table-section" id="product-sales-report">
       <div class="table-header">
         <h3><i class="fa-solid fa-shopping-cart"></i> Produits Vendus</h3>
       </div>
@@ -208,12 +212,25 @@
         const params = new URLSearchParams(window.location.search);
         params.set('date_from', document.getElementById('date-from').value || '');
         params.set('date_to', document.getElementById('date-to').value || '');
+        params.set('report_filter', document.getElementById('report-filter').value || '');
         window.location.search = params.toString();
-    }
-
-    function exportReport() {
-        alert('Export PDF en cours...');
-    }
+    };
+    document.getElementById('report-filter').addEventListener('change', function(event) {
+        const selected = this.value;
+        const reportTableSection = document.getElementById('report-table');
+        if (selected === 'report-table') {
+            reportTableSection.style.display = 'block';
+        } else {
+            reportTableSection.style.display = 'none';
+        }
+        const productSalesReport = document.getElementById('product-sales-report');
+        if (selected === 'product-sales-report') {
+            productSalesReport.style.display = 'block';
+        } else {
+            productSalesReport.style.display = 'none';
+        }
+    
+    });
   </script>
 </body>
 {% endblock %}

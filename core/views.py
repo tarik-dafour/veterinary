@@ -1,3 +1,4 @@
+from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -18,6 +19,18 @@ from datetime import datetime
 
 def root_redirect(request):
     return redirect('dashboard')
+
+def paginate_queryset(request, qs, per_page=3):
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+    page = request.GET.get('page', 1)
+    paginator = Paginator(qs.order_by('id'), per_page)
+    try:
+        paged = paginator.page(page)
+    except PageNotAnInteger:
+        paged = paginator.page(1)
+    except EmptyPage:
+        paged = paginator.page(paginator.num_pages)
+    return paged
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -233,6 +246,11 @@ def reservation(request):
         )
     clients = Client.objects.all()
     animals = Animal.objects.all()
+
+    #pagination
+    paged_reservations = paginate_queryset(request, qs, per_page=10)
+    qs = paged_reservations
+
     if request.method == 'POST':
         edit_id = request.POST.get('edit_id')
         client_id = request.POST.get('client')
@@ -718,15 +736,7 @@ def clients(request):
         )
     
     # Pagination
-    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-    page = request.GET.get('page', 1)
-    paginator = Paginator(qs.order_by('id'), 5)
-    try:
-        paged_clients = paginator.page(page)
-    except PageNotAnInteger:
-        paged_clients = paginator.page(1)
-    except EmptyPage:
-        paged_clients = paginator.page(paginator.num_pages)
+    paged_clients = paginate_queryset(request, qs, per_page=10)
     
     if request.method == 'POST':
         edit_id = request.POST.get('edit_id')
@@ -782,6 +792,11 @@ def report(request):
             models.Q(destinataire__icontains=search_query)
         )
     users = User.objects.all()
+
+    #pagination
+    paged_reports = paginate_queryset(request, qs, per_page=10)
+    qs = paged_reports
+
     if request.method == 'POST':
         edit_id = request.POST.get('edit_id')
         user_id = request.POST.get('user')
@@ -846,6 +861,11 @@ def animals(request):
             models.Q(client__prenom__icontains=search_query)
         )
     clients = Client.objects.all()
+
+   #pagination
+    paged_animals = paginate_queryset(request, qs, per_page=10)
+    qs = paged_animals
+
     if request.method == 'POST':
         edit_id = request.POST.get('edit_id')
         nom = request.POST.get('nom')
@@ -1098,6 +1118,9 @@ def users(request):
             models.Q(email__icontains=search_query) |
             models.Q(profile__role__icontains=search_query)
         )
+    # Pagination
+    paged_users = paginate_queryset(request, qs, per_page=1)
+    qs = paged_users
     
     if request.method == 'POST':
         edit_id = request.POST.get('edit_id')

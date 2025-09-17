@@ -1,6 +1,12 @@
 /* Reservation Report Styles - Modern & Professional */
 /* Using consistent color scheme: header gradient #38B2FF to #1E90FF to #1A73E8 */
 
+#report-table-section {
+    display: none;
+}
+#product-sales-report {
+    display: none;
+}
 /* Full size layout */
 html, body {
     width: 100%;

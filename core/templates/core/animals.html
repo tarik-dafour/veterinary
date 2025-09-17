@@ -191,4 +191,40 @@
         </div>
     </div>
 </div>
+<!-- Pagination -->
+    {% if animals.has_other_pages %}
+    <nav class="pagination" role="navigation" aria-label="Animal list pagination">
+        <ul class="pagination-list">
+            {% if animals.has_previous %}
+            <li>
+                <a href="?page={{ animals.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-link" aria-label="Go to previous page">
+                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in animals.paginator.page_range %}
+                {% if animals.number == num %}
+                <li>
+                    <span>{{ num }}</span>
+                </li>
+                {% elif num > animals.number|add:'-3' and num < animals.number|add:'3' %}
+                <li>
+                    <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                       class="pagination-link">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if animals.has_next %}
+            <li>
+                <a href="?page={{ animals.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-link" aria-label="Go to next page">
+                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 {% endblock %}
+

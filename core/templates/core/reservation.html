@@ -274,6 +274,42 @@
         </table>
     </div>
 </body>
+<!-- Pagination -->
+    {% if reservations.has_other_pages %}
+    <nav class="pagination" role="navigation" aria-label="Reservation list pagination">
+        <ul class="pagination-list">
+            {% if reservations.has_previous %}
+            <li>
+                <a href="?page={{ reservations.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-link" aria-label="Go to previous page">
+                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in reservations.paginator.page_range %}
+                {% if reservations.number == num %}
+                <li>
+                    <span>{{ num }}</span>
+                </li>
+                {% elif num > reservations.number|add:'-3' and num < reservations.number|add:'3' %}
+                <li>
+                    <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                       class="pagination-link">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if reservations.has_next %}
+            <li>
+                <a href="?page={{ reservations.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-link" aria-label="Go to next page">
+                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
 <script src="{% static 'core/js/reservation-management.js' %}"></script>
 <script src="{% static 'core/js/reservation.js' %}"></script>
 {% endblock %}

@@ -137,6 +137,41 @@
         </tbody>
     </table>
 </div>
+<!-- Pagination -->
+    {% if reports.has_other_pages %}
+    <nav class="pagination" role="navigation" aria-label="Report list pagination">
+        <ul class="pagination-list">
+            {% if reports.has_previous %}
+            <li>
+                <a href="?page={{ reports.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-link" aria-label="Go to previous page">
+                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in reports.paginator.page_range %}
+                {% if reports.number == num %}
+                <li>
+                    <span>{{ num }}</span>
+                </li>
+                {% elif num > reports.number|add:'-3' and num < reports.number|add:'3' %}
+                <li>
+                    <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                       class="pagination-link">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if reports.has_next %}
+            <li>
+                <a href="?page={{ reports.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-link" aria-label="Go to next page">
+                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 <!-- Report JavaScript -->
 <script src="{% static 'core/js/report.js' %}"></script>
 
