@@ -82,6 +82,7 @@
               <option value="">Selectionnez le rapport</option>
               <option value="report-table">Rapport rendez-vous</option>
               <option value="product-sales-report">Rapport Produits Vendus</option>
+              <option value="clients-report">Rapport Clients</option>
             </select>
             <div class="filter-group">
               <button class="btn-apply-filter" onclick="submitFilters()">
@@ -133,6 +134,42 @@
             <tr>
               <td colspan="6" style="text-align: center; padding: 2rem; color: #718096;">
                 Aucune réservation trouvée pour les critères sélectionnés
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- info Client Report -->
+    <div class="report-table-section" id="clients-report">
+      <div class="table-header">
+        <h3><i class="fa-solid fa-user"></i> Rapport Clients</h3>
+      </div>
+      <div class="table-container">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Téléphone</th>
+              <th>Nombre de Réservations</th>
+              <th>Montant Total</th>
+            </tr>
+          </thead>
+          <tbody id="clients-table-body">
+            {% for client in clients %}
+            <tr>
+              <td>{{ client.nom }}</td>
+              <td>{{ client.email }}</td>
+              <td>{{ client.telephone }}</td>
+              <td>{{ client.nombre_reservations }}</td>
+              <td>{{ client.montant_total }} MAD</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 2rem; color: #718096;">
+                Aucune information client trouvée pour les critères sélectionnés
               </td>
             </tr>
             {% endfor %}
@@ -228,6 +265,12 @@
             productSalesReport.style.display = 'block';
         } else {
             productSalesReport.style.display = 'none';
+        }
+        const clientsReport = document.getElementById('clients-report');
+        if (selected === 'clients-report') {
+            clientsReport.style.display = 'block';
+        } else {
+            clientsReport.style.display = 'none';
         }
     
     });

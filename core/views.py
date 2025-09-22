@@ -23,7 +23,7 @@ def root_redirect(request):
 def paginate_queryset(request, qs, per_page=3):
     from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
     page = request.GET.get('page', 1)
-    paginator = Paginator(qs.order_by('id'), per_page)
+    paginator = Paginator(qs.order_by('-id'), per_page)
     try:
         paged = paginator.page(page)
     except PageNotAnInteger:
@@ -755,8 +755,14 @@ def clients(request):
             nom = request.POST.get('nom')
             telephone = request.POST.get('telephone')
             email = request.POST.get('email')
-            if prenom and nom and telephone and email:
-                client = Client.objects.create(prenom=prenom, nom=nom, telephone=telephone, email=email)
+            # Email is optional per UI; allow creation without it
+            if prenom and nom and telephone:
+                client = Client.objects.create(
+                    prenom=prenom,
+                    nom=nom,
+                    telephone=telephone,
+                    email=email or ''
+                )
                 
                 # Log client creation
                 log_create(request, 'Client', client.id, f"Client: {client.prenom} {client.nom}")
