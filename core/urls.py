@@ -40,4 +40,6 @@ urlpatterns = [
     path('delete-supplier/<int:supplier_id>/', views.delete_supplier, name='delete_supplier'),
     # Reservation Status Change URL
     path('change-reservation-status/', views.change_reservation_status, name='change_reservation_status'),
+    # Employee role update
+    path('api/update-employee-role/', views.update_employee_role, name='update_employee_role'),
 ]

@@ -11,6 +11,7 @@ from .utils import log_login, log_logout, log_create, log_update, log_delete, lo
 from django.db import models
 from django.views.decorators.http import require_POST
 from django.db import transaction
+from django.views.decorators.csrf import csrf_exempt
 import csv
 from django.http import HttpResponse
 import json
@@ -726,7 +727,7 @@ def logs(request):
 def clients(request):
     from django.shortcuts import get_object_or_404
     search_query = request.GET.get('search', '')
-    qs = Client.objects.all()
+    qs = Client.objects.filter(is_deleted=False)
     if search_query:
         qs = qs.filter(
             models.Q(nom__icontains=search_query) |
@@ -770,7 +771,11 @@ def clients(request):
     elif request.method == 'GET' and 'delete' in request.GET:
         client = get_object_or_404(Client, id=request.GET.get('delete'))
         client_name = f"{client.prenom} {client.nom}"
-        client.delete()
+        # Soft delete client
+        from django.utils import timezone as dj_tz
+        client.is_deleted = True
+        client.deleted_at = dj_tz.now()
+        client.save(update_fields=['is_deleted', 'deleted_at'])
         
         # Log client deletion
         log_delete(request, 'Client', client.id, f"Client: {client_name}")
@@ -1125,7 +1130,7 @@ def users(request):
             models.Q(profile__role__icontains=search_query)
         )
     # Pagination
-    paged_users = paginate_queryset(request, qs, per_page=1)
+    paged_users = paginate_queryset(request, qs, per_page=10)
     qs = paged_users
     
     if request.method == 'POST':
@@ -1380,15 +1385,16 @@ def bulk_delete_clients(request):
                     'message': 'No valid clients found for deletion'
                 }, status=400)
             
-            # Log the deletion of each client
+            # Soft delete each client and log
+            from django.utils import timezone as dj_tz
             deleted_clients = []
             for client in clients_to_delete:
                 client_name = f"{client.prenom} {client.nom}"
                 deleted_clients.append(client_name)
+                client.is_deleted = True
+                client.deleted_at = dj_tz.now()
+                client.save(update_fields=['is_deleted', 'deleted_at'])
                 log_delete(request, 'Client', client.id, f"Client: {client_name}")
-            
-            # Delete all selected clients
-            clients_to_delete.delete()
             
             return JsonResponse({
                 'success': True,
@@ -1580,6 +1586,52 @@ def change_reservation_status(request):
         'message': 'Invalid request method'
     }, status=405)
 
+
+@login_required
+@admin_required
+@require_POST
+def update_employee_role(request):
+    """
+    Update a user's role (admin only). Expects JSON: { user_id: int, role: str }
+    Returns JSON { success: bool, message: str, role_display: str }
+    """
+    try:
+        data = json.loads(request.body or '{}')
+        user_id = data.get('user_id')
+        new_role = data.get('role')
+
+        if not user_id or not new_role:
+            return JsonResponse({'success': False, 'message': 'user_id and role are required'}, status=400)
+
+        # Validate role
+        valid_roles = [choice[0] for choice in UserProfile.ROLE_CHOICES]
+        if new_role not in valid_roles:
+            return JsonResponse({'success': False, 'message': 'Invalid role'}, status=400)
+
+        user = get_object_or_404(User, id=user_id)
+
+        # Ensure profile exists
+        if hasattr(user, 'profile'):
+            profile = user.profile
+        else:
+            profile = UserProfile.objects.create(user=user)
+
+        old_role = profile.role
+        profile.role = new_role
+        profile.save(update_fields=['role'])
+
+        # Log update
+        log_update(request, 'UserProfile', profile.id, f"Role changed from {old_role} to {new_role} for {user.username}")
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Role updated successfully',
+            'role': new_role,
+            'role_display': profile.get_role_display(),
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
 @login_required
 def reservation_report(request):
     """
@@ -1691,6 +1743,42 @@ def reservation_report(request):
         # Calculate average revenue per visit
         avg_revenue = total_revenue / completed_reservations if completed_reservations > 0 else 0
         
+        # Build clients report (include soft-deleted clients)
+        from django.db.models import Count, Sum
+        from core.models import Client as ClientModel, Reservation as ReservationModel, Vente as VenteModel
+        # Start with all clients (active + deleted)
+        clients_qs = ClientModel.objects.all()
+        # Aggregate reservation counts from Reservation (including soft-deleted reservations)
+        reservations_for_clients = ReservationModel.objects.all()
+        if from_date:
+            reservations_for_clients = reservations_for_clients.filter(date_reservation__date__gte=from_date)
+        if to_date:
+            reservations_for_clients = reservations_for_clients.filter(date_reservation__date__lte=to_date)
+
+        # Aggregate product sales totals per client as part of montant_total
+        ventes_qs = VenteModel.objects.all()
+        if from_date:
+            ventes_qs = ventes_qs.filter(date_vente__date__gte=from_date)
+        if to_date:
+            ventes_qs = ventes_qs.filter(date_vente__date__lte=to_date)
+
+        # Compute per-client metrics
+        clients_data = []
+        for c in clients_qs:
+            nb_res = reservations_for_clients.filter(client=c).count()
+            # Total from reservations (completed only)
+            res_total = reservations_for_clients.filter(client=c, statut='Completed').aggregate(s=Sum('prix'))['s'] or 0
+            # Total from store sales
+            ventes_total = ventes_qs.filter(client=c).aggregate(s=Sum('total'))['s'] or 0
+            montant_total = float(res_total) + float(ventes_total)
+            clients_data.append({
+                'nom': f"{c.prenom} {c.nom}",
+                'email': c.email,
+                'telephone': c.telephone,
+                'nombre_reservations': nb_res,
+                'montant_total': round(montant_total, 2),
+            })
+
         # Prepare context
         context = {
             'total_reservations': total_reservations,
@@ -1713,6 +1801,7 @@ def reservation_report(request):
             'service_filter': service_filter,
             'period_label': period_label or '—',
             'total_sales_revenue' : sales_revenue,
+            'clients': clients_data,
         }
         
         return render(request, 'core/reservation_report.html', context)

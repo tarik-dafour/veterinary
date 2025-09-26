@@ -39,17 +39,6 @@
                 <input type="text" name="last_name" class="form-input" value="{{ edit_user.last_name|default:'' }}">
             </div>
             <div class="form-group">
-                <label class="form-label">Rôle</label>
-                <select name="role" class="form-select" required>
-                    <option value="">Sélectionnez un rôle</option>
-                    {% for role_value, role_name in role_choices %}
-                        <option value="{{ role_value }}" {% if edit_user.profile.role == role_value %}selected{% endif %}>
-                            {{ role_name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
                 <label class="form-label">Numéro de téléphone</label>
                 <input type="text" name="phone" class="form-input" value="{{ edit_user.profile.phone|default:'' }}">
             </div>

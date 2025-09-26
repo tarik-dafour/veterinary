@@ -65,6 +65,9 @@ class Client(models.Model):
     prenom = models.CharField(max_length=100)
     telephone = models.CharField(max_length=20)
     email = models.EmailField()
+    # Soft delete to preserve client history in reports
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.prenom} {self.nom}"

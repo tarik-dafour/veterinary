@@ -540,7 +540,7 @@ input:checked + .toggle-slider:before {
     border-radius: 12px;
     font-size: 1rem;
     background: var(--light-bg);
-    color: var(--main-text);
+    color: black;
 }
 
 .search-input:focus {
@@ -867,6 +867,130 @@ input:checked + .toggle-slider:before {
     color: #c05621;
     border: 1px solid rgba(237, 137, 54, 0.3);
 }
+
+/* Role Edit Modal Styles */
+.role-edit-modal.open {
+    display: flex !important;
+}
+
+.role-edit-modal { 
+    position: fixed;
+    inset: 0; 
+    z-index: 1000; 
+    display: none; 
+    align-items: flex-start; 
+    justify-content: center; 
+    padding: 1.5rem; 
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.role-edit-backdrop { 
+    position: absolute; 
+    inset: 0; 
+    background: rgba(0,0,0,0.4); 
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.role-edit-dialog { 
+    position: relative;     
+    z-index: 1001; 
+    width: 100%; 
+    max-width: 560px; 
+    margin: 180vh auto 0 auto; 
+    background: #ffffff; 
+    border-radius: 12px; 
+    box-shadow: 0 12px 36px rgba(1, 56, 71, 0.25); 
+    overflow: auto; 
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@media (max-height: 700px) {
+    .role-edit-dialog { margin-top: 8vh; }
+}
+.role-edit-header { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    padding: 1rem 1.25rem; 
+    border-bottom: 1px solid #E2ECED; 
+    background: #ffffff; 
+    color: #013847; 
+}
+
+.role-edit-title { 
+    margin: 0; 
+    font-size: 1.1rem; 
+    font-weight: 700; 
+    display: flex; 
+    gap: 0.6rem; 
+    align-items: center; 
+}
+
+.role-edit-title i { 
+    color: #013847; 
+}
+
+.role-edit-close { 
+    background: transparent; 
+    border: none; 
+    color: #4a5568;  
+    font-size: 1.1rem; 
+}
+
+.role-edit-body { 
+    padding: 1.25rem; 
+    background: #ffffff; 
+}
+
+.role-edit-name { 
+    margin: 0 0 0.6rem 0; 
+    color: #1A202C; 
+    font-weight: 600; 
+}
+
+.role-edit-body .form-label { 
+    color: #013847; 
+    font-weight: 500; 
+}
+
+.role-edit-body .form-select { 
+    background: #F7FAFC; 
+    border: 2px solid #E2E8F0; 
+    border-radius: 10px; 
+    padding: 0.7rem 0.9rem; 
+}
+
+.role-edit-body .form-select:focus { 
+    border-color: #38B2FF; 
+    box-shadow: 0 0 0 2px rgba(56,178,255,0.2); 
+    outline: none; 
+}
+
+.role-edit-footer { 
+    padding: 1rem 1.25rem; 
+    display: flex; 
+    justify-content: flex-end; 
+    gap: 0.6rem; 
+    border-top: 1px solid #E2ECED; 
+    background: #ffffff; 
+}
+
+.role-edit-footer .btn-success { 
+    background: #025A6B; 
+    color: #ffffff; 
+}
+
+.role-edit-footer .btn-success:hover { 
+    filter: brightness(0.96); 
+}
+
+.role-edit-footer .btn-secondary { 
+    background: #E2ECED; 
+    color: #013847; 
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open { overflow: hidden; }
 
 
 @media (max-width: 480px) {

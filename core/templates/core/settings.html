@@ -237,7 +237,32 @@
                 </div>
             </div>
         </div>
+    <!-- Small Role Edit Modal -->
+    <div id="roleEditModal" class="role-edit-modal" style="display:none;">
+        <div class="role-edit-dialog">
+            <div class="role-edit-header">
+                <h4 class="role-edit-title"><i class="fa-solid fa-plus"></i> Modifier le rôle</h4>
+                <button type="button" class="role-edit-close" onclick="closeRoleEditModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="role-edit-body">
+                <p class="role-edit-name" id="roleEditName"></p>
+                <input type="hidden" id="roleEditUserId">
+                <label class="form-label">Rôle</label>
+                <select id="roleEditSelect" class="form-select">
+                    <option value="admin">Administrator</option>
+                    <option value="veterinarian">Veterinarian</option>
+                    <option value="assistant">Assistant</option>
+                    <option value="receptionist">Receptionist</option>
+                </select>
+            </div>
+            <div class="role-edit-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeRoleEditModal()">Annuler</button>
+                <button type="button" class="btn btn-success" onclick="submitRoleEdit()"><i class="fa-solid fa-check"></i> Enregistrer</button>
+            </div>
+        </div>
+        <div class="role-edit-backdrop" onclick="closeRoleEditModal()"></div>
     </div>
+</div>
 </div>
 {% endif %}
 
@@ -401,15 +426,63 @@ function filterEmployees() {
 }
 
 function editEmployeeRole(employeeId, currentRole, employeeName) {
-    // This function will be implemented to show a modal or form for editing roles
-    alert(`Edit role for ${employeeName} (ID: ${employeeId}, Current Role: ${currentRole})`);
-    // TODO: Implement role editing functionality
+    const modal = document.getElementById('roleEditModal');
+    const nameEl = document.getElementById('roleEditName');
+    const roleSelect = document.getElementById('roleEditSelect');
+    const userIdInput = document.getElementById('roleEditUserId');
+    if (!modal || !nameEl || !roleSelect || !userIdInput) return;
+    nameEl.textContent = employeeName;
+    userIdInput.value = employeeId;
+    if (roleSelect.querySelector(`option[value="${currentRole}"]`)) {
+        roleSelect.value = currentRole;
+    }
+    modal.classList.add('open');
+    document.body.classList.add('modal-open');
 }
 
 function viewEmployeeDetails(employeeId) {
     // This function will be implemented to show employee details
     alert(`View details for employee ID: ${employeeId}`);
     // TODO: Implement employee details view
+}
+
+function closeRoleEditModal() {
+    const modal = document.getElementById('roleEditModal');
+    if (modal) modal.classList.remove('open');
+    document.body.classList.remove('modal-open');
+}
+
+function submitRoleEdit() {
+    const userId = document.getElementById('roleEditUserId').value;
+    const role = document.getElementById('roleEditSelect').value;
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    if (!userId || !role) return;
+    const saveBtn = document.querySelector('#roleEditModal .btn.btn-success');
+    const prevHtml = saveBtn.innerHTML;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enregistrement...';
+    fetch('{% url 'update_employee_role' %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf || '',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ user_id: userId, role })
+    })
+    .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })))
+    .then(({ ok, data }) => {
+        if (!ok || !data.success) throw new Error(data.message || 'Erreur');
+        window.location.reload();
+    })
+    .catch(err => {
+        alert(err.message || 'Erreur lors de la mise à jour');
+    })
+    .finally(() => {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = prevHtml;
+        closeRoleEditModal();
+    });
 }
 </script>
 

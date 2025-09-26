@@ -56,7 +56,7 @@
 
 /* Checkbox Styles */
 .select-all-checkbox,
-.client-checkbox {
+.animal-checkbox {
     width: 18px;
     height: 18px;
     cursor: pointer;
@@ -68,7 +68,7 @@
     border-color: #38B2FF;
 }
 
-.client-checkbox:checked {
+.animal-checkbox:checked {
     background-color: #38B2FF;
     border-color: #38B2FF;
 }
@@ -173,12 +173,37 @@
 /* Table Card */
 .table-card {
     background: #fff;
+    border-radius: 16px;
     box-shadow: 0 6px 16px rgba(1, 56, 71, 0.1);
+    scrollbar-width: thin;
+    scrollbar-color: #43C0AF #E2ECED;
+    overflow-y: auto;   
+    overflow-x: auto;   
+    max-height: 700px;
     max-width: 100%;
-    margin: 10px auto;
+    margin: 35px auto;
     animation: fadeIn 0.8s ease-out;
 }
 
+/* ✅ Scrollbar Style */
+.table-card::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-card::-webkit-scrollbar-track {
+    background: #E2ECED;
+    border-radius: 10px;
+}
+
+.table-card::-webkit-scrollbar-thumb {
+    background: #43C0AF;
+    border-radius: 10px;
+}
+
+.table-card::-webkit-scrollbar-thumb:hover {
+    background: #fff;
+}
 
 .table-header {
     padding: 1.8rem;
@@ -465,6 +490,52 @@
     color: #013847;
     font-weight: 600;
 }
+/* Pagination */
+.pagination {
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 12px;
+}
+
+.pagination-list li {
+    display: inline-flex;
+}
+
+.pagination-link,
+.pagination-list span {
+    min-width: 44px;
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid #E2ECED;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #013847;
+    background: #fff;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+}
+
+.pagination-link:hover {
+    background: #E2ECED;
+}
+
+/* Current page style: use accent similar to screenshot */
+.pagination-list span {
+    background: #013847;
+    color: #fff;
+    border-color: #013847;
+    font-weight: 700;
+}
 
 /* Animations */
 @keyframes fadeIn {
@@ -518,51 +589,4 @@
         width: 95%;
         padding: 15px;
     }
-}
-
-/* Pagination */
-.pagination {
-    margin: 20px auto;
-    display: flex;
-    justify-content: center;
-}
-
-.pagination-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    gap: 12px;
-}
-
-.pagination-list li {
-    display: inline-flex;
-}
-
-.pagination-link,
-.pagination-list span {
-    min-width: 44px;
-    height: 44px;
-    padding: 0 14px;
-    border: 1px solid #E2ECED;
-    border-radius: 12px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    color: #013847;
-    background: #fff;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.06);
-}
-
-.pagination-link:hover {
-    background: #E2ECED;
-}
-
-/* Current page style: use accent similar to screenshot */
-.pagination-list span {
-    background: #013847;
-    color: #fff;
-    border-color: #013847;
-    font-weight: 700;
 }
