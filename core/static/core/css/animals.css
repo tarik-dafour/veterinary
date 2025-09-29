@@ -16,9 +16,9 @@
 }
 
 .bulk-selection-count {
+    color: #013847;
     font-weight: 600;
     font-size: 1.1rem;
-    color: #013847;
 }
 
 .bulk-actions-buttons {
@@ -45,12 +45,13 @@
 }
 
 .bulk-actions-buttons .btn-secondary {
-    background: #718096;
+    background: #013847;
     color: white;
 }
 
 .bulk-actions-buttons .btn-secondary:hover {
-    background: #4A5568;
+    background: #013847;
+    color: white;
     transform: translateY(-1px);
 }
 
@@ -335,7 +336,7 @@
 .btn-danger {
     background: linear-gradient(135deg, #FF5252, #FF5252);
     color: white;
-    margin-right: 50px;
+    margin-right: 10px;
 }
 
 .btn-danger:hover {

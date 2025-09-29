@@ -56,12 +56,13 @@ html,body {
 }
 
 .bulk-actions-buttons .btn-secondary {
-    background: #718096;
+    background: #013847;
     color: white;
 }
 
 .bulk-actions-buttons .btn-secondary:hover {
-    background: #4A5568;
+    background: #013847;
+    color: white;
     transform: translateY(-1px);
 }
 
